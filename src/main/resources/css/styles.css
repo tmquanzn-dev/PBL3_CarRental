@@ -1,0 +1,19 @@
+.root {
+    -fx-font-family: "Segoe UI";
+}
+
+.left-panel {
+   -fx-background-color: linear-gradient(to bottom right, #478dff, #146dff);
+}
+
+.btn-login {
+    -fx-background-color: linear-gradient(to bottom right, #478dff, #146dff);
+    -fx-text-fill: white;
+    -fx-background-radius: 20;
+    -fx-cursor: hand;
+    -fx-font-weight: bold;
+    -fx-transition: 0.3s;
+}
+.btn-login:hover {
+    -fx-background-color: #00f;
+}
