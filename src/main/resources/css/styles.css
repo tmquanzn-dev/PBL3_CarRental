@@ -17,3 +17,7 @@
 .btn-login:hover {
     -fx-background-color: #00f;
 }
+
+.logomenu {
+    -fx-background-radius: 20
+}
