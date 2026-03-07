@@ -1,0 +1,23 @@
+.left-panel {
+   -fx-background-color: linear-gradient(to bottom right, #478dff, #146dff);
+   -fx-effect: dropshadow(three-pass-box, #000, 10, 0, 0, 4);
+}
+
+.txt_login {
+    -fx-text-fill: linear-gradient(to bottom right, #478dff, #146dff);
+    -fx-effect: dropshadow(three-pass-box, rgba(165, 60, 220, 0.4), 10, 0, 0, 4);
+}
+
+.btn-login {
+    -fx-background-color: linear-gradient(to bottom right, #478dff, #146dff);
+    -fx-text-fill: white;
+    -fx-background-radius: 20;
+    -fx-cursor: hand;
+    -fx-font-weight: bold;
+    -fx-transition: 0.3s;
+    -fx-effect: dropshadow(three-pass-box, rgba(165, 60, 220, 0.4), 10, 0, 0, 4);
+}
+.btn-login:hover {
+    -fx-background-color: #00f;
+    -fx-text-fill: #fff;
+}
