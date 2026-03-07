@@ -2,22 +2,32 @@
     -fx-font-family: "Segoe UI";
 }
 
-.left-panel {
-   -fx-background-color: linear-gradient(to bottom right, #478dff, #146dff);
-}
-
-.btn-login {
-    -fx-background-color: linear-gradient(to bottom right, #478dff, #146dff);
-    -fx-text-fill: white;
-    -fx-background-radius: 20;
-    -fx-cursor: hand;
-    -fx-font-weight: bold;
-    -fx-transition: 0.3s;
-}
-.btn-login:hover {
-    -fx-background-color: #00f;
-}
-
 .logomenu {
     -fx-background-radius: 20
 }
+
+.avataUser {
+    -fx-background-radius: 50%;
+    -fx-background-color: linear-gradient(from 0% 0% to 100% 100%, #fada61 0%, #ff9188 50%, #ff5acd 100%);
+
+}
+
+.btn_menu {
+       -fx-background-color: transparent;
+       -fx-background-radius: 10;
+       -fx-font-weight: bold;
+       -fx-font-size: 18px;
+       -fx-text-fill: #333;
+       -fx-cursor: hand;
+       -fx-transition: all 0.3s ease;
+       -fx-transition: 0.3s;
+}
+
+.btn_menu:hover {
+    -fx-background-color:  #f0f5ff;
+    -fx-effect: dropshadow(three-pass-box, rgba(71, 141, 255, 0.4), 15, 0.1, 0, 4);
+    -fx-translate-y: -2px;
+}
+
+
+

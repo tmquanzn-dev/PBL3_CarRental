@@ -1,0 +1,47 @@
+.card-blue {
+    -fx-background-radius: 10;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 15, 0, 0, 10);
+    -fx-background-color: linear-gradient(to bottom right, #478dff, #146dff);
+}
+
+.card-green {
+    -fx-background-radius: 10;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 15, 0, 0, 10);
+    -fx-background-color: linear-gradient(to bottom right, #34d399, #10b981);
+}
+
+.card-purple {
+    -fx-background-radius: 10;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 15, 0, 0, 10);
+    -fx-background-color: linear-gradient(to bottom right, #a855f7, #7c3aed);
+}
+
+.card-orange {
+    -fx-background-radius: 10;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 15, 0, 0, 10);
+    -fx-background-color: linear-gradient(to bottom right, #fb923c, #f97316);
+}
+
+.card-title {
+    -fx-text-fill: white;
+    -fx-font-size: 16px;
+    -fx-opacity: 0.9;
+}
+
+.card-value {
+    -fx-text-fill: white;
+    -fx-font-size: 32px;
+    -fx-font-weight: bold;
+}
+
+.card-sub {
+    -fx-text-fill: white;
+    -fx-font-size: 14px;
+    -fx-opacity: 0.8;
+}
+
+.card-icon {
+    -fx-text-fill: white;
+    -fx-font-size: 45px;
+    -fx-opacity: 0.25;
+}

@@ -13,7 +13,8 @@ public class Customers {
 
     public Customers() {}
 
-    public Customers(int id_customer, String cccd, String full_name, boolean gender, String phone, String email, String address, boolean is_blacklist, String blacklist_reason) {
+    public Customers(int id_customer, String cccd, String full_name, boolean gender,
+                     String phone, String email, String address, boolean is_blacklist, String blacklist_reason) {
         this.id_customer = id_customer;
         this.cccd = cccd;
         this.full_name = full_name;
