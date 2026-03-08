@@ -16,23 +16,26 @@ import java.io.IOException;
 public class MainController {
     @FXML
     private VBox sideBar;
-
     @FXML
     private StackPane contentArea;
+    @FXML
+    private Button btnDashboard;
     @FXML
     public void initialize() {
         changeView("DashboardView.fxml");
         sideBar.setVisible(false);
+        if (btnDashboard != null)
+            setActiveMenu(btnDashboard);
     }
 
     @FXML
     void handleHamburgerMenu(ActionEvent event) {
         sideBar.setVisible(!sideBar.isVisible());
     }
-
     @FXML
     void handleMenuClick(ActionEvent e) {
         Button btnClick = (Button) e.getSource();
+        setActiveMenu(btnClick);
         String fxmlFile = "";
         switch (btnClick.getText()) {
             case "Tổng quan": fxmlFile = "DashboardView.fxml"; break;
@@ -43,6 +46,16 @@ public class MainController {
             sideBar.setVisible(false);
         }
     }
+
+    private void setActiveMenu(Button activeBtn) {
+        for (Node node : sideBar.getChildren()) {
+            if (node instanceof Button)
+                node.getStyleClass().remove("active_menu");
+        }
+        if (activeBtn != null)
+            activeBtn.getStyleClass().add("active_menu");
+    }
+
     private void changeView(String fxmlFile) {
         try {
             Parent fxml = FXMLLoader.load(getClass().getResource("/views/" + fxmlFile));
