@@ -14,11 +14,11 @@
 
 .btn_menu {
        -fx-background-color: transparent;
+       -fx-cursor: hand;
        -fx-background-radius: 10;
        -fx-font-weight: bold;
        -fx-font-size: 18px;
        -fx-text-fill: #333;
-       -fx-cursor: hand;
        -fx-transition: all 0.3s ease;
        -fx-transition: 0.3s;
 }
@@ -27,6 +27,15 @@
     -fx-background-color:  #f0f5ff;
     -fx-effect: dropshadow(three-pass-box, rgba(71, 141, 255, 0.4), 15, 0.1, 0, 4);
     -fx-translate-y: -2px;
+}
+
+.active_menu {
+    -fx-background-color: #f0f5ff;
+    -fx-text-fill: #146dff;
+    -fx-font-weight: bold;
+    -fx-border-color: #146dff;
+    -fx-border-width: 0 0 0 3;
+    -fx-background-radius: 0 10 10 0;
 }
 
 

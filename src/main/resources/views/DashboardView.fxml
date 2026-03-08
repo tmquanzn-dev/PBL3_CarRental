@@ -15,7 +15,7 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="1200.0" prefWidth="1000.0" spacing="25.0" stylesheets="@../css/dashboardview/dashboardstyle.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1">
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="1200.0" prefWidth="1100.0" spacing="25.0" stylesheets="@../css/dashboardview/dashboardstyle.css" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1">
    <padding>
       <Insets bottom="30.0" left="30.0" right="30.0" top="30.0" />
    </padding>
@@ -24,7 +24,7 @@
          <children>
             <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Tổng quan">
                <font>
-                  <Font name="System Bold" size="28.0" />
+                  <Font name="System Bold" size="32.0" />
                </font>
             </Text>
             <Region prefHeight="200.0" prefWidth="200.0" HBox.hgrow="ALWAYS" />
@@ -35,7 +35,7 @@
             </Button>
          </children>
       </HBox>
-      <GridPane hgap="20.0" prefHeight="272.0" prefWidth="745.0" vgap="20.0">
+      <GridPane hgap="40.0" prefHeight="306.0" prefWidth="1052.0" vgap="20.0">
         <columnConstraints>
           <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="50.0" prefWidth="100.0" />
           <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="50.0" prefWidth="100.0" />
@@ -135,7 +135,7 @@
                         <Font size="45.0" />
                      </font>
                   </Label>
-                  <ImageView fitHeight="50.0" fitWidth="50.0" layoutX="291.0" layoutY="30.0" opacity="0.18" pickOnBounds="true" preserveRatio="true">
+                  <ImageView fitHeight="50.0" fitWidth="50.0" layoutX="429.0" layoutY="26.0" opacity="0.18" pickOnBounds="true" preserveRatio="true">
                      <image>
                         <Image url="@../image/dashboardform/dollar.png" />
                      </image>
@@ -167,7 +167,7 @@
                         <Font size="45.0" />
                      </font>
                   </Label>
-                  <ImageView fitHeight="50.0" fitWidth="50.0" layoutX="287.0" layoutY="24.0" opacity="0.18" pickOnBounds="true" preserveRatio="true">
+                  <ImageView fitHeight="50.0" fitWidth="50.0" layoutX="421.0" layoutY="26.0" opacity="0.18" pickOnBounds="true" preserveRatio="true">
                      <image>
                         <Image url="@../image/dashboardform/growth.png" />
                      </image>
@@ -199,7 +199,7 @@
                         <Font size="45.0" />
                      </font>
                   </Label>
-                  <ImageView fitHeight="50.0" fitWidth="50.0" layoutX="296.0" layoutY="26.0" opacity="0.18" pickOnBounds="true" preserveRatio="true">
+                  <ImageView fitHeight="50.0" fitWidth="50.0" layoutX="430.0" layoutY="26.0" opacity="0.18" pickOnBounds="true" preserveRatio="true">
                      <image>
                         <Image url="@../image/dashboardform/invoice.png" />
                      </image>
@@ -231,7 +231,7 @@
                         <Font size="45.0" />
                      </font>
                   </Label>
-                  <ImageView fitHeight="57.0" fitWidth="70.0" layoutX="281.0" layoutY="23.0" opacity="0.18" pickOnBounds="true" preserveRatio="true">
+                  <ImageView fitHeight="57.0" fitWidth="70.0" layoutX="414.0" layoutY="23.0" opacity="0.18" pickOnBounds="true" preserveRatio="true">
                      <image>
                         <Image url="@../image/dashboardform/card-moto.png" />
                      </image>
@@ -240,5 +240,117 @@
             </AnchorPane>
          </children>
       </GridPane>
+      <VBox prefHeight="440.0" prefWidth="1040.0" spacing="20.0">
+         <children>
+            <HBox alignment="CENTER_LEFT" prefHeight="80.0" prefWidth="200.0" styleClass="alert-red">
+               <children>
+                  <Label>
+                     <HBox.margin>
+                        <Insets bottom="40.0" left="20.0" />
+                     </HBox.margin>
+                     <graphic>
+                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../image/dashboardform/exclamation.png" />
+                           </image>
+                        </ImageView>
+                     </graphic>
+                  </Label>
+                  <VBox prefHeight="59.0" prefWidth="1000.0">
+                     <children>
+                        <Text fill="#510404" strokeType="OUTSIDE" strokeWidth="0.0" text="Đơn quá hạn">
+                           <VBox.margin>
+                              <Insets left="14.0" top="8.0" />
+                           </VBox.margin>
+                           <font>
+                              <Font size="18.0" />
+                           </font>
+                        </Text>
+                        <Text fill="#e16969" strokeType="OUTSIDE" strokeWidth="0.0" text="3 đơn chưa trả xe đúng hạn">
+                           <VBox.margin>
+                              <Insets left="14.0" top="14.0" />
+                           </VBox.margin>
+                           <font>
+                              <Font size="16.0" />
+                           </font>
+                        </Text>
+                     </children>
+                  </VBox>
+               </children>
+            </HBox>
+            <HBox alignment="CENTER_LEFT" layoutX="10.0" layoutY="10.0" prefHeight="80.0" prefWidth="200.0" styleClass="alert-yellow">
+               <children>
+                  <Label>
+                     <HBox.margin>
+                        <Insets bottom="40.0" left="20.0" />
+                     </HBox.margin>
+                     <graphic>
+                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../image/mainform/btn-bell.png" />
+                           </image>
+                        </ImageView>
+                     </graphic>
+                  </Label>
+                  <VBox prefHeight="59.0" prefWidth="1000.0">
+                     <children>
+                        <Text fill="#510404" strokeType="OUTSIDE" strokeWidth="0.0" text="Xe cần bảo dưỡng">
+                           <VBox.margin>
+                              <Insets left="14.0" top="8.0" />
+                           </VBox.margin>
+                           <font>
+                              <Font size="18.0" />
+                           </font>
+                        </Text>
+                        <Text fill="#d09029" strokeType="OUTSIDE" strokeWidth="0.0" text="2 xe đạt km bảo dưỡng">
+                           <VBox.margin>
+                              <Insets left="14.0" top="14.0" />
+                           </VBox.margin>
+                           <font>
+                              <Font size="16.0" />
+                           </font>
+                        </Text>
+                     </children>
+                  </VBox>
+               </children>
+            </HBox>
+            <HBox alignment="CENTER_LEFT" layoutX="10.0" layoutY="10.0" prefHeight="80.0" prefWidth="200.0" styleClass="alert-blue">
+               <children>
+                  <Label>
+                     <HBox.margin>
+                        <Insets bottom="40.0" left="20.0" />
+                     </HBox.margin>
+                     <graphic>
+                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../image/dashboardform/marketing.png" />
+                           </image>
+                        </ImageView>
+                     </graphic>
+                  </Label>
+                  <VBox prefHeight="59.0" prefWidth="1000.0">
+                     <children>
+                        <Text fill="#510404" strokeType="OUTSIDE" strokeWidth="0.0" text="Voucher sắp hết">
+                           <VBox.margin>
+                              <Insets left="14.0" top="8.0" />
+                           </VBox.margin>
+                           <font>
+                              <Font size="18.0" />
+                           </font>
+                        </Text>
+                        <Text fill="#3b82f6" strokeType="OUTSIDE" strokeWidth="0.0" text="WELCOME2024 còn 5 lượt">
+                           <VBox.margin>
+                              <Insets left="14.0" top="14.0" />
+                           </VBox.margin>
+                           <font>
+                              <Font size="16.0" />
+                           </font>
+                        </Text>
+                     </children>
+                  </VBox>
+               </children>
+            </HBox>
+         </children>
+      </VBox>
    </children>
 </VBox>

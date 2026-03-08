@@ -45,3 +45,27 @@
     -fx-font-size: 45px;
     -fx-opacity: 0.25;
 }
+
+.alert-red {
+    -fx-background-radius: 10;
+    -fx-border-width: 0 0 0 3;
+    -fx-border-radius: 10;
+    -fx-background-color: #fff1f2;
+    -fx-border-color: #ef4444;
+}
+
+.alert-yellow {
+    -fx-background-radius: 10;
+    -fx-border-width: 0 0 0 3;
+    -fx-border-radius: 10;
+    -fx-background-color: #fffbeb;
+    -fx-border-color: #f59e0b;
+}
+
+.alert-blue {
+    -fx-background-radius: 10;
+    -fx-border-width: 0 0 0 3;
+    -fx-border-radius: 10;
+    -fx-background-color: #eff6ff;
+    -fx-border-color: #3b82f6;
+}
