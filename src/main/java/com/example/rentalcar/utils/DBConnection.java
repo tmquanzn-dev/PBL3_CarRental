@@ -8,7 +8,7 @@ public class DBConnection {
     public static Connection getConnection() {
         String url = "jdbc:mysql://localhost:3306/CarRentalDB";
         String user = "root";
-        String pass = "huynhducha";
+        String pass = "anhyeuem123";
         try {
             return DriverManager.getConnection(url, user, pass);
         } catch (SQLException e) {
