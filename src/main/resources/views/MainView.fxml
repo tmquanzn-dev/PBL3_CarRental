@@ -120,7 +120,7 @@
                                 </VBox>
                             </children>
                         </HBox>
-                        <Button mnemonicParsing="false" onAction="#handleLogout" prefHeight="55.0" prefWidth="57.0" style="-fx-background-color: #fff;">
+                        <Button mnemonicParsing="false" onAction="#handleLogout" prefHeight="55.0" prefWidth="57.0">
                             <graphic>
                                 <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
                                     <image>
@@ -151,7 +151,7 @@
 
                 <VBox fx:id="sideBar" maxWidth="250.0" prefWidth="250.0" style="-fx-background-color: #fff; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.15), 15, 0, 0, 0);" visible="false">
                     <children>
-                        <Button fx:id="btnDashboard" contentDisplay="RIGHT" graphicTextGap="57.0" mnemonicParsing="false" onAction="#handleMenuClick" prefHeight="50.0" prefWidth="200.0" styleClass="btn_menu" stylesheets="@../css/styles.css" text="Tổng quan">
+                        <Button fx:id="btnDashboard" contentDisplay="RIGHT" graphicTextGap="20.0" mnemonicParsing="false" onAction="#handleMenuClick" prefHeight="50.0" prefWidth="200.0" styleClass="btn_menu" stylesheets="@../css/styles.css" text="Tổng quan">
                             <font>
                                 <Font size="18.0" />
                             </font>
