@@ -120,7 +120,7 @@
                         <Font size="16.0" />
                      </font>
                   </Label>
-                  <Label layoutX="20.0" layoutY="43.0" styleClass="card-value" text="2.450.000 đ">
+                  <Label fx:id="label_today_revenue" layoutX="20.0" layoutY="43.0" styleClass="card-value" text="2.450.000 đ">
                      <font>
                         <Font name="System Bold" size="28.0" />
                      </font>

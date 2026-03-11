@@ -9,5 +9,6 @@ module PBL3 {
     // Mở package chứa file RentalApp để JavaFX có thể khởi chạy
     opens com.example.rentalcar to javafx.fxml;
     requires java.sql;
+    requires jdk.jdi;
     exports com.example.rentalcar;
 }
