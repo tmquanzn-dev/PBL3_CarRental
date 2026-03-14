@@ -1,0 +1,22 @@
+#btnMenu {
+    -fx-background-color: transparent;
+    -fx-background-radius: 10;
+    -fx-text-fill: #444444;
+    -fx-cursor: hand;
+    -fx-transition: 0.3s;
+}
+
+#btnMenu:hover {
+    -fx-background-color: #ececec;
+}
+
+.btn-logout {
+    -fx-background-color: #fff0f0;
+    -fx-background-radius: 10;
+    -fx-cursor: hand;
+}
+
+.btn-logout:hover {
+    -fx-background-color: #ffe0e0;
+    -fx-effect: dropshadow(three-pass-box, rgba(255,0,0,0.1), 10, 0, 0, 0);
+}

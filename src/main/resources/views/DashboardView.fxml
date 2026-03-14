@@ -3,6 +3,8 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
@@ -28,7 +30,7 @@
                </font>
             </Text>
             <Region prefHeight="200.0" prefWidth="200.0" HBox.hgrow="ALWAYS" />
-            <Button mnemonicParsing="false" prefHeight="34.0" prefWidth="155.0" text="+ Tạo đơn mới">
+            <Button mnemonicParsing="false" prefHeight="34.0" prefWidth="155.0" styleClass="card-blue" text="+ Tạo đơn mới" textFill="WHITE">
                <font>
                   <Font size="18.0" />
                </font>
@@ -120,7 +122,7 @@
                         <Font size="16.0" />
                      </font>
                   </Label>
-                  <Label fx:id="label_today_revenue" layoutX="20.0" layoutY="43.0" styleClass="card-value" text="2.450.000 đ">
+                  <Label fx:id="label_today_revenue" layoutX="20.0" layoutY="43.0" styleClass="card-value">
                      <font>
                         <Font name="System Bold" size="28.0" />
                      </font>
@@ -240,7 +242,7 @@
             </AnchorPane>
          </children>
       </GridPane>
-      <VBox prefHeight="440.0" prefWidth="1040.0" spacing="20.0">
+      <VBox prefHeight="286.0" prefWidth="1040.0" spacing="20.0">
          <children>
             <HBox alignment="CENTER_LEFT" prefHeight="80.0" prefWidth="200.0" styleClass="alert-red">
                <children>
@@ -350,6 +352,31 @@
                   </VBox>
                </children>
             </HBox>
+         </children>
+      </VBox>
+      <VBox prefHeight="443.0" prefWidth="1040.0" spacing="15.0" styleClass="table_container" stylesheets="@../css/dashboardview/dashboardstyle.css">
+         <padding>
+            <Insets bottom="20.0" />
+         </padding>
+         <children>
+            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Đơn thuê gần đây">
+               <font>
+                  <Font name="Arial" size="24.0" />
+               </font>
+               <VBox.margin>
+                  <Insets left="20.0" top="20.0" />
+               </VBox.margin>
+            </Text>
+            <TableView prefHeight="318.0" prefWidth="1040.0">
+              <columns>
+                  <TableColumn prefWidth="141.0" text="Mã HĐ" />
+                  <TableColumn prefWidth="217.0" text="KHÁCH HÀNG" />
+                  <TableColumn prefWidth="203.0" text="BIỂN SỐ XE" />
+                  <TableColumn prefWidth="162.0" text="TRẠNG THÁI" />
+                  <TableColumn prefWidth="178.0" text="TỔNG TIỀN" />
+                  <TableColumn prefWidth="138.0" text="THAO TÁC" />
+              </columns>
+            </TableView>
          </children>
       </VBox>
    </children>
