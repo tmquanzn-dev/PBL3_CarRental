@@ -23,7 +23,7 @@
                </font>
             </Text>
             <Region prefHeight="200.0" prefWidth="200.0" HBox.hgrow="ALWAYS" />
-            <TextField prefHeight="40.0" prefWidth="155.0" text="Tìm kiếm">
+            <TextField alignment="CENTER" prefHeight="40.0" prefWidth="155.0" style="-fx-background-radius: 5;" text="Tìm kiếm">
                <font>
                   <Font size="18.0" />
                </font>
@@ -31,7 +31,7 @@
                   <Insets right="20.0" />
                </HBox.margin>
             </TextField>
-            <Button mnemonicParsing="false" prefHeight="34.0" prefWidth="155.0" text="+ Tạo đơn mới">
+            <Button mnemonicParsing="false" prefHeight="34.0" prefWidth="155.0" styleClass="btn-new" stylesheets="@../css/dashboardview/dashboardstyle.css" text="+ Tạo đơn mới" textFill="WHITE">
                <font>
                   <Font size="18.0" />
                </font>

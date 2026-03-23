@@ -28,3 +28,13 @@
     -fx-background-color: #e3f2fd;
     -fx-text-fill: #1976d2;
 }
+.btn-filter {
+    -fx-background-color: #f0f0f5;
+    -fx-text-fill: #333;
+    -fx-background-radius: 20;
+    -fx-padding: 8 20;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.05), 10, 0, 0, 3);
+}

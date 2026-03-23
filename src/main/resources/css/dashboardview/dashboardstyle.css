@@ -103,3 +103,10 @@
 .table-row-cell:hover {
     -fx-background-color: #f1f4f9;
 }
+
+.btn-new {
+   -fx-background-radius: 10;
+   -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 15, 0, 0, 10);
+   -fx-background-color: linear-gradient(to bottom right, #478dff, #146dff);
+   -fx-cursor: hand;
+}

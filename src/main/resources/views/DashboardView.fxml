@@ -17,7 +17,7 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="1200.0" prefWidth="1100.0" spacing="25.0" stylesheets="@../css/dashboardview/dashboardstyle.css" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.rentalcar.controller.DashboardController">
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="1200.0" prefWidth="1100.0" spacing="25.0" stylesheets="@../css/dashboardview/dashboardstyle.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.rentalcar.controller.DashboardController">
    <padding>
       <Insets bottom="30.0" left="30.0" right="30.0" top="30.0" />
    </padding>
@@ -30,7 +30,7 @@
                </font>
             </Text>
             <Region prefHeight="200.0" prefWidth="200.0" HBox.hgrow="ALWAYS" />
-            <Button mnemonicParsing="false" prefHeight="34.0" prefWidth="155.0" styleClass="card-blue" text="+ Tạo đơn mới" textFill="WHITE">
+            <Button mnemonicParsing="false" prefHeight="34.0" prefWidth="155.0" styleClass="btn-new" text="+ Tạo đơn mới" textFill="WHITE">
                <font>
                   <Font size="18.0" />
                </font>

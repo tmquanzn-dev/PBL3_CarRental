@@ -11,7 +11,7 @@ public class ContractDAO {
     public double getTodayRevenue() {
         String sql = "Select Coalesce(Sum(total_price),0) from contracts " +
                 "Where Date(start_datetime) = Curdate() " +
-                "And status = 'DA HUY'";
+                "And status = 'HOAN THANH'";
         try (Connection cnt = DBConnection.getConnection()) {
             if (cnt == null) {
                 System.err.println("Lỗi! Không thể kết nối tới Database");
