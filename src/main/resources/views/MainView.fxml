@@ -166,7 +166,8 @@
                                 </ImageView>
                             </graphic>
                         </Button>
-                        <Button contentDisplay="RIGHT" graphicTextGap="10.0" mnemonicParsing="false" prefHeight="50.0" prefWidth="200.0" styleClass="btn_menu" stylesheets="@../css/styles.css" text="Quản lý hóa đơn">
+                        <Button contentDisplay="RIGHT" graphicTextGap="10.0" mnemonicParsing="false" prefHeight="50.0" prefWidth="200.0" styleClass="btn_menu" stylesheets="@../css/styles.css" text="Quản lý hóa đơn" fx:id="btnContract"
+                                onAction="#handleMenuClick">
                             <font>
                                 <Font size="18.0" />
                             </font>

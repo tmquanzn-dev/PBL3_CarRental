@@ -1,0 +1,30 @@
+.vbox-contract-list {
+    -fx-padding: 10;
+    -fx-spacing: 20;
+    -fx-background-color: transparent;
+}
+.contract-card {
+    -fx-background-color: white;
+    -fx-background-radius: 15;
+    -fx-border-color: #f0f0f5;
+    -fx-border-radius: 15;
+    -fx-padding: 20;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.08), 15, 0, 0, 5);
+}
+
+.contract-card:hover {
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.15), 20, 0, 0, 8);
+    -fx-cursor: hand;
+}
+
+.badge {
+    -fx-background-radius: 20;
+    -fx-padding: 5 15;
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+}
+
+.badge-renting {
+    -fx-background-color: #e3f2fd;
+    -fx-text-fill: #1976d2;
+}

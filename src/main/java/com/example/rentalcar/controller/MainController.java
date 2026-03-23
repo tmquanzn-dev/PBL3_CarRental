@@ -39,6 +39,7 @@ public class MainController {
         String fxmlFile = "";
         switch (btnClick.getText()) {
             case "Tổng quan": fxmlFile = "DashboardView.fxml"; break;
+            case "Quản lý hóa đơn": fxmlFile = "ContractView.fxml"; break;
             case "Quản lý xe": fxmlFile = "VehicleView.fxml"; break;
         }
         if (!fxmlFile.isEmpty()) {

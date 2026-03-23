@@ -10,7 +10,6 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-
 <VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="1200.0" prefWidth="1100.0" spacing="25.0" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1">
    <padding>
       <Insets bottom="30.0" left="30.0" right="30.0" top="30.0" />
@@ -68,6 +67,10 @@
             </Button>
          </children>
       </HBox>
-      <ScrollPane prefHeight="401.0" prefWidth="1039.0" style="-fx-background-color: transparent;" />
+      <ScrollPane fitToWidth="true" prefHeight="1017.0" prefWidth="1039.0" style="-fx-background-color: transparent;">
+         <content>
+            <VBox fx:id="vbox_contract_list" prefHeight="200.0" prefWidth="100.0" />
+         </content>
+      </ScrollPane>
    </children>
 </VBox>
