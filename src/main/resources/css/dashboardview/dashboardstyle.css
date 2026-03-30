@@ -110,3 +110,7 @@
    -fx-background-color: linear-gradient(to bottom right, #478dff, #146dff);
    -fx-cursor: hand;
 }
+
+.btn-new: hover {
+    -fx-background-color: #0052cc
+}

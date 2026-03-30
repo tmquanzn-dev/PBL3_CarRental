@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox spacing="20.0" stylesheets="@../../css/create_contract/style.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1">
+    <children>
+        <Label text="Bước 4: Xác nhận và Hoàn tất" style="-fx-font-weight: bold; -fx-font-size: 1.8em; -fx-text-fill: #0f172a;" />
+
+        <GridPane hgap="30.0" VBox.vgrow="ALWAYS">
+            <columnConstraints>
+                <ColumnConstraints hgrow="SOMETIMES" percentWidth="50.0" />
+                <ColumnConstraints hgrow="SOMETIMES" percentWidth="50.0" />
+            </columnConstraints>
+
+            <children>
+                <VBox spacing="15.0" styleClass="summary-box" GridPane.columnIndex="0">
+                    <children>
+                        <Label text="THÔNG TIN KHÁCH HÀNG &amp; XE" styleClass="summary-title" maxWidth="Infinity" />
+
+                        <GridPane vgap="12.0" hgap="10.0">
+                            <columnConstraints>
+                                <ColumnConstraints minWidth="100.0" prefWidth="120.0" />
+                                <ColumnConstraints hgrow="ALWAYS" />
+                            </columnConstraints>
+                            <children>
+                                <Label text="Khách hàng:" styleClass="summary-label" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+                                <Label fx:id="lblCustomerName" text="Nguyễn Văn A - 0905123456" styleClass="summary-value" GridPane.rowIndex="0" GridPane.columnIndex="1" wrapText="true"/>
+
+                                <Label text="CCCD/CMND:" styleClass="summary-label" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+                                <Label fx:id="lblCCCD" text="048203001234" styleClass="summary-value" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+
+                                <Label text="Xe thuê:" styleClass="summary-label" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+                                <Label fx:id="lblVehicleName" text="Toyota Vios 2022" styleClass="summary-value" GridPane.rowIndex="2" GridPane.columnIndex="1" wrapText="true"/>
+
+                                <Label text="Biển số:" styleClass="summary-label" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
+                                <Label fx:id="lblLicensePlate" text="43A-123.45" styleClass="summary-value" GridPane.rowIndex="3" GridPane.columnIndex="1"/>
+                            </children>
+                        </GridPane>
+                    </children>
+                </VBox>
+
+                <VBox spacing="15.0" styleClass="summary-box" GridPane.columnIndex="1">
+                    <children>
+                        <Label text="CHI TIẾT THANH TOÁN" styleClass="summary-title" maxWidth="Infinity" />
+
+                        <GridPane vgap="12.0" hgap="10.0">
+                            <columnConstraints>
+                                <ColumnConstraints minWidth="120.0" prefWidth="140.0" />
+                                <ColumnConstraints hgrow="ALWAYS" />
+                            </columnConstraints>
+                            <children>
+                                <Label text="Thời gian:" styleClass="summary-label" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+                                <Label fx:id="lblRentalPeriod" text="15/10/2026 - 18/10/2026 (3 ngày)" styleClass="summary-value" GridPane.rowIndex="0" GridPane.columnIndex="1" wrapText="true"/>
+
+                                <Label text="Đơn giá thuê:" styleClass="summary-label" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+                                <Label fx:id="lblPricePerDay" text="800.000 đ/ngày" styleClass="summary-value" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+
+                                <Label text="Tổng tiền thuê:" styleClass="summary-label" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+                                <Label fx:id="lblTotalRent" text="2.400.000 đ" styleClass="summary-value" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+
+                                <Label text="Đã đặt cọc:" styleClass="summary-label" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
+                                <Label fx:id="lblDeposit" text="1.000.000 đ (Tiền mặt)" styleClass="summary-value" GridPane.rowIndex="3" GridPane.columnIndex="1"/>
+
+                                <Label text="Thế chấp:" styleClass="summary-label" GridPane.rowIndex="4" GridPane.columnIndex="0"/>
+                                <Label fx:id="lblCollateral" text="Không có" styleClass="summary-value" GridPane.rowIndex="4" GridPane.columnIndex="1" wrapText="true"/>
+                            </children>
+                        </GridPane>
+
+                        <Separator />
+
+                        <HBox alignment="CENTER_LEFT" spacing="10.0">
+                            <Label text="CẦN THANH TOÁN:" style="-fx-font-weight: bold; -fx-text-fill: #334155;"/>
+                            <Region HBox.hgrow="ALWAYS" />
+                            <Label fx:id="lblFinalAmount" text="1.400.000 đ" styleClass="highlight-amount" />
+                        </HBox>
+                    </children>
+                </VBox>
+            </children>
+        </GridPane>
+
+        <VBox spacing="8.0" VBox.vgrow="ALWAYS">
+            <Label text="Ghi chú hợp đồng (Tùy chọn):" style="-fx-font-weight: bold; -fx-text-fill: #475569;" />
+            <TextArea fx:id="txtNote" promptText="Nhập các điều khoản bổ sung, tình trạng xe trước khi giao..." styleClass="modern-input" wrapText="true" VBox.vgrow="ALWAYS" prefHeight="80.0" />
+        </VBox>
+    </children>
+    <padding>
+        <Insets bottom="15.0" left="20.0" right="20.0" top="10.0" />
+    </padding>
+</VBox>

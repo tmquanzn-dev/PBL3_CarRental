@@ -30,7 +30,7 @@
                </font>
             </Text>
             <Region prefHeight="200.0" prefWidth="200.0" HBox.hgrow="ALWAYS" />
-            <Button mnemonicParsing="false" prefHeight="34.0" prefWidth="155.0" styleClass="btn-new" text="+ Tạo đơn mới" textFill="WHITE">
+            <Button mnemonicParsing="false" onAction="#showCreateContractModal" prefHeight="34.0" prefWidth="155.0" styleClass="btn-new" text="+ Tạo đơn mới" textFill="WHITE">
                <font>
                   <Font size="18.0" />
                </font>
@@ -38,14 +38,14 @@
          </children>
       </HBox>
       <GridPane hgap="40.0" prefHeight="306.0" prefWidth="1052.0" vgap="20.0">
-        <columnConstraints>
-          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="50.0" prefWidth="100.0" />
-          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="50.0" prefWidth="100.0" />
-        </columnConstraints>
-        <rowConstraints>
-          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-        </rowConstraints>
+         <columnConstraints>
+            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="50.0" prefWidth="100.0" />
+            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="50.0" prefWidth="100.0" />
+         </columnConstraints>
+         <rowConstraints>
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+         </rowConstraints>
          <children>
             <AnchorPane prefHeight="140.0" prefWidth="200.0" styleClass="card-blue">
                <children>
@@ -368,14 +368,14 @@
                </VBox.margin>
             </Text>
             <TableView prefHeight="318.0" prefWidth="1040.0">
-              <columns>
+               <columns>
                   <TableColumn prefWidth="141.0" text="Mã HĐ" />
                   <TableColumn prefWidth="217.0" text="KHÁCH HÀNG" />
                   <TableColumn prefWidth="203.0" text="BIỂN SỐ XE" />
                   <TableColumn prefWidth="162.0" text="TRẠNG THÁI" />
                   <TableColumn prefWidth="178.0" text="TỔNG TIỀN" />
                   <TableColumn prefWidth="138.0" text="THAO TÁC" />
-              </columns>
+               </columns>
             </TableView>
          </children>
       </VBox>

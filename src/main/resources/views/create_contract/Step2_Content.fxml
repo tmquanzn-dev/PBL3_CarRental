@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.layout.FlowPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox spacing="15.0" stylesheets="@../../css/contractview/create_contract/style.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1">
+    <children>
+        <Label style="-fx-font-weight: bold; -fx-font-size: 20px;" text="Bước 2: Chọn xe thuê" />
+        <HBox spacing="15.0">
+            <children>
+                <ComboBox fx:id="cbBrand" prefHeight="40.0" prefWidth="180.0" promptText="Tất cả hãng" />
+                <ComboBox fx:id="cbType" prefHeight="40.0" prefWidth="180.0" promptText="Tất cả loại" />
+            </children>
+        </HBox>
+        <ScrollPane fitToWidth="true" hbarPolicy="NEVER" styleClass="custom-scroll" VBox.vgrow="ALWAYS">
+            <content>
+                <FlowPane fx:id="flowPaneVehicles" hgap="25.0" vgap="25.0">
+                    <padding><Insets bottom="10.0" left="10.0" right="10.0" top="10.0" /></padding>
+                </FlowPane>
+            </content>
+        </ScrollPane>
+    </children>
+</VBox>

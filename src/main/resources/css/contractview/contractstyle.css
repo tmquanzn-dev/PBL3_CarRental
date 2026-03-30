@@ -38,3 +38,17 @@
     -fx-cursor: hand;
     -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.05), 10, 0, 0, 3);
 }
+
+.step-title {
+    -fx-font-size: 24px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #1e293b;
+}
+
+.contract-scroll-pane {
+    -fx-background-color: transparent;
+    -fx-background: #f8fafc;
+    -fx-border-color: #e2e8f0;
+    -fx-border-radius: 12;
+}
+

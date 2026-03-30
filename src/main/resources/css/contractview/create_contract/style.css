@@ -1,0 +1,93 @@
+.header-title { -fx-font-size: 28px; -fx-font-weight: bold; -fx-text-fill: #1e293b; }
+
+ /* Vòng tròn số */
+.step-circle {
+     -fx-background-color: #cbd5e1; /* Màu xám khi chưa tới */
+     -fx-text-fill: white;
+     -fx-background-radius: 50;
+     -fx-min-width: 38;
+     -fx-min-height: 38;
+     -fx-alignment: center;
+     -fx-font-weight: bold;
+     -fx-font-size: 14px;
+}
+
+.step-active .step-circle, .step-done .step-circle {
+     -fx-background-color: #22c55e;
+ }
+
+.step-label {
+    -fx-font-size: 13px;
+    -fx-text-fill: #64748b;
+}
+
+.step-active .step-label {
+    -fx-text-fill: #22c55e;
+    -fx-font-weight: bold;
+}
+
+.step-line {
+    -fx-translate-y: -12;
+    -fx-opacity: 0.4;
+}
+
+.btn-primary {
+     -fx-background-color: #146dff;
+     -fx-text-fill: white;
+     -fx-font-weight: bold;
+     -fx-background-radius: 8;
+     -fx-padding: 12 30;
+     -fx-cursor: hand;
+ }
+
+.btn-primary:hover {
+    -fx-background-color: #0052cc
+}
+
+ .btn-secondary {
+     -fx-background-color: white;
+     -fx-border-color: #cbd5e1;
+     -fx-border-radius: 8;
+     -fx-text-fill: #64748b;
+     -fx-padding: 12 25;
+     -fx-cursor: hand;
+ }
+
+.btn-secondary:hover {
+    -fx-background-color: #ccc;
+    -fx-text-fill: #000;
+}
+
+ .btn-danger {
+     -fx-background-color: #fff1f2;
+     -fx-text-fill: #e11d48;
+     -fx-background-radius: 8;
+     -fx-padding: 12 25;
+     -fx-cursor: hand;
+ }
+
+.btn-danger: hover
+{
+    -fx-background-color: E3918D;
+    -fx-text-fill: #fff;
+}
+
+
+/* Khung tải ảnh CCCD nét đứt */
+.image-upload-box {
+    -fx-border-color: #cbd5e1;
+    -fx-border-style: dashed;
+    -fx-border-width: 2;
+    -fx-background-color: #f8fafc;
+    -fx-background-radius: 12;
+    -fx-border-radius: 12;
+    -fx-padding: 15;
+}
+
+.image-upload-box:hover {
+    -fx-border-color: #146dff;
+    -fx-background-color: #f1f5f9;
+}
+
+
+

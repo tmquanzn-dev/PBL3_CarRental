@@ -10,7 +10,7 @@ public class DBConnection
     private static DBConnection instance;
     private Connection connection;
 
-    private final String URL = "jdbc:mysql://localhost:3306;databaseName=CarRentalDB;encrypt=true;trustServerCertificate=true;";
+    private final String URL = "jdbc:mysql://localhost:3306/CarRentalDB";
     private final String USER = "root";
     private final String PASSWORD = "anhyeuem123";
 

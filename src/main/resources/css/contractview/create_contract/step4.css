@@ -1,0 +1,37 @@
+.summary-box {
+    -fx-background-color: white;
+    -fx-background-radius: 12;
+    -fx-border-color: #e2e8f0;
+    -fx-border-radius: 12;
+    -fx-border-width: 1.5;
+    -fx-padding: 20;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.05), 10, 0, 0, 4);
+}
+
+.summary-title {
+    -fx-font-size: 1.1em;
+    -fx-font-weight: bold;
+    -fx-text-fill: #3b82f6;
+    -fx-border-color: transparent transparent #e2e8f0 transparent;
+    -fx-border-width: 0 0 1 0;
+    -fx-padding: 0 0 8 0;
+}
+
+.summary-label {
+    -fx-text-fill: #64748b;
+    -fx-font-family: inherit;
+}
+
+.summary-value {
+    -fx-font-weight: bold;
+    -fx-text-fill: #0f172a;
+    -fx-font-family: inherit;
+}
+
+
+.highlight-amount {
+    -fx-font-size: 1.4em;
+    -fx-font-weight: bold;
+    -fx-text-fill: #ef4444;
+    -fx-font-family: inherit;
+}

@@ -1,0 +1,42 @@
+
+.modern-input {
+    -fx-background-color: #f8fafc;
+    -fx-border-color: #cbd5e1;
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+    -fx-padding: 8 12 8 12;
+    -fx-text-fill: #1e293b;
+    -fx-pref-height: 48px;
+}
+
+.modern-input .text-field {
+    -fx-background-color: transparent;
+    -fx-padding: 0;
+    -fx-font-family: inherit;
+}
+
+.modern-input:focused, .modern-input:contains-focus {
+    -fx-border-color: #3b82f6;
+    -fx-background-color: white;
+}
+
+/* Ẩn cái viền mặc định của JavaFX */
+.date-picker { -fx-background-color: transparent; -fx-padding: 0; }
+.date-picker .button { -fx-background-color: transparent; }
+.combo-box { -fx-font-family: inherit; }
+
+.total-amount-box {
+    -fx-background-color: white;
+    -fx-background-radius: 16;
+    -fx-border-color: #e2e8f0;
+    -fx-border-radius: 16;
+    -fx-border-width: 1.5;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.08), 15, 0, 0, 5);
+}
+
+.price-text {
+    -fx-font-size: 2.2em;
+    -fx-font-weight: bold;
+    -fx-text-fill: #1e3a8a;
+    -fx-font-family: inherit;
+}

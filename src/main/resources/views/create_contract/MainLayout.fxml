@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+
+<AnchorPane prefHeight="850.0" prefWidth="1000.0" stylesheets="@../../css/create_contract/style.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.rentalcar.controller.create_contract.CreateContractController">
+    <children>
+        <VBox spacing="20.0" stylesheets="@../../css/contractview/create_contract/style.css" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+            <padding><Insets bottom="25.0" left="40.0" right="40.0" top="25.0" /></padding>
+            <children>
+                <Label styleClass="header-title" text="Tạo hợp đồng mới" />
+
+                <HBox alignment="CENTER" prefHeight="90.0">
+                    <children>
+                        <VBox fx:id="step1Box" alignment="CENTER" spacing="8.0" styleClass="step-item, step-active">
+                            <children><Label fx:id="lblStep1" styleClass="step-circle" text="1" /><Label styleClass="step-label" text="Khách hàng" /></children>
+                        </VBox>
+                        <Separator prefWidth="100.0" styleClass="step-line" />
+                        <VBox fx:id="step2Box" alignment="CENTER" spacing="8.0" styleClass="step-item">
+                            <children><Label fx:id="lblStep2" styleClass="step-circle" text="2" /><Label styleClass="step-label" text="Chọn xe" /></children>
+                        </VBox>
+                        <Separator prefWidth="100.0" styleClass="step-line" />
+                        <VBox fx:id="step3Box" alignment="CENTER" spacing="8.0" styleClass="step-item">
+                            <children><Label fx:id="lblStep3" styleClass="step-circle" text="3" /><Label styleClass="step-label" text="Thời gian" /></children>
+                        </VBox>
+                        <Separator prefWidth="100.0" styleClass="step-line" />
+                        <VBox fx:id="step4Box" alignment="CENTER" spacing="8.0" styleClass="step-item">
+                            <children><Label fx:id="lblStep4" styleClass="step-circle" text="4" /><Label styleClass="step-label" text="Xác nhận" /></children>
+                        </VBox>
+                    </children>
+                </HBox>
+
+                <StackPane fx:id="contentArea" styleClass="content-pane" VBox.vgrow="ALWAYS" />
+
+                <HBox alignment="CENTER_RIGHT" spacing="15.0">
+                    <children>
+                        <Button fx:id="btnBack" onAction="#handleBack" styleClass="btn-secondary" text="← Quay lại" />
+                        <Region HBox.hgrow="ALWAYS" />
+                        <Button onAction="#handleCancel" styleClass="btn-danger" text="Hủy bỏ" />
+                        <Button fx:id="btnNext" onAction="#handleNext" styleClass="btn-primary" text="Tiếp theo →" />
+                    </children>
+                </HBox>
+            </children>
+        </VBox>
+    </children>
+</AnchorPane>

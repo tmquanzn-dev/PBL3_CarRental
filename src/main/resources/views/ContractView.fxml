@@ -23,7 +23,7 @@
                </font>
             </Text>
             <Region prefHeight="200.0" prefWidth="200.0" HBox.hgrow="ALWAYS" />
-            <TextField alignment="CENTER" prefHeight="40.0" prefWidth="155.0" style="-fx-background-radius: 5;" text="Tìm kiếm">
+            <TextField alignment="CENTER" prefHeight="40.0" prefWidth="155.0" promptText="🔍 Tìm kiếm" style="-fx-background-radius: 5;">
                <font>
                   <Font size="18.0" />
                </font>

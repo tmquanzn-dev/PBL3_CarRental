@@ -11,4 +11,5 @@ module PBL3 {
     requires java.sql;
     requires jdk.jdi;
     exports com.example.rentalcar;
+    opens com.example.rentalcar.controller.create_contract to javafx.fxml;
 }
