@@ -6,6 +6,7 @@ public class Customers {
     private String full_name;
     private boolean gender;
     private String phone;
+    private int trust_score;
     private String email;
     private String address;
     private boolean is_blacklist;
@@ -14,12 +15,13 @@ public class Customers {
     public Customers() {}
 
     public Customers(int id_customer, String cccd, String full_name, boolean gender,
-                     String phone, String email, String address, boolean is_blacklist, String blacklist_reason) {
+                     String phone, int trust_score, String email, String address, boolean is_blacklist, String blacklist_reason) {
         this.id_customer = id_customer;
         this.cccd = cccd;
         this.full_name = full_name;
         this.gender = gender;
         this.phone = phone;
+        this.trust_score = trust_score;
         this.email = email;
         this.address = address;
         this.is_blacklist = is_blacklist;
@@ -66,9 +68,11 @@ public class Customers {
         this.phone = phone;
     }
 
-    public String getEmail() {
-        return email;
-    }
+    public int getTrust_score() { return trust_score; }
+
+    public void setTrust_score(int trust_score) { this.trust_score = trust_score; }
+
+    public String getEmail() { return email; }
 
     public void setEmail(String email) {
         this.email = email;
