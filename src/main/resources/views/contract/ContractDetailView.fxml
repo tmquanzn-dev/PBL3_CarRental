@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Font?>
+
+<VBox prefWidth="450.0" spacing="20.0" style="-fx-background-color: white; -fx-background-radius: 15; -fx-border-color: #E0E0E0; -fx-border-radius: 15;" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.rentalcar.controller.contract.ContractDetailController">
+    <padding>
+        <Insets bottom="30.0" left="30.0" right="30.0" top="30.0" />
+    </padding>
+    <children>
+        <HBox alignment="CENTER_LEFT" spacing="10.0">
+            <children>
+                <Label text="CHI TIẾT HỢP ĐỒNG" textFill="#555555">
+                    <font>
+                        <Font name="System Bold" size="16.0" />
+                    </font>
+                </Label>
+                <Label fx:id="label_contract_code" text="#HD-001" textFill="#1a73e8">
+                    <font>
+                        <Font name="System Bold" size="16.0" />
+                    </font>
+                </Label>
+            </children>
+        </HBox>
+
+        <Separator prefWidth="200.0" />
+
+        <GridPane vgap="18.0">
+            <columnConstraints>
+                <ColumnConstraints hgrow="SOMETIMES" maxWidth="150.0" minWidth="10.0" prefWidth="130.0" />
+                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="250.0" />
+            </columnConstraints>
+            <rowConstraints>
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            </rowConstraints>
+            <children>
+                <Label text="Khách hàng:" textFill="#888888" />
+                <Label fx:id="label_customer_name" text="Đang tải..." GridPane.columnIndex="1">
+                    <font> <Font name="System Bold" size="14.0" /> </font>
+                </Label>
+
+                <Label text="Số điện thoại:" textFill="#888888" GridPane.rowIndex="1" />
+                <Label fx:id="label_customer_phone" text="09xx xxx xxx" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+
+                <Label text="Xe thuê:" textFill="#888888" GridPane.rowIndex="2" />
+                <Label fx:id="label_vehicle_info" text="Hãng xe - Biển số" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                    <font> <Font name="System Bold" size="13.0" /> </font>
+                </Label>
+
+                <Label text="Thời gian thuê:" textFill="#888888" GridPane.rowIndex="3" />
+                <Label fx:id="label_rental_period" text="Từ ... Đến ..." wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+
+                <Label text="Trạng thái:" textFill="#888888" GridPane.rowIndex="4" />
+                <Label fx:id="label_status" style="-fx-background-color: #E8F0FE; -fx-text-fill: #1A73E8; -fx-padding: 4 12; -fx-background-radius: 10;" text="TRẠNG THÁI" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+
+                <Label text="Tổng thanh toán:" textFill="#888888" GridPane.rowIndex="5" />
+                <Label fx:id="label_total_price" text="0 đ" textFill="#d32f2f" GridPane.columnIndex="1" GridPane.rowIndex="5">
+                    <font> <Font name="System Bold" size="18.0" /> </font>
+                </Label>
+            </children>
+        </GridPane>
+
+        <Separator prefWidth="200.0" />
+
+        <HBox alignment="CENTER_RIGHT" spacing="15.0">
+            <children>
+                <Button onAction="#handleClose" prefHeight="38.0" prefWidth="90.0" style="-fx-background-color: #F1F3F4; -fx-text-fill: #5F6368; -fx-background-radius: 8; -fx-cursor: hand;" text="Đóng" />
+                <Button prefHeight="38.0" prefWidth="120.0" style="-fx-background-color: #1A73E8; -fx-text-fill: white; -fx-background-radius: 8; -fx-cursor: hand; -fx-font-weight: bold;" text="In hợp đồng" />
+            </children>
+        </HBox>
+    </children>
+</VBox>

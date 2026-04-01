@@ -1,4 +1,4 @@
-package com.example.rentalcar.controller.create_contract;
+package com.example.rentalcar.controller.contract.booking;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;

@@ -17,7 +17,7 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="1200.0" prefWidth="1100.0" spacing="25.0" stylesheets="@../css/dashboardview/dashboardstyle.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.rentalcar.controller.DashboardController">
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="1176.0" prefWidth="1100.0" spacing="25.0" stylesheets="@../css/dashboardview/dashboardstyle.css" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.rentalcar.controller.dashboard.DashboardController">
    <padding>
       <Insets bottom="30.0" left="30.0" right="30.0" top="30.0" />
    </padding>
@@ -154,7 +154,7 @@
                         <Font size="16.0" />
                      </font>
                   </Label>
-                  <Label layoutX="20.0" layoutY="40.0" styleClass="card-value" text="15.500.000 đ">
+                  <Label fx:id="label_monthly_revenue" layoutX="20.0" layoutY="40.0" styleClass="card-value" text="15.500.000 đ">
                      <font>
                         <Font name="System Bold" size="28.0" />
                      </font>
@@ -186,7 +186,7 @@
                         <Font size="16.0" />
                      </font>
                   </Label>
-                  <Label layoutX="20.0" layoutY="40.0" styleClass="card-value" text="12">
+                  <Label fx:id="label_active_contracts" layoutX="20.0" layoutY="40.0" styleClass="card-value" text="12">
                      <font>
                         <Font name="System Bold" size="28.0" />
                      </font>
@@ -354,7 +354,7 @@
             </HBox>
          </children>
       </VBox>
-      <VBox prefHeight="443.0" prefWidth="1040.0" spacing="15.0" styleClass="table_container" stylesheets="@../css/dashboardview/dashboardstyle.css">
+      <VBox prefHeight="369.0" prefWidth="1040.0" spacing="15.0" styleClass="table_container" stylesheets="@../css/dashboardview/dashboardstyle.css">
          <padding>
             <Insets bottom="20.0" />
          </padding>
@@ -367,14 +367,14 @@
                   <Insets left="20.0" top="20.0" />
                </VBox.margin>
             </Text>
-            <TableView prefHeight="318.0" prefWidth="1040.0">
+            <TableView fx:id="tableContracts" prefHeight="318.0" prefWidth="1040.0">
                <columns>
-                  <TableColumn prefWidth="141.0" text="Mã HĐ" />
-                  <TableColumn prefWidth="217.0" text="KHÁCH HÀNG" />
-                  <TableColumn prefWidth="203.0" text="BIỂN SỐ XE" />
-                  <TableColumn prefWidth="162.0" text="TRẠNG THÁI" />
-                  <TableColumn prefWidth="178.0" text="TỔNG TIỀN" />
-                  <TableColumn prefWidth="138.0" text="THAO TÁC" />
+                  <TableColumn fx:id="colCode" prefWidth="141.0" text="Mã HĐ" />
+                  <TableColumn fx:id="colCustomer" prefWidth="217.0" text="KHÁCH HÀNG" />
+                  <TableColumn fx:id="colVehicle" prefWidth="203.0" text="BIỂN SỐ XE" />
+                  <TableColumn fx:id="colStatus" prefWidth="162.0" text="TRẠNG THÁI" />
+                  <TableColumn fx:id="colTotal" prefWidth="178.0" text="TỔNG TIỀN" />
+                  <TableColumn fx:id="colAction" prefWidth="138.0" text="THAO TÁC" />
                </columns>
             </TableView>
          </children>

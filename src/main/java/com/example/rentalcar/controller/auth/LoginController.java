@@ -1,4 +1,4 @@
-package com.example.rentalcar.controller;
+package com.example.rentalcar.controller.auth;
 
 import com.example.rentalcar.dao.UserDAO;
 import com.example.rentalcar.models.Users;

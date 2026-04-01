@@ -1,4 +1,4 @@
-package com.example.rentalcar.controller.create_contract;
+package com.example.rentalcar.controller.contract.booking;
 
 import com.example.rentalcar.dao.CustomerDAO;
 import javafx.fxml.FXML;

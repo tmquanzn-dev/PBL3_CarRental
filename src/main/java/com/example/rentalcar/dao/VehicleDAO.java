@@ -179,4 +179,16 @@ public class VehicleDAO implements IBaseDAO<Vehicles, Integer>
         }
         return listCars;
     }
+
+    public int getVehiclesByStatus(String status) {
+        String sql = "SELECT COUNT(*) FROM Vehicles WHERE status = ?";
+        try (Connection cnt = DBConnection.getInstance().getConnection();
+             PreparedStatement pstm = cnt.prepareStatement(sql)) {
+            pstm.setString(1, status);
+            try (ResultSet rs = pstm.executeQuery()) {
+                if (rs.next()) return rs.getInt(1);
+            }
+        } catch (SQLException e) { e.printStackTrace(); }
+        return 0;
+    }
 }
