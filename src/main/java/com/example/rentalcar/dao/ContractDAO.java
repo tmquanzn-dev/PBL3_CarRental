@@ -51,17 +51,17 @@ public class ContractDAO implements IBaseDAO<Contracts, Integer>
         // 3. Map các dữ liệu Enum (Check null trước khi ép kiểu để tránh Crash)
         if (rs.getString("deposit_type") != null)
         {
-            contract.setDeposit_type(DepositType.valueOf(rs.getString("deposit_type")));
+            contract.setDeposit_type(DepositType.valueOf(rs.getString("deposit_type").replace(" ", "_")));
         }
 
         if (rs.getString("payment_status") != null)
         {
-            contract.setPayment_status(PaymentStatus.valueOf(rs.getString("payment_status")));
+            contract.setPayment_status(PaymentStatus.valueOf(rs.getString("payment_status").replace(" ", "_")));
         }
 
         if (rs.getString("status") != null)
         {
-            contract.setStatus(StatusContracts.valueOf(rs.getString("status")));
+            contract.setStatus(StatusContracts.valueOf(rs.getString("status").replace(" ", "_")));
         }
 
         // 4. Map Khóa ngoại (Khởi tạo Object trống và nhét ID vào để xài tạm)
@@ -276,5 +276,56 @@ public class ContractDAO implements IBaseDAO<Contracts, Integer>
             System.err.println("LỖI Tính doanh thu hôm nay: " + e.getMessage());
         }
         return 0.0; // Trả về 0 nếu hôm nay chưa có đơn nào
+    }
+
+    // HÀM LẤY HỢP ĐỒNG GẦN ĐÂY CHO DASHBOARD
+    public List<Contracts> findRecentContracts(int limitNumber)
+    {
+        List<Contracts> listContracts = new ArrayList<>();
+        String sql = "SELECT * FROM Contracts ORDER BY id_contract DESC LIMIT ?";
+
+        try (Connection cnt = DBConnection.getInstance().getConnection();
+             PreparedStatement pstm = cnt.prepareStatement(sql))
+        {
+            pstm.setInt(1, limitNumber);
+
+            try (ResultSet rs = pstm.executeQuery())
+            {
+                while (rs.next())
+                {
+                    listContracts.add(mapResultSetToContract(rs));
+                }
+            }
+        }
+        catch (SQLException e)
+        {
+            System.err.println("LỖI Lấy danh sách Hợp đồng gần đây: " + e.getMessage());
+        }
+        return listContracts;
+    }
+
+    // Lấy tổng doanh thu tháng hiện tại
+    public double getMonthlyRevenue() {
+        String sql = "SELECT SUM(total_price) FROM Contracts " +
+                "WHERE MONTH(start_datetime) = MONTH(CURDATE()) " +
+                "AND YEAR(start_datetime) = YEAR(CURDATE()) " +
+                "AND status != 'CANCELLED'";
+        try (Connection cnt = DBConnection.getInstance().getConnection();
+             PreparedStatement pstm = cnt.prepareStatement(sql);
+             ResultSet rs = pstm.executeQuery()) {
+            if (rs.next()) return rs.getDouble(1);
+        } catch (SQLException e) { e.printStackTrace(); }
+        return 0;
+    }
+
+    // Lấy số lượng đơn đang trong quá trình thuê (DANG_THUE)
+    public int getActiveContractsCount() {
+        String sql = "SELECT COUNT(*) FROM Contracts WHERE status = 'DANG_THUE'";
+        try (Connection cnt = DBConnection.getInstance().getConnection();
+             PreparedStatement pstm = cnt.prepareStatement(sql);
+             ResultSet rs = pstm.executeQuery()) {
+            if (rs.next()) return rs.getInt(1);
+        } catch (SQLException e) { e.printStackTrace(); }
+        return 0;
     }
 }

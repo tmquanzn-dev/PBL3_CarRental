@@ -16,14 +16,14 @@ public class CustomerDAO implements IBaseDAO<Customers, Integer>
     private Customers mapResultSetToCustomer(ResultSet rs) throws SQLException
     {
         Customers customer = new Customers();
-        customer.setId_customer(rs.getInt("id"));
+        customer.setId_customer(rs.getInt("id_customer"));
         customer.setCccd(rs.getString("cccd"));
         customer.setFull_name(rs.getString("full_name"));
         customer.setPhone(rs.getString("phone"));
         customer.setAddress(rs.getString("address"));
         customer.setCccd(rs.getString("cccd_images"));
         customer.setTrust_score(rs.getInt("trust_score"));
-        customer.setIs_blacklist(rs.getBoolean("is_blacklisted"));
+        customer.setIs_blacklist(rs.getBoolean("is_blacklist"));
         customer.setBlacklist_reason(rs.getString("blacklist_reason"));
 
         return customer;
@@ -142,7 +142,7 @@ public class CustomerDAO implements IBaseDAO<Customers, Integer>
     @Override
     public Customers findById(Integer id)
     {
-        String sql = "SELECT * FROM Customers WHERE id = ?";
+        String sql = "SELECT * FROM Customers WHERE id_customer = ?";
 
         try (Connection cnt = DBConnection.getInstance().getConnection();
              PreparedStatement pstm = cnt.prepareStatement(sql))
