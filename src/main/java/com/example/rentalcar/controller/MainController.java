@@ -30,6 +30,7 @@ public class MainController {
 
     @FXML
     void handleHamburgerMenu(ActionEvent event) {
+
         sideBar.setVisible(!sideBar.isVisible());
     }
     @FXML
@@ -41,6 +42,7 @@ public class MainController {
             case "Tổng quan": fxmlFile = "DashboardView.fxml"; break;
             case "Quản lý hóa đơn": fxmlFile = "ContractView.fxml"; break;
             case "Quản lý xe": fxmlFile = "VehicleView.fxml"; break;
+            case "Khách hàng": fxmlFile = "customer/CustomerManagement.fxml"; break;
         }
         if (!fxmlFile.isEmpty()) {
             changeView(fxmlFile);

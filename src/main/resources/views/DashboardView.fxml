@@ -32,7 +32,7 @@
             <Region prefHeight="200.0" prefWidth="200.0" HBox.hgrow="ALWAYS" />
             <Button mnemonicParsing="false" onAction="#showCreateContractModal" prefHeight="34.0" prefWidth="155.0" styleClass="btn-new" text="+ Tạo đơn mới" textFill="WHITE">
                <font>
-                  <Font size="18.0" />
+                  <Font name="System Bold" size="18.0" />
                </font>
             </Button>
          </children>

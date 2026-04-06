@@ -182,7 +182,8 @@
                                 </ImageView>
                             </graphic>
                         </Button>
-                        <Button contentDisplay="RIGHT" graphicTextGap="60.0" mnemonicParsing="false" prefHeight="50.0" prefWidth="200.0" styleClass="btn_menu" stylesheets="@../css/styles.css" text="Quản lý xe">
+                        <Button contentDisplay="RIGHT" graphicTextGap="60.0" mnemonicParsing="false" prefHeight="50.0" prefWidth="200.0" styleClass="btn_menu" stylesheets="@../css/styles.css" text="Quản lý xe"
+                                onAction="#handleMenuClick">
                             <VBox.margin>
                                 <Insets left="25.0" top="10.0" />
                             </VBox.margin>
@@ -197,7 +198,8 @@
                                 </ImageView>
                             </graphic>
                         </Button>
-                        <Button alignment="CENTER" contentDisplay="RIGHT" graphicTextGap="51.0" mnemonicParsing="false" prefHeight="50.0" prefWidth="200.0" styleClass="btn_menu" stylesheets="@../css/styles.css" text="Khách hàng">
+                        <Button alignment="CENTER" contentDisplay="RIGHT" graphicTextGap="51.0" mnemonicParsing="false" prefHeight="50.0" prefWidth="200.0" styleClass="btn_menu" stylesheets="@../css/styles.css" text="Khách hàng"
+                                onAction="#handleMenuClick">
                             <font>
                                 <Font size="18.0" />
                             </font>

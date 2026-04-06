@@ -1,8 +1,14 @@
+.root {
+    -fx-background-color: #f4f7f6;
+    -fx-font-family: "Segoe UI", Arial, sans-serif;
+}
+
 .vbox-contract-list {
     -fx-padding: 10;
     -fx-spacing: 20;
     -fx-background-color: transparent;
 }
+
 .contract-card {
     -fx-background-color: white;
     -fx-background-radius: 15;

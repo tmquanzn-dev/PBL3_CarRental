@@ -1,3 +1,7 @@
+.root {
+    -fx-background-color: #f4f7f6;
+    -fx-font-family: "Segoe UI", Arial, sans-serif;
+}
 .card-blue {
     -fx-background-radius: 10;
     -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 15, 0, 0, 10);
@@ -83,27 +87,45 @@
 }
 .table-view {
     -fx-background-color: transparent;
+    -fx-border-color: transparent;
 }
 
-.table-view .column-header,
-.table-view .filler {
-    -fx-background-color: #f8f9fa;
-    -fx-size: 40;
-    -fx-border-color: #eeeeee;
+.table-view .column-header-background {
+    -fx-background-color: transparent;
     -fx-border-width: 0 0 1 0;
+    -fx-border-color: #E0E0E0;
+}
+
+.table-view .column-header {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
 }
 
 .table-view .column-header .label {
-    -fx-text-fill: #444444;
+    -fx-text-fill: #888888;
     -fx-font-weight: bold;
+    -fx-font-size: 13px;
     -fx-alignment: CENTER_LEFT;
-    -fx-padding: 0 0 0 10;
+    -fx-padding: 0 0 0 10px;
+}
+
+.table-view .table-cell {
+    -fx-border-color: transparent;
+    -fx-alignment: CENTER_LEFT;
+    -fx-padding: 0 0 0 10px;
+    -fx-font-size: 14px;
+}
+
+.table-row-cell {
+    -fx-cell-size: 55px;
+    -fx-background-color: transparent;
+    -fx-border-width: 0 0 1 0;
+    -fx-border-color: #F0F0F0;
 }
 
 .table-row-cell:hover {
-    -fx-background-color: #f1f4f9;
+    -fx-background-color: #F9F9F9;
 }
-
 .btn-new {
    -fx-background-radius: 10;
    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 15, 0, 0, 10);
@@ -155,7 +177,6 @@
 }
 
 
-/* . STYLE RIÊNG CHO CỘT TRẠNG THÁI (BADGE) */
 .status-pill {
     -fx-padding: 5px 12px;
     -fx-background-radius: 15px;
