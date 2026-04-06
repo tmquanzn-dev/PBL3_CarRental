@@ -11,11 +11,12 @@ public class Customers {
     private String address;
     private boolean is_blacklist;
     private String blacklist_reason;
+    private int rental_count;
+    private String cccd_images;
 
     public Customers() {}
 
-    public Customers(int id_customer, String cccd, String full_name, boolean gender,
-                     String phone, int trust_score, String email, String address, boolean is_blacklist, String blacklist_reason) {
+    public Customers(int id_customer, String cccd, String full_name, boolean gender, String phone, int trust_score, String email, String address, boolean is_blacklist, String blacklist_reason, int rental_count, String cccd_images) {
         this.id_customer = id_customer;
         this.cccd = cccd;
         this.full_name = full_name;
@@ -26,6 +27,16 @@ public class Customers {
         this.address = address;
         this.is_blacklist = is_blacklist;
         this.blacklist_reason = blacklist_reason;
+        this.rental_count = rental_count;
+        this.cccd_images = cccd_images;
+    }
+
+    public String getCccd_images() {
+        return cccd_images;
+    }
+
+    public void setCccd_images(String cccd_images) {
+        this.cccd_images = cccd_images;
     }
 
     public int getId_customer() {
@@ -68,11 +79,17 @@ public class Customers {
         this.phone = phone;
     }
 
-    public int getTrust_score() { return trust_score; }
+    public int getTrust_score() {
+        return trust_score;
+    }
 
-    public void setTrust_score(int trust_score) { this.trust_score = trust_score; }
+    public void setTrust_score(int trust_score) {
+        this.trust_score = trust_score;
+    }
 
-    public String getEmail() { return email; }
+    public String getEmail() {
+        return email;
+    }
 
     public void setEmail(String email) {
         this.email = email;
@@ -100,5 +117,13 @@ public class Customers {
 
     public void setBlacklist_reason(String blacklist_reason) {
         this.blacklist_reason = blacklist_reason;
+    }
+
+    public int getRental_count() {
+        return rental_count;
+    }
+
+    public void setRental_count(int rental_count) {
+        this.rental_count = rental_count;
     }
 }
