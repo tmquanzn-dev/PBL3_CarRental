@@ -21,10 +21,11 @@ public class CustomerDAO implements IBaseDAO<Customers, Integer>
         customer.setFull_name(rs.getString("full_name"));
         customer.setPhone(rs.getString("phone"));
         customer.setAddress(rs.getString("address"));
-        customer.setCccd(rs.getString("cccd_images"));
+        customer.setCccd_images(rs.getString("cccd_images"));
         customer.setTrust_score(rs.getInt("trust_score"));
         customer.setIs_blacklist(rs.getBoolean("is_blacklist"));
         customer.setBlacklist_reason(rs.getString("blacklist_reason"));
+        customer.setRental_count(rs.getInt("rental_count"));
 
         return customer;
     }
