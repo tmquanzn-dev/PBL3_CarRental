@@ -13,16 +13,16 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox prefWidth="800.0" spacing="25.0" styleClass="modal-container" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.rentalcar.controller.customer.AddCustomerController">
+<VBox prefWidth="800.0" spacing="25.0" styleClass="modal-container" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.rentalcar.controller.customer.CustomerEditController">
     <padding>
         <Insets bottom="30.0" left="40.0" right="40.0" top="30.0" />
     </padding>
     <children>
         <HBox alignment="CENTER_LEFT">
             <children>
-                <Label styleClass="header-title" text="Thêm khách hàng" />
+                <Label styleClass="header-title" text="Chỉnh sửa thông tin khách hàng" />
                 <Region HBox.hgrow="ALWAYS" />
-                <Button fx:id="btnClose" mnemonicParsing="false" styleClass="btn-close" text="✕" />
+                <Label fx:id="lblCustomerId" style="-fx-text-fill: #64748b; -fx-font-weight: bold;" text="ID: ---" />
             </children>
         </HBox>
 
@@ -37,7 +37,6 @@
                 <RowConstraints minHeight="10.0" prefHeight="65.0" vgrow="SOMETIMES" />
             </rowConstraints>
             <children>
-
                 <VBox spacing="5.0" GridPane.columnIndex="0" GridPane.rowIndex="0">
                     <children>
                         <Label styleClass="input-label" text="Họ tên *" />
@@ -81,14 +80,14 @@
                     <children>
                         <Label styleClass="upload-label" text="📷 Mặt trước CCCD" />
                         <ImageView fx:id="imgFront" fitHeight="130.0" fitWidth="220.0" pickOnBounds="true" preserveRatio="true" />
-                        <Button mnemonicParsing="false" styleClass="btn-upload" text="Tải ảnh lên" />
+                        <Button mnemonicParsing="false" onAction="#handleUploadFront" styleClass="btn-upload" text="Thay đổi ảnh" />
                     </children>
                 </VBox>
                 <VBox alignment="CENTER" spacing="12.0" styleClass="image-upload-box" HBox.hgrow="ALWAYS">
                     <children>
                         <Label styleClass="upload-label" text="📷 Mặt sau CCCD" />
                         <ImageView fx:id="imgBack" fitHeight="130.0" fitWidth="220.0" pickOnBounds="true" preserveRatio="true" />
-                        <Button mnemonicParsing="false" styleClass="btn-upload" text="Tải ảnh lên" />
+                        <Button mnemonicParsing="false" onAction="#handleUploadBack" styleClass="btn-upload" text="Thay đổi ảnh" />
                     </children>
                 </VBox>
             </children>
@@ -96,16 +95,15 @@
 
         <HBox alignment="CENTER_RIGHT" spacing="15.0">
             <children>
-                <Button fx:id="btnCancel" mnemonicParsing="false" styleClass="btn-cancel" text="Hủy bỏ" />
-                <Button fx:id="btnSave" mnemonicParsing="false" styleClass="btn-primary" text="💾 Lưu khách hàng" />
+                <Button mnemonicParsing="false" onAction="#handleClose" styleClass="btn-cancel" text="Hủy bỏ" />
+                <Button mnemonicParsing="false" onAction="#handleSave" styleClass="btn-primary" text="💾 Lưu thay đổi" />
             </children>
             <VBox.margin>
                 <Insets top="10.0" />
             </VBox.margin>
         </HBox>
     </children>
-   <stylesheets>
-      <URL value="@../../css/modal_style.css" />
-      <URL value="@../../css/customerview/modal_style.css" />
-   </stylesheets>
+    <stylesheets>
+        <URL value="@../../css/customerview/modal_style.css" />
+    </stylesheets>
 </VBox>
