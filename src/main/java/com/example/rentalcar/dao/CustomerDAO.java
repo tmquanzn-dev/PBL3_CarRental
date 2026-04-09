@@ -93,7 +93,7 @@ public class CustomerDAO implements IBaseDAO<Customers, Integer>
     public boolean update(Customers entity)
     {
         // Cập nhật thông tin khách. Có thể dùng để Admin đưa khách vào danh sách đen (is_blacklisted = 1)
-        String sql = "UPDATE Customers SET cccd = ?, full_name = ?, phone = ?, address = ?, cccd_images = ?, trust_score = ?, is_blacklisted = ?, blacklist_reason = ? WHERE id = ?";
+        String sql = "UPDATE Customers SET cccd = ?, full_name = ?, phone = ?, address = ?, cccd_images = ?, trust_score = ?, is_blacklist = ?, blacklist_reason = ? WHERE id_customer = ?";
 
         try (Connection cnt = DBConnection.getInstance().getConnection();
              PreparedStatement pstm = cnt.prepareStatement(sql))

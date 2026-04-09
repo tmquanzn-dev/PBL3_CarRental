@@ -123,11 +123,10 @@ public class CustomerController implements Initializable {
                 } else {
                     Label pill = new Label(isBlacklist ? "Blacklist" : "Bình thường");
 
-                    // Xóa hết style cũ, dùng class từ CSS bạn gửi
                     pill.getStyleClass().add("status-pill");
 
                     if (isBlacklist) {
-                        pill.getStyleClass().add("status-yellow"); // Hoặc status-gray tùy bạn
+                        pill.getStyleClass().add("status-yellow");
                     } else {
                         pill.getStyleClass().add("status-green");
                     }
@@ -154,6 +153,20 @@ public class CustomerController implements Initializable {
                 loadIcon(btnView, "/image/dashboardform/view.png");
                 loadIcon(btnEdit, "/image/dashboardform/edit.png");
                 loadIcon(btnDelete, "/image/dashboardform/delete.png");
+
+                btnView.setOnAction(event -> {
+                    Customers selectedCustomer = getTableView().getItems().get(getIndex());
+                    if (selectedCustomer != null) {
+                        showDetailModal(selectedCustomer);
+                    }
+                });
+
+                btnEdit.setOnAction(event -> {
+                    Customers selectedCustomer = getTableView().getItems().get(getIndex());
+                    if (selectedCustomer != null)
+                        showEditCustomerModal(selectedCustomer);
+
+                } );
             }
 
             private void loadIcon(Button btn, String path) {
@@ -213,14 +226,57 @@ public class CustomerController implements Initializable {
             modalStage.setTitle("Thêm khách mới");
 
             modalStage.initModality(Modality.APPLICATION_MODAL);
-//            modalStage.initStyle(StageStyle.UNDECORATED);
+            modalStage.initStyle(StageStyle.UNDECORATED);
             modalStage.centerOnScreen();
             modalStage.showAndWait();
 
-            // loadData();
+            loadData();
 
         } catch (Exception e) {
             System.err.println("Lỗi khi mở modal Thêm Khách Hàng: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    private void showDetailModal(Customers customer) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/views/customer/CustomerDetailModal.fxml"));
+            Parent root = loader.load();
+
+            CustomerDetailController controller = loader.getController();
+            controller.setCustomerData(customer);
+
+            Stage modalStage = new Stage();
+            modalStage.setScene(new Scene(root));
+            modalStage.setTitle("Chi tiết khách hàng");
+            modalStage.initModality(Modality.APPLICATION_MODAL);
+            modalStage.centerOnScreen();
+            modalStage.showAndWait();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void showEditCustomerModal(Customers customer)
+    {
+        try
+        {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/views/customer/CustomerEditModal.fxml"));
+            Parent root = loader.load();
+
+            CustomerEditController controller = loader.getController();
+            controller.setCustomerData(customer);
+
+            Stage modalStage = new Stage();
+            modalStage.setScene(new Scene(root));
+            modalStage.setTitle("Chỉnh sửa khách hàng");
+            modalStage.initModality(Modality.APPLICATION_MODAL);
+            modalStage.centerOnScreen();
+            modalStage.showAndWait();
+            loadData();
+        } catch (Exception e)
+        {
             e.printStackTrace();
         }
     }
@@ -236,4 +292,6 @@ public class CustomerController implements Initializable {
     void loadDataToTable(ActionEvent event) {
         System.out.println("Đang load lại dữ liệu vào bảng...");
     }
+
+
 }
