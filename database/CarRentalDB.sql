@@ -1,4 +1,6 @@
-contractscustomerdocumentscustomers-- MySQL dump 10.13  Distrib 8.0.45, for Win64 (x86_64)
+CREATE DATABASE  IF NOT EXISTS `carrentaldb` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci */ /*!80016 DEFAULT ENCRYPTION='N' */;
+USE `carrentaldb`;
+-- MySQL dump 10.13  Distrib 8.0.45, for Win64 (x86_64)
 --
 -- Host: localhost    Database: carrentaldb
 -- ------------------------------------------------------
@@ -24,7 +26,7 @@ DROP TABLE IF EXISTS `contracts`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `contracts` (
   `id_contract` int NOT NULL,
-  `code_contract` varchar(20) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `code_contract` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `start_datetime` datetime NOT NULL,
   `end_datetime` datetime NOT NULL,
   `return_datetime` datetime DEFAULT NULL,
@@ -32,13 +34,13 @@ CREATE TABLE `contracts` (
   `km_end` int DEFAULT NULL,
   `fuel_start` int DEFAULT '100',
   `fuel_end` int DEFAULT NULL,
-  `deposit_type` enum('TIEN MAT','GIAY TO','KHAC') COLLATE utf8mb4_unicode_ci DEFAULT 'TIEN MAT',
+  `deposit_type` enum('TIEN MAT','GIAY TO','KHAC') CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT 'TIEN MAT',
   `deposit_amount` double DEFAULT '0',
   `base_price` double DEFAULT NULL,
   `discount_amount` double DEFAULT '0',
   `total_price` double DEFAULT NULL,
-  `payment_status` enum('CHUA THANH TOAN','THANH TOAN 1 PHAN','DA THANH TOAN') COLLATE utf8mb4_unicode_ci DEFAULT 'CHUA THANH TOAN',
-  `status` enum('DANG THUE','QUA HAN','HOAN THANH','DA HUY') COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `payment_status` enum('CHUA THANH TOAN','THANH TOAN 1 PHAN','DA THANH TOAN') CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT 'CHUA THANH TOAN',
+  `status` enum('DANG THUE','QUA HAN','HOAN THANH','DA HUY') CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `id_user` int NOT NULL,
   `id_vehicle` int NOT NULL,
   `id_customer` int NOT NULL,
@@ -76,8 +78,8 @@ DROP TABLE IF EXISTS `customerdocuments`;
 CREATE TABLE `customerdocuments` (
   `id_document` int NOT NULL,
   `id_customer` int NOT NULL,
-  `document_type` enum('CCCD','BANG LAI','HO CHIEU') COLLATE utf8mb4_unicode_ci NOT NULL,
-  `document_number` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `document_type` enum('CCCD','BANG LAI','HO CHIEU') CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `document_number` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`id_document`),
   KEY `id_customer` (`id_customer`),
   CONSTRAINT `customerdocuments_ibfk_1` FOREIGN KEY (`id_customer`) REFERENCES `customers` (`id_customer`)
@@ -103,14 +105,17 @@ DROP TABLE IF EXISTS `customers`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `customers` (
   `id_customer` int NOT NULL,
-  `cccd` varchar(20) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `full_name` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `cccd` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `full_name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `gender` tinyint(1) DEFAULT '1',
-  `phone` varchar(15) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `email` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `address` text COLLATE utf8mb4_unicode_ci,
+  `phone` varchar(15) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `email` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `address` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
   `is_blacklist` tinyint(1) DEFAULT '0',
-  `blacklist_reason` text COLLATE utf8mb4_unicode_ci,
+  `blacklist_reason` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+  `cccd_images` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `trust_score` int DEFAULT '100',
+  `rental_count` int DEFAULT NULL,
   PRIMARY KEY (`id_customer`),
   UNIQUE KEY `cccd` (`cccd`),
   UNIQUE KEY `email` (`email`)
@@ -123,7 +128,7 @@ CREATE TABLE `customers` (
 
 LOCK TABLES `customers` WRITE;
 /*!40000 ALTER TABLE `customers` DISABLE KEYS */;
-INSERT INTO `customers` VALUES (1,'012345678901','Nguyễn Văn An',1,'0912000111','an.nguyen@gmail.com','Hòa Vang, Đà Nẵng',0,NULL),(2,'012345678902','Lê Thị Bình',0,'0912222333','binh.le@gmail.com','Sơn Trà, Đà Nẵng',0,NULL),(3,'012345678903','Phạm Văn Xấu',1,'0912444555','xau.pham@gmail.com','Quảng Nam',1,'Quỵt tiền thuê xe năm 2024');
+INSERT INTO `customers` VALUES (1,'012345678901','Nguyễn Văn An',1,'0912000111','an.nguyen@gmail.com','Hòa Vang, Đà Nẵng',0,NULL,'images/cccd/012345678901.jpg',100,2),(2,'012345678902','Lê Thị Bình',0,'0122440959','binh.le@gmail.com','Sơn Trà, Đà Nẵng',0,NULL,'012345678902',95,3),(3,'012345678903','Phạm Văn Xấu',1,'0912444555','xau.pham@gmail.com','Quảng Nam',1,'Quỵt tiền thuê xe năm 2024','images/cccd/012345678903.jpg',10,4);
 /*!40000 ALTER TABLE `customers` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -138,7 +143,7 @@ CREATE TABLE `inspections` (
   `id_inspection` int NOT NULL,
   `id_contract` int NOT NULL,
   `id_user` int NOT NULL,
-  `inspection_type` enum('GIAO XE','TRA XE') COLLATE utf8mb4_unicode_ci NOT NULL,
+  `inspection_type` enum('GIAO XE','TRA XE') CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   PRIMARY KEY (`id_inspection`),
   KEY `id_contract` (`id_contract`),
   KEY `id_user` (`id_user`),
@@ -165,8 +170,8 @@ DROP TABLE IF EXISTS `partprices`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `partprices` (
   `id_part_price` int NOT NULL,
-  `part_name` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `vehicle_type` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `part_name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `vehicle_type` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `price` double DEFAULT NULL,
   PRIMARY KEY (`id_part_price`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -192,8 +197,8 @@ DROP TABLE IF EXISTS `payments`;
 CREATE TABLE `payments` (
   `id_payment` int NOT NULL,
   `amount` double NOT NULL,
-  `payment_type` enum('TIEN COC','THANH TOAN PHAN CON LAI','HOAN TIEN','PHU THU') COLLATE utf8mb4_unicode_ci NOT NULL,
-  `payment_method` enum('TIEN MAT','CHUYEN KHOAN') COLLATE utf8mb4_unicode_ci DEFAULT 'TIEN MAT',
+  `payment_type` enum('TIEN COC','THANH TOAN PHAN CON LAI','HOAN TIEN','PHU THU') CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `payment_method` enum('TIEN MAT','CHUYEN KHOAN') CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT 'TIEN MAT',
   `id_user` int NOT NULL,
   `id_contract` int NOT NULL,
   PRIMARY KEY (`id_payment`),
@@ -224,7 +229,7 @@ DROP TABLE IF EXISTS `penalties`;
 CREATE TABLE `penalties` (
   `id_penalty` int NOT NULL,
   `id_contract` int NOT NULL,
-  `penalty_type` enum('QUA GIO','XANG','HU HONG','VI PHAM GIAO THONG') COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `penalty_type` enum('QUA GIO','XANG','HU HONG','VI PHAM GIAO THONG') CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `amount` double DEFAULT NULL,
   PRIMARY KEY (`id_penalty`),
   KEY `id_contract` (`id_contract`),
@@ -243,6 +248,32 @@ INSERT INTO `penalties` VALUES (1,1,'QUA GIO',20000),(2,1,'XANG',10000);
 UNLOCK TABLES;
 
 --
+-- Table structure for table `roles`
+--
+
+DROP TABLE IF EXISTS `roles`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `roles` (
+  `role_id` int NOT NULL AUTO_INCREMENT,
+  `role_name` varchar(50) NOT NULL,
+  `description` text,
+  PRIMARY KEY (`role_id`),
+  UNIQUE KEY `role_name` (`role_name`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `roles`
+--
+
+LOCK TABLES `roles` WRITE;
+/*!40000 ALTER TABLE `roles` DISABLE KEYS */;
+INSERT INTO `roles` VALUES (1,'Admin','Quản trị viên toàn quyền hệ thống'),(2,'Staff','Nhân viên quản lý hợp đồng và khách hàng');
+/*!40000 ALTER TABLE `roles` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `rules`
 --
 
@@ -251,8 +282,8 @@ DROP TABLE IF EXISTS `rules`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `rules` (
   `id_rule` int NOT NULL,
-  `rule_name` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `rule_type` enum('CUOI TUAN','NGAY LE','KHAC') COLLATE utf8mb4_unicode_ci NOT NULL,
+  `rule_name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `rule_type` enum('CUOI TUAN','NGAY LE','KHAC') CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `multi` double NOT NULL,
   `star_date` date NOT NULL,
   `end_date` date NOT NULL,
@@ -280,11 +311,11 @@ DROP TABLE IF EXISTS `systemsettings`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `systemsettings` (
   `id_setting` int NOT NULL,
-  `setting_key` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `setting_value` text COLLATE utf8mb4_unicode_ci NOT NULL,
-  `data_type` enum('STRING','NUMBER','BOOLEAN','JSON') COLLATE utf8mb4_unicode_ci DEFAULT 'STRING',
-  `description` text COLLATE utf8mb4_unicode_ci,
-  `category` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `setting_key` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `setting_value` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `data_type` enum('STRING','NUMBER','BOOLEAN','JSON') CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT 'STRING',
+  `description` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+  `category` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `user_id` int NOT NULL,
   `update_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id_setting`),
@@ -313,20 +344,22 @@ DROP TABLE IF EXISTS `users`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `users` (
   `id_user` int NOT NULL,
-  `username` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `password` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `role` enum('Admin','Staff') COLLATE utf8mb4_unicode_ci NOT NULL,
-  `full_name` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `phone` varchar(15) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `cccd` varchar(20) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `username` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `password` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `full_name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `phone` varchar(15) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `cccd` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `gender` tinyint(1) DEFAULT '1',
   `birth_date` date DEFAULT NULL,
-  `email` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `email` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `is_active` tinyint(1) DEFAULT '1',
-  `address` text COLLATE utf8mb4_unicode_ci,
+  `address` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+  `role_id` int DEFAULT NULL,
   PRIMARY KEY (`id_user`),
   UNIQUE KEY `username` (`username`),
-  UNIQUE KEY `cccd` (`cccd`)
+  UNIQUE KEY `cccd` (`cccd`),
+  KEY `fk_user_role` (`role_id`),
+  CONSTRAINT `fk_user_role` FOREIGN KEY (`role_id`) REFERENCES `roles` (`role_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -336,7 +369,7 @@ CREATE TABLE `users` (
 
 LOCK TABLES `users` WRITE;
 /*!40000 ALTER TABLE `users` DISABLE KEYS */;
-INSERT INTO `users` VALUES (1,'admin_quan','password123','Admin','Trần Văn Quản','0905123456','048099000123',1,'1990-05-15','quan.admin@gmail.com',1,'Hải Châu, Đà Nẵng'),(2,'staff_lan','staff789','Staff','Nguyễn Thị Lan','0905666777','048099000456',0,'1995-10-20','lan.staff@gmail.com',1,'Liên Chiểu, Đà Nẵng');
+INSERT INTO `users` VALUES (1,'admin_quan','password123','Trần Văn Quản','0905123456','048099000123',1,'1990-05-15','quan.admin@gmail.com',1,'Hải Châu, Đà Nẵng',1),(2,'staff_lan','staff789','Nguyễn Thị Lan','0905666777','048099000456',0,'1995-10-20','lan.staff@gmail.com',1,'Liên Chiểu, Đà Nẵng',2),(3,'quan_staff','12345678','Ngô Lê Anh Quân','0905123456','123456789012',1,'2004-10-20','quan@gmail.com',1,'Đà Nẵng',2),(4,'nguyen_staff','12345678','Mai Nguyễn Đạt Nguyên','0905654321','987654321098',1,'2004-05-15','nguyen@gmail.com',1,'Quảng Nam',2);
 /*!40000 ALTER TABLE `users` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -349,16 +382,16 @@ DROP TABLE IF EXISTS `vehicles`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `vehicles` (
   `id_vehicle` int NOT NULL,
-  `code_vehicle` varchar(20) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `brand` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `model` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `color` varchar(20) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `code_vehicle` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `brand` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `model` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `color` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `year_of_manufacture` int DEFAULT NULL,
   `price_day` double DEFAULT NULL,
   `price_hour` double DEFAULT NULL,
   `fuel_capacity` int DEFAULT NULL,
   `current_km` int DEFAULT '0',
-  `status` enum('AVAILABLE','RENTED','RESERVED','MAINTENANCE','INACTIVE') COLLATE utf8mb4_unicode_ci DEFAULT 'AVAILABLE',
+  `status` enum('AVAILABLE','RENTED','RESERVED','MAINTENANCE','INACTIVE') CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT 'AVAILABLE',
   `total_price` double DEFAULT '0',
   PRIMARY KEY (`id_vehicle`),
   UNIQUE KEY `code_vehicle` (`code_vehicle`)
@@ -384,9 +417,9 @@ DROP TABLE IF EXISTS `vouchers`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `vouchers` (
   `id_voucher` int NOT NULL,
-  `code_voucher` varchar(20) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `description` text COLLATE utf8mb4_unicode_ci,
-  `discount_type` enum('CO DINH','PHAN TRAM') COLLATE utf8mb4_unicode_ci NOT NULL,
+  `code_voucher` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `description` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+  `discount_type` enum('CO DINH','PHAN TRAM') CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `discount_value` double DEFAULT NULL,
   `usage_limit` int DEFAULT '0',
   `usage_count` int DEFAULT '0',
@@ -417,4 +450,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2026-01-26 15:12:09
+-- Dump completed on 2026-04-11 13:19:17
