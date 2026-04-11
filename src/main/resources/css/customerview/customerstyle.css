@@ -25,9 +25,7 @@
 }
 .btn-new:hover { -fx-background-color: #0052cc; }
 
-/* ======================================================
-   2. THANH TÌM KIẾM (CHỈ CÓ Ở CUSTOMER)
-====================================================== */
+
 .search-field {
     -fx-background-color: white;
     -fx-background-radius: 6;
@@ -42,16 +40,13 @@
     -fx-text-fill: #FFF;
     -fx-background-radius: 6;
     -fx-border-color: #d1d5db;
-    -fx-border-radius: 6;
+    -fx-border-radius:  8;
     -fx-cursor: hand;
 }
-.btn-search { -fx-background-color: #3BCC78; }
-.btn-reload { -fx-background-color: linear-gradient(to bottom right, #478dff, #146dff); }
+.btn-search { -fx-background-color:  #0ea5e9 }
+.btn-reload { -fx-background-color: #64748b }
 .btn-search:hover, .btn-reload:hover { -fx-background-color: #e5e7eb; }
 
-/* ======================================================
-   3. BẢNG DỮ LIỆU (ĐỒNG BỘ 100%)
-====================================================== */
 .table_container {
     -fx-background-color: white;
     -fx-background-radius: 15px;

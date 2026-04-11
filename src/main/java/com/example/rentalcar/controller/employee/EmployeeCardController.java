@@ -11,26 +11,25 @@ public class EmployeeCardController {
 
     public void setData(Users user) {
         if (lblFullName == null || lblRoleName == null || lblUsername == null) {
-            System.err.println("LỖI: Một số ID trong EmployeeCard.fxml chưa khớp với Controller!");
+            System.err.println("LỖI: fx:id chưa khớp với Controller!");
             return;
         }
 
         lblFullName.setText(user.getFull_name());
         lblRoleName.setText(user.getRole_name() != null ? user.getRole_name() : "Nhân viên");
-        lblUsername.setText(user.getUsername());
-        lblOrderCount.setText("0 đơn"); // sau này join với bảng Orders để lấy sốđơn nhân viên tạo được
+        lblUsername.setText("@" + user.getUsername());
+        lblOrderCount.setText("0 đơn"); // Sau này join với bảng Orders để show số đơn nhân viên tạo được
 
-        if (user.getFull_name() != null && !user.getFull_name().isEmpty()) {
+        if (user.getFull_name() != null && !user.getFull_name().isEmpty())
             lblInitial.setText(user.getFull_name().substring(0, 1).toUpperCase());
-        }
 
-        lblStatus.getStyleClass().removeAll("status-pill-active", "status-pill-locked");
+        lblStatus.getStyleClass().removeAll("status-active", "status-locked");
         if (user.isIs_active()) {
             lblStatus.setText("Hoạt động");
-            lblStatus.getStyleClass().add("status-pill-active");
+            lblStatus.getStyleClass().add("status-active");
         } else {
             lblStatus.setText("Đã khóa");
-            lblStatus.getStyleClass().add("status-pill-locked");
+            lblStatus.getStyleClass().add("status-locked");
         }
     }
 

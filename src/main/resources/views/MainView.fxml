@@ -145,7 +145,7 @@
             <children>
                 <ScrollPane fitToWidth="true" hbarPolicy="NEVER" style="-fx-background-color: transparent; -fx-background: #f4f7fe;">
                     <content>
-                        <StackPane fx:id="contentArea" prefHeight="200.0" prefWidth="200.0" />
+                        <StackPane fx:id="contentArea" prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS"/>
                     </content>
                 </ScrollPane>
 

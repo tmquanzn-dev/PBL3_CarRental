@@ -1,4 +1,4 @@
-/* Container chính cho mỗi Card nhân viên */
+
 .employee-card {
     -fx-background-color: white;
     -fx-background-radius: 20;
@@ -6,7 +6,6 @@
     -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.05), 15, 0, 0, 5);
 }
 
-/* Badge trạng thái Hoạt động */
 .status-active {
     -fx-background-color: #f0fdf4;
     -fx-text-fill: #16a34a;
@@ -16,7 +15,6 @@
     -fx-font-weight: bold;
 }
 
-/* Badge trạng thái Đã khóa */
 .status-locked {
     -fx-background-color: #f1f5f9;
     -fx-text-fill: #64748b;
@@ -26,12 +24,10 @@
     -fx-font-weight: bold;
 }
 
-/* Avatar tròn với chữ cái đầu */
 .avatar-circle {
-    -fx-fill: #a78bfa; /* Màu tím trong hình */
+    -fx-fill: #a78bfa;
 }
 
-/* Nút bấm trong card */
 .btn-edit-emp {
     -fx-background-color: #4f46e5;
     -fx-text-fill: white;
@@ -54,4 +50,15 @@
     -fx-background-radius: 8;
     -fx-font-weight: bold;
     -fx-cursor: hand;
+}
+
+.btn-new {
+   -fx-background-radius: 10;
+   -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 15, 0, 0, 10);
+   -fx-background-color: linear-gradient(to bottom right, #478dff, #146dff);
+   -fx-cursor: hand;
+}
+
+.btn-new: hover {
+    -fx-background-color: #0052cc
 }

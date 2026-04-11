@@ -6,13 +6,13 @@ import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
-import javafx.scene.layout.TilePane; // DÙNG TILEPANE ĐỂ KHÓA KÍCH THƯỚC
+import javafx.scene.layout.FlowPane;
 
 import java.util.List;
 
 public class EmployeeController {
-    // Đã đổi thành TilePane cho khớp với FXML
-    @FXML private TilePane employeeContainer;
+
+    @FXML private FlowPane employeeContainer; //
 
     private final UserBLL userBLL = new UserBLL();
 
@@ -32,9 +32,8 @@ public class EmployeeController {
 
                 EmployeeCardController cardController = loader.getController();
 
-                Platform.runLater(() -> {
-                    cardController.setData(user);
-                });
+                // Đổ dữ liệu vào card
+                cardController.setData(user);
 
                 employeeContainer.getChildren().add(card);
             }
