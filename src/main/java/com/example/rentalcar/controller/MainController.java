@@ -7,6 +7,7 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
@@ -43,6 +44,7 @@ public class MainController {
             case "Quản lý hóa đơn": fxmlFile = "ContractView.fxml"; break;
             case "Quản lý xe": fxmlFile = "VehicleView.fxml"; break;
             case "Khách hàng": fxmlFile = "customer/CustomerManagement.fxml"; break;
+            case "Nhân viên" : fxmlFile = "employee/EmployeeManagement.fxml"; break;
         }
         if (!fxmlFile.isEmpty()) {
             changeView(fxmlFile);
@@ -81,4 +83,5 @@ public class MainController {
             ex.printStackTrace();
         }
     }
+
 }

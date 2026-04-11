@@ -1,0 +1,57 @@
+/* Container chính cho mỗi Card nhân viên */
+.employee-card {
+    -fx-background-color: white;
+    -fx-background-radius: 20;
+    -fx-padding: 25;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.05), 15, 0, 0, 5);
+}
+
+/* Badge trạng thái Hoạt động */
+.status-active {
+    -fx-background-color: #f0fdf4;
+    -fx-text-fill: #16a34a;
+    -fx-padding: 5 12;
+    -fx-background-radius: 12;
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+}
+
+/* Badge trạng thái Đã khóa */
+.status-locked {
+    -fx-background-color: #f1f5f9;
+    -fx-text-fill: #64748b;
+    -fx-padding: 5 12;
+    -fx-background-radius: 12;
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+}
+
+/* Avatar tròn với chữ cái đầu */
+.avatar-circle {
+    -fx-fill: #a78bfa; /* Màu tím trong hình */
+}
+
+/* Nút bấm trong card */
+.btn-edit-emp {
+    -fx-background-color: #4f46e5;
+    -fx-text-fill: white;
+    -fx-background-radius: 8;
+    -fx-font-weight: bold;
+    -fx-cursor: hand;
+}
+
+.btn-lock-emp {
+    -fx-background-color: #ef4444;
+    -fx-text-fill: white;
+    -fx-background-radius: 8;
+    -fx-font-weight: bold;
+    -fx-cursor: hand;
+}
+
+.btn-unlock-emp {
+    -fx-background-color: #22c55e;
+    -fx-text-fill: white;
+    -fx-background-radius: 8;
+    -fx-font-weight: bold;
+    -fx-cursor: hand;
+}

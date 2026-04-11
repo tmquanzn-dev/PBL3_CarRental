@@ -1,5 +1,6 @@
 package com.example.rentalcar.controller.contract.booking;
 
+import com.example.rentalcar.bll.CustomerBLL;
 import com.example.rentalcar.dao.CustomerDAO;
 import javafx.fxml.FXML;
 import javafx.scene.control.TextField;
@@ -14,7 +15,7 @@ public class Step1Controller {
         String cccd = txtSearchCCCD.getText();
         System.out.println("Đang tìm khách hàng có CCCD: " + cccd);
         // Gọi DAO của Hà để lấy data khách hàng đổ vào txtName, txtPhone...
-        CustomerDAO customerDAO = new CustomerDAO();
-        customerDAO.findByCccd(cccd);
+        CustomerBLL customerBLL = new CustomerBLL();
+        customerBLL.findByCccd(cccd);
     }
 }

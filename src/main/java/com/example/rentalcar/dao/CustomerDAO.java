@@ -77,7 +77,7 @@ public class CustomerDAO implements IBaseDAO<Customers, Integer>
             pstm.setString(2, entity.getFull_name());
             pstm.setString(3, entity.getPhone());
             pstm.setString(4, entity.getAddress());
-            pstm.setString(5, entity.getCccd()); // Lưu đường dẫn (URL) ảnh chụp CCCD
+            pstm.setString(5, entity.getCccd_images());
             pstm.setString(6, entity.getBlacklist_reason()); // Thường là rỗng khi mới tạo
 
             return pstm.executeUpdate() > 0;

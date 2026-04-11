@@ -19,7 +19,7 @@ public class UserDAO implements IBaseDAO<Users, Integer>
         user.setId_user(rs.getInt("id_user"));
         user.setUsername(rs.getString("username"));
         user.setPassword(rs.getString("password"));
-        user.setRole(rs.getString("role"));
+        user.setRole_id(rs.getInt("role_id"));
         user.setFull_name(rs.getString("full_name"));
         user.setPhone(rs.getString("phone"));
         user.setCccd(rs.getString("cccd"));
@@ -28,12 +28,16 @@ public class UserDAO implements IBaseDAO<Users, Integer>
         user.setEmail(rs.getString("email"));
         user.setIs_active(rs.getBoolean("is_active"));
         user.setAddress(rs.getString("address"));
+        user.setRole_name(rs.getString("role_name"));
         return user;
     }
 
     public Users findByUsername(String username)
     {
-        String sql = "SELECT * FROM Users WHERE username = ? AND is_active = 1";
+        String sql = "SELECT u.*, r.role_name " +
+                "FROM users u " +
+                "JOIN roles r ON u.role_id = r.role_id " +
+                "WHERE u.username = ? AND u.is_active = 1";
         try (Connection cnt = DBConnection.getInstance().getConnection();
              PreparedStatement pstm = cnt.prepareStatement(sql))
         {
@@ -56,7 +60,7 @@ public class UserDAO implements IBaseDAO<Users, Integer>
     @Override
     public boolean insert(Users entity)
     {
-        String sql = "INSERT INTO Users (username, password, role, full_name, phone, cccd, gender, birth_date, email, is_active, address) " +
+        String sql = "INSERT INTO Users (username, password, role_id, full_name, phone, cccd, gender, birth_date, email, is_active, address) " +
                 "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 1, ?)";
 
         try (Connection cnt = DBConnection.getInstance().getConnection();
@@ -64,7 +68,7 @@ public class UserDAO implements IBaseDAO<Users, Integer>
         {
             pstm.setString(1, entity.getUsername());
             pstm.setString(2, entity.getPassword());
-            pstm.setString(3, entity.getRole());
+            pstm.setInt(3, entity.getRole_id());
             pstm.setString(4, entity.getFull_name());
             pstm.setString(5, entity.getPhone());
             pstm.setString(6, entity.getCccd());
@@ -92,12 +96,12 @@ public class UserDAO implements IBaseDAO<Users, Integer>
     public boolean update(Users entity)
     {
         // Không cho phép update username
-        String sql = "UPDATE Users SET password = ?, role = ?, full_name = ?, phone = ?, cccd = ?, gender = ?, birth_date = ?, email = ?, is_active = ?, address = ? WHERE id_user = ?";
+        String sql = "UPDATE Users SET password = ?, role_id = ?, full_name = ?, phone = ?, cccd = ?, gender = ?, birth_date = ?, email = ?, is_active = ?, address = ? WHERE id_user = ?";
         try (Connection cnt = DBConnection.getInstance().getConnection();
              PreparedStatement pstm = cnt.prepareStatement(sql))
         {
             pstm.setString(1, entity.getPassword());
-            pstm.setString(2, entity.getRole());
+            pstm.setInt(2, entity.getRole_id());
             pstm.setString(3, entity.getFull_name());
             pstm.setString(4, entity.getPhone());
             pstm.setString(5, entity.getCccd());
@@ -142,7 +146,10 @@ public class UserDAO implements IBaseDAO<Users, Integer>
     @Override
     public Users findById(Integer id)
     {
-        String sql = "SELECT * FROM Users WHERE id_user = ?";
+        String sql = "SELECT u.*, r.role_name " +
+                "FROM users u " +
+                "JOIN roles r ON u.role_id = r.role_id " +
+                "WHERE u.id_user = ?";
         try (Connection cnt = DBConnection.getInstance().getConnection();
              PreparedStatement pstm = cnt.prepareStatement(sql))
         {
@@ -166,7 +173,9 @@ public class UserDAO implements IBaseDAO<Users, Integer>
     public List<Users> findAll()
     {
         List<Users> listUsers = new ArrayList<>();
-        String sql = "SELECT * FROM Users";
+        String sql = "SELECT u.*, r.role_name \n" +
+                    "FROM users u \n" +
+                    "JOIN roles r ON u.role_id = r.role_id;";
         try (Connection cnt = DBConnection.getInstance().getConnection();
              PreparedStatement pstm = cnt.prepareStatement(sql);
              ResultSet rs = pstm.executeQuery())

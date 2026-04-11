@@ -1,5 +1,6 @@
 package com.example.rentalcar.controller.auth;
 
+import com.example.rentalcar.bll.UserBLL;
 import com.example.rentalcar.dao.UserDAO;
 import com.example.rentalcar.models.Users;
 import com.example.rentalcar.utils.AppSession;
@@ -41,11 +42,10 @@ public class LoginController
             showAlert("Vui lòng nhập đầy đủ tên đăng nhập và mật khẩu!");
             return;
         }
-
-        UserDAO userDAO = new UserDAO();
+        UserBLL userBLL = new UserBLL();
 
         // 2. Sử dụng hàm findByUsername theo chuẩn DAO chúng ta vừa thiết kế
-        Users loginUser = userDAO.findByUsername(user);
+        Users loginUser = userBLL.getUserByUsername(user);
 
         // 3. Kiểm tra mật khẩu (Thực tế sau này áp dụng thư viện BCrypt ở đây)
         // Lưu ý: Nếu DB của bạn em cột mật khẩu tên khác thì đổi loginUser.getPassword_hash() cho khớp nhé

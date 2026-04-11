@@ -189,7 +189,7 @@ public class ContractDAO implements IBaseDAO<Contracts, Integer>
     public boolean delete(Integer id)
     {
         // Nghiệp vụ Hủy Hợp đồng: Đổi Enum Status sang CANCELLED (Hoặc giá trị tương đương trong Enum của bạn em)
-        String sql = "UPDATE Contracts SET status = 'CANCELLED' WHERE id_contract = ?";
+        String sql = "UPDATE Contracts SET status = 'DA_HUY' WHERE id_contract = ?";
 
         try (Connection cnt = DBConnection.getInstance().getConnection();
              PreparedStatement pstm = cnt.prepareStatement(sql))
