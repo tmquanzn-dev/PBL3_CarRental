@@ -8,6 +8,8 @@ public class Rules {
     private double multi;
     private Date start_date;
     private Date end_date;
+    private RuleType rule_type;
+
     private boolean is_active;
 
     public Rules() {};
@@ -61,6 +63,10 @@ public class Rules {
     public void setEnd_date(Date end_date) {
         this.end_date = end_date;
     }
+
+    public RuleType getRule_type() { return rule_type; }
+
+    public void setRule_type(RuleType rule_type) { this.rule_type = rule_type; }
 
     public boolean isIs_active() {
         return is_active;
