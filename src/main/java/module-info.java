@@ -20,5 +20,7 @@ module PBL3 {
     opens com.example.rentalcar.controller.dashboard to javafx.fxml;
     opens com.example.rentalcar.controller.customer to javafx.fxml;
     opens com.example.rentalcar.controller.employee to javafx.fxml;
+    opens com.example.rentalcar.controller.rule to javafx.fxml;
+
     opens com.example.rentalcar.bll to javafx.fxml;
 }

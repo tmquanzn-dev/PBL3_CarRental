@@ -35,9 +35,9 @@
         <HBox alignment="CENTER_LEFT" prefHeight="60.0" prefWidth="1040.0" spacing="15.0">
             <children>
                 <TextField fx:id="txtSearch" prefHeight="45.0" prefWidth="350.0" promptText="🔍 Nhập Tên hoặc Username..." style="-fx-background-radius: 8; -fx-border-color: #cbd5e1; -fx-border-radius: 8;">
-               <font>
-                  <Font size="14.0" />
-               </font></TextField>
+                    <font>
+                        <Font size="14.0" />
+                    </font></TextField>
                 <Button mnemonicParsing="false" prefHeight="45.0" prefWidth="120.0" style="-fx-background-color: #0ea5e9; -fx-text-fill: white; -fx-background-radius: 8; -fx-cursor: hand;" text="Tìm kiếm">
                     <font><Font name="System Bold" size="14.0" /></font>
                 </Button>

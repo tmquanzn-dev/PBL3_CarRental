@@ -45,6 +45,8 @@ public class MainController {
             case "Quản lý xe": fxmlFile = "VehicleView.fxml"; break;
             case "Khách hàng": fxmlFile = "customer/CustomerManagement.fxml"; break;
             case "Nhân viên" : fxmlFile = "employee/EmployeeManagement.fxml"; break;
+            case "Luật tính giá" : fxmlFile = "rule/RuleManagement.fxml"; break;
+
         }
         if (!fxmlFile.isEmpty()) {
             changeView(fxmlFile);
