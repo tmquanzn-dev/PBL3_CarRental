@@ -47,6 +47,8 @@ public class MainController {
             case "Nhân viên" : fxmlFile = "employee/EmployeeManagement.fxml"; break;
             case "Luật tính giá" : fxmlFile = "rule/RuleManagement.fxml"; break;
             case "Báo cáo" : fxmlFile = "report/ReportView.fxml"; break;
+            case "Cài đặt" : fxmlFile = "setting/SettingsView.fxml"; break;
+
 
 
         }

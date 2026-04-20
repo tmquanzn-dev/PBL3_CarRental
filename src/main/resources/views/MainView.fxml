@@ -291,7 +291,8 @@
                                 </ImageView>
                             </graphic>
                         </Button>
-                        <Button alignment="CENTER" contentDisplay="RIGHT" graphicTextGap="83.0" mnemonicParsing="false" prefHeight="50.0" prefWidth="200.0" styleClass="btn_menu" stylesheets="@../css/styles.css" text="Cài đặt">
+                        <Button alignment="CENTER" contentDisplay="RIGHT" graphicTextGap="83.0" mnemonicParsing="false" prefHeight="50.0" prefWidth="200.0" styleClass="btn_menu" stylesheets="@../css/styles.css" text="Cài đặt"
+                                onAction="#handleMenuClick">
                             <VBox.margin>
                                 <Insets left="25.0" top="10.0" />
                             </VBox.margin>

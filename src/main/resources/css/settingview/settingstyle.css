@@ -1,0 +1,402 @@
+/* ======================================================
+   SETTINGS VIEW - Đồng bộ với toàn hệ thống VehicleRent
+   Palette: Blue #146dff / Slate #1e293b / Gray #f8fafc
+====================================================== */
+
+.root {
+    -fx-background-color: #f4f7f6;
+    -fx-font-family: "Segoe UI", Arial, sans-serif;
+}
+
+/* ======================================================
+   SIDEBAR ĐIỀU HƯỚNG CÀI ĐẶT
+====================================================== */
+.settings-sidebar {
+    -fx-background-color: white;
+    -fx-background-radius: 15;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.05), 10, 0, 0, 5);
+    -fx-min-width: 240px;
+    -fx-max-width: 240px;
+}
+
+.settings-nav-btn {
+    -fx-background-color: transparent;
+    -fx-text-fill: #475569;
+    -fx-font-size: 14px;
+    -fx-alignment: CENTER_LEFT;
+    -fx-background-radius: 10;
+    -fx-padding: 12 18;
+    -fx-cursor: hand;
+    -fx-pref-width: 210px;
+    -fx-pref-height: 48px;
+    -fx-graphic-text-gap: 14;
+}
+.settings-nav-btn:hover {
+    -fx-background-color: #f0f5ff;
+    -fx-text-fill: #146dff;
+}
+.settings-nav-active {
+    -fx-background-color: #eff6ff;
+    -fx-text-fill: #146dff;
+    -fx-font-weight: bold;
+    -fx-border-color: #146dff;
+    -fx-border-width: 0 0 0 3;
+    -fx-border-radius: 0 10 10 0;
+    -fx-background-radius: 0 10 10 0;
+}
+
+.nav-section-label {
+    -fx-text-fill: #94a3b8;
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+    -fx-padding: 18 18 6 18;
+}
+
+/* ======================================================
+   CONTENT PANEL CHÍNH
+====================================================== */
+.settings-content {
+    -fx-background-color: white;
+    -fx-background-radius: 15;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.05), 10, 0, 0, 5);
+}
+
+.settings-section-title {
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #1e293b;
+}
+
+.settings-section-desc {
+    -fx-font-size: 13px;
+    -fx-text-fill: #64748b;
+}
+
+/* ======================================================
+   CARD NHÓM CÀI ĐẶT
+====================================================== */
+.setting-group-card {
+    -fx-background-color: #f8fafc;
+    -fx-background-radius: 12;
+    -fx-border-color: #e2e8f0;
+    -fx-border-radius: 12;
+    -fx-border-width: 1;
+}
+
+.setting-group-title {
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #334155;
+}
+
+.setting-row {
+    -fx-background-color: white;
+    -fx-background-radius: 8;
+    -fx-border-color: #f1f5f9;
+    -fx-border-radius: 8;
+    -fx-border-width: 1;
+    -fx-padding: 14 18;
+}
+.setting-row:hover {
+    -fx-background-color: #f8faff;
+    -fx-border-color: #dbeafe;
+}
+
+.setting-label {
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #1e293b;
+}
+
+.setting-sublabel {
+    -fx-font-size: 12px;
+    -fx-text-fill: #94a3b8;
+}
+
+/* ======================================================
+   INPUT FIELDS
+====================================================== */
+.modern-input {
+    -fx-background-color: white;
+    -fx-border-color: #cbd5e1;
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+    -fx-padding: 0 14;
+    -fx-pref-height: 42px;
+    -fx-font-size: 14px;
+    -fx-text-fill: #334155;
+}
+.modern-input:focused {
+    -fx-border-color: #146dff;
+    -fx-border-width: 1.5;
+}
+.modern-input:disabled {
+    -fx-background-color: #f1f5f9;
+    -fx-text-fill: #94a3b8;
+    -fx-border-color: #e2e8f0;
+}
+
+.modern-combo {
+    -fx-background-color: white;
+    -fx-border-color: #cbd5e1;
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+    -fx-pref-height: 42px;
+    -fx-font-size: 14px;
+}
+.modern-combo:focused {
+    -fx-border-color: #146dff;
+    -fx-border-width: 1.5;
+}
+
+.modern-password {
+    -fx-background-color: white;
+    -fx-border-color: #cbd5e1;
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+    -fx-padding: 0 14;
+    -fx-pref-height: 42px;
+    -fx-font-size: 14px;
+    -fx-text-fill: #334155;
+}
+.modern-password:focused {
+    -fx-border-color: #146dff;
+    -fx-border-width: 1.5;
+}
+
+/* ======================================================
+   TOGGLE SWITCH (Custom)
+====================================================== */
+.toggle-btn-on {
+    -fx-background-color: #146dff;
+    -fx-text-fill: white;
+    -fx-background-radius: 20;
+    -fx-pref-width: 60px;
+    -fx-pref-height: 28px;
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+    -fx-cursor: hand;
+}
+.toggle-btn-off {
+    -fx-background-color: #cbd5e1;
+    -fx-text-fill: white;
+    -fx-background-radius: 20;
+    -fx-pref-width: 60px;
+    -fx-pref-height: 28px;
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+    -fx-cursor: hand;
+}
+.toggle-btn-on:hover { -fx-background-color: #0052cc; }
+.toggle-btn-off:hover { -fx-background-color: #94a3b8; }
+
+/* ======================================================
+   BUTTONS
+====================================================== */
+.btn-primary {
+    -fx-background-color: linear-gradient(to bottom right, #478dff, #146dff);
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-background-radius: 10;
+    -fx-padding: 11 26;
+    -fx-cursor: hand;
+    -fx-font-size: 14px;
+    -fx-effect: dropshadow(three-pass-box, rgba(71,141,255,0.35), 10, 0, 0, 4);
+}
+.btn-primary:hover { -fx-background-color: #0052cc; }
+
+.btn-secondary {
+    -fx-background-color: white;
+    -fx-border-color: #cbd5e1;
+    -fx-border-radius: 10;
+    -fx-text-fill: #475569;
+    -fx-padding: 11 26;
+    -fx-cursor: hand;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+}
+.btn-secondary:hover { -fx-background-color: #f1f5f9; }
+
+.btn-danger {
+    -fx-background-color: #fff1f2;
+    -fx-text-fill: #e11d48;
+    -fx-background-radius: 10;
+    -fx-padding: 11 26;
+    -fx-cursor: hand;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+}
+.btn-danger:hover { -fx-background-color: #fecdd3; }
+
+.btn-warning {
+    -fx-background-color: #fffbeb;
+    -fx-text-fill: #b45309;
+    -fx-background-radius: 10;
+    -fx-border-color: #fcd34d;
+    -fx-border-radius: 10;
+    -fx-padding: 11 26;
+    -fx-cursor: hand;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+}
+.btn-warning:hover { -fx-background-color: #fef3c7; }
+
+.btn-success {
+    -fx-background-color: #f0fdf4;
+    -fx-text-fill: #16a34a;
+    -fx-background-radius: 10;
+    -fx-border-color: #86efac;
+    -fx-border-radius: 10;
+    -fx-padding: 11 26;
+    -fx-cursor: hand;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+}
+.btn-success:hover { -fx-background-color: #dcfce7; }
+
+/* ======================================================
+   AVATAR & PROFILE
+====================================================== */
+.avatar-circle-large {
+    -fx-background-color: linear-gradient(to bottom right, #478dff, #146dff);
+    -fx-background-radius: 50;
+    -fx-min-width: 90;
+    -fx-min-height: 90;
+    -fx-max-width: 90;
+    -fx-max-height: 90;
+    -fx-alignment: center;
+    -fx-effect: dropshadow(three-pass-box, rgba(71,141,255,0.4), 12, 0, 0, 4);
+}
+
+.avatar-initial-large {
+    -fx-font-size: 36px;
+    -fx-font-weight: bold;
+    -fx-text-fill: white;
+}
+
+.profile-name {
+    -fx-font-size: 22px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #1e293b;
+}
+
+.profile-role {
+    -fx-font-size: 13px;
+    -fx-text-fill: #64748b;
+    -fx-background-color: #eff6ff;
+    -fx-text-fill: #2563eb;
+    -fx-padding: 3 10;
+    -fx-background-radius: 10;
+    -fx-font-weight: bold;
+}
+
+/* ======================================================
+   TAGS BADGE
+====================================================== */
+.badge-blue {
+    -fx-background-color: #dbeafe;
+    -fx-text-fill: #1d4ed8;
+    -fx-padding: 4 12;
+    -fx-background-radius: 10;
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+}
+.badge-green {
+    -fx-background-color: #dcfce7;
+    -fx-text-fill: #15803d;
+    -fx-padding: 4 12;
+    -fx-background-radius: 10;
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+}
+.badge-red {
+    -fx-background-color: #fee2e2;
+    -fx-text-fill: #b91c1c;
+    -fx-padding: 4 12;
+    -fx-background-radius: 10;
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+}
+.badge-yellow {
+    -fx-background-color: #fef3c7;
+    -fx-text-fill: #b45309;
+    -fx-padding: 4 12;
+    -fx-background-radius: 10;
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+}
+
+/* ======================================================
+   SEPARATOR / DIVIDER
+====================================================== */
+.settings-divider {
+    -fx-background-color: #f1f5f9;
+    -fx-pref-height: 1;
+}
+
+/* ======================================================
+   SYSTEM INFO CARD
+====================================================== */
+.info-card {
+    -fx-background-color: linear-gradient(to bottom right, #eff6ff, #f0fdf4);
+    -fx-background-radius: 10;
+    -fx-border-color: #bfdbfe;
+    -fx-border-radius: 10;
+    -fx-padding: 14 18;
+}
+.info-card-label {
+    -fx-font-size: 12px;
+    -fx-text-fill: #64748b;
+}
+.info-card-value {
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #1e293b;
+}
+
+/* ======================================================
+   SCROLLPANE
+====================================================== */
+.scroll-pane {
+    -fx-background-color: transparent;
+    -fx-background: transparent;
+}
+.scroll-pane > .viewport {
+    -fx-background-color: transparent;
+}
+.scroll-pane .scroll-bar:vertical .thumb {
+    -fx-background-color: #cbd5e1;
+    -fx-background-radius: 10;
+}
+.scroll-pane .scroll-bar:vertical .track {
+    -fx-background-color: transparent;
+}
+
+/* ======================================================
+   LABEL INPUT
+====================================================== */
+.input-label {
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #475569;
+}
+
+/* Alert notification toast */
+.toast-success {
+    -fx-background-color: #f0fdf4;
+    -fx-border-color: #86efac;
+    -fx-border-radius: 10;
+    -fx-background-radius: 10;
+    -fx-padding: 12 18;
+    -fx-text-fill: #15803d;
+    -fx-font-weight: bold;
+}
+.toast-error {
+    -fx-background-color: #fff1f2;
+    -fx-border-color: #fca5a5;
+    -fx-border-radius: 10;
+    -fx-background-radius: 10;
+    -fx-padding: 12 18;
+    -fx-text-fill: #b91c1c;
+    -fx-font-weight: bold;
+}
