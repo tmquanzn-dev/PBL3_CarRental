@@ -275,7 +275,8 @@
                                 </ImageView>
                             </graphic>
                         </Button>
-                        <Button alignment="CENTER" contentDisplay="RIGHT" graphicTextGap="75.0" mnemonicParsing="false" prefHeight="50.0" prefWidth="200.0" styleClass="btn_menu" stylesheets="@../css/styles.css" text="Báo cáo">
+                        <Button alignment="CENTER" contentDisplay="RIGHT" graphicTextGap="75.0" mnemonicParsing="false" prefHeight="50.0" prefWidth="200.0" styleClass="btn_menu" stylesheets="@../css/styles.css" text="Báo cáo"
+                                onAction="#handleMenuClick">
                             <font>
                                 <Font size="18.0" />
                             </font>

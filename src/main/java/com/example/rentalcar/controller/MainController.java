@@ -41,11 +41,13 @@ public class MainController {
         String fxmlFile = "";
         switch (btnClick.getText()) {
             case "Tổng quan": fxmlFile = "DashboardView.fxml"; break;
-            case "Quản lý hóa đơn": fxmlFile = "ContractView.fxml"; break;
-            case "Quản lý xe": fxmlFile = "VehicleView.fxml"; break;
+            case "Quản lý hóa đơn": fxmlFile = "ContractManagement.fxml"; break;
+            case "Quản lý xe": fxmlFile = "vehicle/VehicleManagement.fxml"; break;
             case "Khách hàng": fxmlFile = "customer/CustomerManagement.fxml"; break;
             case "Nhân viên" : fxmlFile = "employee/EmployeeManagement.fxml"; break;
             case "Luật tính giá" : fxmlFile = "rule/RuleManagement.fxml"; break;
+            case "Báo cáo" : fxmlFile = "report/ReportView.fxml"; break;
+
 
         }
         if (!fxmlFile.isEmpty()) {

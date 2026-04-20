@@ -1,60 +1,289 @@
+/* ======================================================
+   CONTRACT MANAGEMENT STYLE
+   Đồng bộ với customerstyle.css & dashboardstyle.css
+====================================================== */
 .root {
     -fx-background-color: #f4f7f6;
     -fx-font-family: "Segoe UI", Arial, sans-serif;
 }
 
-.vbox-contract-list {
-    -fx-padding: 10;
-    -fx-spacing: 20;
-    -fx-background-color: transparent;
+/* ======================================================
+   STAT CARDS
+====================================================== */
+.card-blue, .card-green, .card-yellow, .card-red {
+    -fx-background-radius: 12;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 15, 0, 0, 8);
+}
+.card-blue   { -fx-background-color: linear-gradient(to bottom right, #478dff, #146dff); }
+.card-green  { -fx-background-color: linear-gradient(to bottom right, #34d399, #10b981); }
+.card-yellow { -fx-background-color: linear-gradient(to bottom right, #fbbf24, #f59e0b); }
+.card-red    { -fx-background-color: linear-gradient(to bottom right, #f87171, #ef4444); }
+
+.card-title { -fx-text-fill: white; -fx-font-size: 14px; -fx-opacity: 0.92; }
+.card-value { -fx-text-fill: white; -fx-font-size: 30px; -fx-font-weight: bold; }
+.card-sub   { -fx-text-fill: white; -fx-font-size: 12px; -fx-opacity: 0.85; }
+.card-icon  { -fx-text-fill: white; -fx-font-size: 38px; -fx-opacity: 0.18; }
+
+/* ======================================================
+   NÚT THÊM MỚI
+====================================================== */
+.btn-new {
+    -fx-background-color: linear-gradient(to bottom right, #478dff, #146dff);
+    -fx-background-radius: 10;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(three-pass-box, rgba(71,141,255,0.4), 12, 0, 0, 4);
+}
+.btn-new:hover { -fx-background-color: #0052cc; }
+
+/* ======================================================
+   FILTER TABS
+====================================================== */
+.filter-bar {
+    -fx-background-color: white;
+    -fx-background-radius: 10;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.05), 8, 0, 0, 3);
+    -fx-padding: 6 10;
 }
 
-.contract-card {
+.tab-btn {
+    -fx-background-color: transparent;
+    -fx-text-fill: #64748b;
+    -fx-background-radius: 8;
+    -fx-padding: 8 18;
+    -fx-font-size: 13px;
+    -fx-cursor: hand;
+    -fx-font-weight: bold;
+}
+.tab-btn:hover { -fx-background-color: #f1f5f9; }
+
+.tab-btn-active {
+    -fx-background-color: #e0eaff;
+    -fx-text-fill: #146dff;
+    -fx-background-radius: 8;
+    -fx-padding: 8 18;
+    -fx-font-size: 13px;
+    -fx-cursor: hand;
+    -fx-font-weight: bold;
+}
+
+/* ======================================================
+   THANH TÌM KIẾM
+====================================================== */
+.search-field {
+    -fx-background-color: white;
+    -fx-background-radius: 8;
+    -fx-border-color: #cbd5e1;
+    -fx-border-radius: 8;
+    -fx-padding: 0 12;
+    -fx-font-size: 14px;
+    -fx-pref-height: 42px;
+}
+.search-field:focused {
+    -fx-border-color: #146dff;
+    -fx-border-width: 1.5;
+}
+
+.btn-search {
+    -fx-background-color: #0ea5e9;
+    -fx-text-fill: white;
+    -fx-background-radius: 8;
+    -fx-font-weight: bold;
+    -fx-cursor: hand;
+    -fx-pref-height: 42px;
+}
+.btn-search:hover { -fx-background-color: #0284c7; }
+
+.btn-reload {
+    -fx-background-color: #64748b;
+    -fx-text-fill: white;
+    -fx-background-radius: 8;
+    -fx-font-weight: bold;
+    -fx-cursor: hand;
+    -fx-pref-height: 42px;
+}
+.btn-reload:hover { -fx-background-color: #475569; }
+
+/* ======================================================
+   TABLE CONTAINER
+====================================================== */
+.table_container {
     -fx-background-color: white;
     -fx-background-radius: 15;
-    -fx-border-color: #f0f0f5;
-    -fx-border-radius: 15;
-    -fx-padding: 20;
-    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.08), 15, 0, 0, 5);
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.05), 10, 0, 0, 5);
 }
 
-.contract-card:hover {
-    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.15), 20, 0, 0, 8);
-    -fx-cursor: hand;
+/* ======================================================
+   TABLE VIEW
+====================================================== */
+.table-view {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
 }
-
-.badge {
-    -fx-background-radius: 20;
-    -fx-padding: 5 15;
-    -fx-font-size: 13px;
+.table-view .column-header-background {
+    -fx-background-color: transparent;
+    -fx-border-width: 0 0 2 0;
+    -fx-border-color: #f1f5f9;
+}
+.table-view .column-header {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+}
+.table-view .column-header .label {
+    -fx-text-fill: #94a3b8;
     -fx-font-weight: bold;
+    -fx-font-size: 12px;
+    -fx-alignment: CENTER_LEFT;
+    -fx-padding: 0 0 0 12px;
 }
-
-.badge-renting {
-    -fx-background-color: #e3f2fd;
-    -fx-text-fill: #1976d2;
+.table-view .table-row-cell {
+    -fx-cell-size: 68px;
+    -fx-background-color: transparent;
+    -fx-border-width: 0 0 1 0;
+    -fx-border-color: #f8fafc;
 }
-.btn-filter {
-    -fx-background-color: #f0f0f5;
-    -fx-text-fill: #333;
-    -fx-background-radius: 20;
-    -fx-padding: 8 20;
+.table-view .table-row-cell:hover  { -fx-background-color: #f8faff; }
+.table-view .table-row-cell:selected { -fx-background-color: #eff6ff; }
+.table-view .table-cell {
+    -fx-border-color: transparent;
+    -fx-alignment: CENTER_LEFT;
+    -fx-padding: 0 0 0 12px;
     -fx-font-size: 14px;
-    -fx-font-weight: bold;
-    -fx-cursor: hand;
-    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.05), 10, 0, 0, 3);
+    -fx-text-fill: #1e293b;
 }
 
-.step-title {
-    -fx-font-size: 24px;
+/* ======================================================
+   STATUS PILLS
+====================================================== */
+.status-pill {
+    -fx-padding: 5 14;
+    -fx-background-radius: 20;
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+}
+.status-blue   { -fx-background-color: #dbeafe; -fx-text-fill: #1d4ed8; }
+.status-yellow { -fx-background-color: #fef3c7; -fx-text-fill: #b45309; }
+.status-green  { -fx-background-color: #dcfce7; -fx-text-fill: #15803d; }
+.status-gray   { -fx-background-color: #f1f5f9; -fx-text-fill: #64748b; }
+.status-red    { -fx-background-color: #fee2e2; -fx-text-fill: #b91c1c; }
+
+/* PAYMENT STATUS */
+.pay-pill {
+    -fx-padding: 4 10;
+    -fx-background-radius: 12;
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+}
+.pay-none  { -fx-background-color: #fee2e2; -fx-text-fill: #b91c1c; }
+.pay-part  { -fx-background-color: #fef3c7; -fx-text-fill: #b45309; }
+.pay-done  { -fx-background-color: #dcfce7; -fx-text-fill: #15803d; }
+
+/* ======================================================
+   ACTION BUTTONS
+====================================================== */
+.btn-action {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-cursor: hand;
+    -fx-padding: 6;
+    -fx-background-radius: 6;
+}
+.btn-action:hover  { -fx-background-color: #f1f5f9; }
+.btn-action:pressed { -fx-background-color: #e2e8f0; }
+
+/* ======================================================
+   MODAL DETAIL
+====================================================== */
+.modal-container {
+    -fx-background-color: white;
+    -fx-background-radius: 16;
+    -fx-border-color: #e2e8f0;
+    -fx-border-radius: 16;
+}
+
+.modal-header {
+    -fx-background-color: linear-gradient(to right, #f8faff, #eff6ff);
+    -fx-background-radius: 16 16 0 0;
+    -fx-padding: 20 30;
+}
+
+.modal-code {
+    -fx-font-size: 22px;
     -fx-font-weight: bold;
     -fx-text-fill: #1e293b;
 }
 
-.contract-scroll-pane {
-    -fx-background-color: transparent;
-    -fx-background: #f8fafc;
-    -fx-border-color: #e2e8f0;
-    -fx-border-radius: 12;
+.detail-section-title {
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #94a3b8;
+    -fx-padding: 0 0 8 0;
 }
 
+.detail-label {
+    -fx-text-fill: #94a3b8;
+    -fx-font-size: 13px;
+}
+
+.detail-value {
+    -fx-text-fill: #1e293b;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+}
+
+.detail-value-big {
+    -fx-text-fill: #146dff;
+    -fx-font-size: 22px;
+    -fx-font-weight: bold;
+}
+
+.info-card {
+    -fx-background-color: #f8fafc;
+    -fx-background-radius: 10;
+    -fx-padding: 16;
+}
+
+.btn-close-modal {
+    -fx-background-color: #f1f5f9;
+    -fx-text-fill: #64748b;
+    -fx-background-radius: 8;
+    -fx-cursor: hand;
+    -fx-font-weight: bold;
+    -fx-padding: 10 24;
+}
+.btn-close-modal:hover { -fx-background-color: #e2e8f0; }
+
+.btn-return-vehicle {
+    -fx-background-color: linear-gradient(to right, #10b981, #059669);
+    -fx-text-fill: white;
+    -fx-background-radius: 8;
+    -fx-cursor: hand;
+    -fx-font-weight: bold;
+    -fx-padding: 10 24;
+    -fx-effect: dropshadow(three-pass-box, rgba(16,185,129,0.3), 8, 0, 0, 3);
+}
+.btn-return-vehicle:hover { -fx-background-color: #059669; }
+
+.btn-cancel-contract {
+    -fx-background-color: #fff1f2;
+    -fx-text-fill: #e11d48;
+    -fx-background-radius: 8;
+    -fx-cursor: hand;
+    -fx-font-weight: bold;
+    -fx-padding: 10 24;
+}
+.btn-cancel-contract:hover { -fx-background-color: #fecdd3; }
+
+.combo-filter {
+    -fx-background-color: white;
+    -fx-border-color: #cbd5e1;
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+    -fx-font-size: 14px;
+    -fx-pref-height: 42px;
+}
+.combo-filter:focused {
+    -fx-border-color: #146dff;
+    -fx-border-width: 1.5;
+}

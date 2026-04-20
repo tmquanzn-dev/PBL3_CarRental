@@ -63,37 +63,55 @@ public class CustomerDAO implements IBaseDAO<Customers, Integer>
     // PHẦN 2: CÁC HÀM IMPLEMENTS TỪ IBaseDAO (Chuẩn CRUD)
     // ==========================================================
 
+
+    // ==========================================================
+    // PHẦN 2: CÁC HÀM IMPLEMENTS TỪ IBaseDAO (Chuẩn CRUD)
+    // ==========================================================
+
     @Override
     public boolean insert(Customers entity)
     {
-        // Khi tạo khách mới, mặc định điểm tin cậy (trust_score) là 100 và không bị Blacklist (0)
-        String sql = "INSERT INTO Customers (cccd, full_name, phone, address, cccd_images, trust_score, is_blacklisted, blacklist_reason) " +
-                "VALUES (?, ?, ?, ?, ?, 100, 0, ?)";
+        //  Dùng Java tự động tính ID mới nhất (Bỏ qua lỗi AUTO_INCREMENT)
+        int newId = 1;
+        String sqlGetMaxId = "SELECT MAX(id_customer) FROM customers";
+        try (Connection cnt = DBConnection.getInstance().getConnection();
+             PreparedStatement pstmMax = cnt.prepareStatement(sqlGetMaxId);
+             ResultSet rs = pstmMax.executeQuery()) {
+            if (rs.next()) {
+                newId = rs.getInt(1) + 1; // Lấy ID cao nhất hiện tại cộng thêm 1
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        String sql = "INSERT INTO customers (id_customer, cccd, full_name, phone, address, email, cccd_images, trust_score, is_blacklist, blacklist_reason) " +
+                "VALUES (?, ?, ?, ?, ?, ?, ?, 100, 0, ?)";
 
         try (Connection cnt = DBConnection.getInstance().getConnection();
              PreparedStatement pstm = cnt.prepareStatement(sql))
         {
-            pstm.setString(1, entity.getCccd());
-            pstm.setString(2, entity.getFull_name());
-            pstm.setString(3, entity.getPhone());
-            pstm.setString(4, entity.getAddress());
-            pstm.setString(5, entity.getCccd_images());
-            pstm.setString(6, entity.getBlacklist_reason()); // Thường là rỗng khi mới tạo
+            pstm.setInt(1, newId);
+            pstm.setString(2, entity.getCccd());
+            pstm.setString(3, entity.getFull_name());
+            pstm.setString(4, entity.getPhone());
+            pstm.setString(5, entity.getAddress());
+            pstm.setString(6, entity.getEmail());
+            pstm.setString(7, entity.getCccd_images());
+            pstm.setString(8, entity.getBlacklist_reason());
 
             return pstm.executeUpdate() > 0;
         }
         catch (SQLException e)
         {
             System.err.println("LỖI Thêm Khách hàng mới: " + e.getMessage());
+            e.printStackTrace();
             return false;
         }
     }
-
     @Override
     public boolean update(Customers entity)
     {
-        // Cập nhật thông tin khách. Có thể dùng để Admin đưa khách vào danh sách đen (is_blacklisted = 1)
-        String sql = "UPDATE Customers SET cccd = ?, full_name = ?, phone = ?, address = ?, cccd_images = ?, trust_score = ?, is_blacklist = ?, blacklist_reason = ? WHERE id_customer = ?";
+        String sql = "UPDATE Customers SET cccd = ?, full_name = ?, phone = ?, address = ?, email = ?, cccd_images = ?, trust_score = ?, is_blacklist = ?, blacklist_reason = ? WHERE id_customer = ?";
 
         try (Connection cnt = DBConnection.getInstance().getConnection();
              PreparedStatement pstm = cnt.prepareStatement(sql))
@@ -102,17 +120,19 @@ public class CustomerDAO implements IBaseDAO<Customers, Integer>
             pstm.setString(2, entity.getFull_name());
             pstm.setString(3, entity.getPhone());
             pstm.setString(4, entity.getAddress());
-            pstm.setString(5, entity.getCccd());
-            pstm.setInt(6, entity.getTrust_score());
-            pstm.setBoolean(7, entity.isIs_blacklist());
-            pstm.setString(8, entity.getBlacklist_reason());
-            pstm.setInt(9, entity.getId_customer());
+            pstm.setString(5, entity.getEmail());
+            pstm.setString(6, entity.getCccd_images());
+            pstm.setInt(7, entity.getTrust_score());
+            pstm.setBoolean(8, entity.isIs_blacklist());
+            pstm.setString(9, entity.getBlacklist_reason());
+            pstm.setInt(10, entity.getId_customer());
 
             return pstm.executeUpdate() > 0;
         }
         catch (SQLException e)
         {
             System.err.println("LỖI Cập nhật thông tin Khách hàng: " + e.getMessage());
+            e.printStackTrace();
             return false;
         }
     }

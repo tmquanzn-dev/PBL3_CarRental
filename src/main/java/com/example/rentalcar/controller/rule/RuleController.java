@@ -35,6 +35,9 @@ public class RuleController {
 
     // Hàm tạo dữ liệu giả chạy thử (Xóa đi khi có Database thật)
     private List<Rules> getMockData() {
-
+        Rules rules = new Rules();
+        List<Rules> li = new ArrayList<>();
+        li.add(rules);
+        return li;
     }
 }

@@ -1,0 +1,100 @@
+/* Container chính */
+.part-page-container {
+    -fx-background-color: #f8fafc;
+}
+
+/* Typography */
+.header-title {
+    -fx-font-family: "System";
+    -fx-font-weight: bold;
+    -fx-font-size: 32px;
+    -fx-text-fill: #1e293b;
+}
+
+.section-title {
+    -fx-font-family: "System";
+    -fx-font-weight: bold;
+    -fx-font-size: 18px;
+    -fx-text-fill: #1e293b;
+}
+
+/* Nút Bấm Chính (18px, Indigo #4f46e5) */
+.btn-new {
+   -fx-background-radius: 10;
+   -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 15, 0, 0, 10);
+   -fx-background-color: linear-gradient(to bottom right, #478dff, #146dff);
+   -fx-cursor: hand;
+}
+
+.btn-new: hover {
+    -fx-background-color: #0052cc
+}
+
+/* Thanh Tìm Kiếm */
+.search-field {
+    -fx-background-radius: 8;
+    -fx-border-radius: 8;
+    -fx-border-color: #cbd5e1;
+    -fx-padding: 0 10;
+    -fx-font-size: 14px;
+}
+.btn-search {
+    -fx-background-color: #0ea5e9;
+    -fx-text-fill: white;
+    -fx-background-radius: 8;
+    -fx-font-weight: bold;
+    -fx-cursor: hand;
+}
+.btn-refresh {
+    -fx-background-color: #64748b;
+    -fx-text-fill: white;
+    -fx-background-radius: 8;
+    -fx-font-weight: bold;
+    -fx-cursor: hand;
+}
+
+/* Khung chứa Bảng */
+.table-container {
+    -fx-background-color: white;
+    -fx-background-radius: 10;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.05), 10, 0, 0, 5);
+}
+
+/* Style cho Table */
+.table-view {
+    -fx-background-color: transparent;
+}
+.table-view .column-header-background {
+    -fx-background-color: #f1f5f9;
+    -fx-background-radius: 8 8 0 0;
+}
+.table-view .column-header {
+    -fx-background-color: transparent;
+    -fx-font-weight: bold;
+    -fx-text-fill: #475569;
+}
+
+/* Custom các Cell đặc biệt */
+.price-cell {
+    -fx-text-fill: #ef4444; /* Đỏ đô cho giá tiền */
+    -fx-font-weight: bold;
+    -fx-alignment: center-right;
+}
+.type-cell {
+    -fx-text-fill: #10b981; /* Xanh ngọc cho loại xe */
+    -fx-font-weight: bold;
+}
+
+/* Nút Thao tác */
+.btn-edit {
+    -fx-background-color: #f59e0b;
+    -fx-text-fill: white;
+    -fx-background-radius: 6;
+    -fx-cursor: hand;
+}
+.btn-delete {
+    -fx-background-color: #ef4444;
+    -fx-text-fill: white;
+    -fx-background-radius: 6;
+    -fx-cursor: hand;
+}
