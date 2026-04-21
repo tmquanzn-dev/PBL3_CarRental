@@ -1,11 +1,14 @@
+/* loginstyle.css - Fix: bỏ gradient khỏi -fx-text-fill */
 .left-panel {
-   -fx-background-color: linear-gradient(to bottom right, #478dff, #146dff);
-   -fx-effect: dropshadow(three-pass-box, #000, 10, 0, 0, 4);
+    -fx-background-color: linear-gradient(to bottom right, #478dff, #146dff);
+    -fx-effect: dropshadow(three-pass-box, #000, 10, 0, 0, 4);
 }
 
+/* FIX: gradient KHÔNG được dùng ở -fx-text-fill
+   Thay bằng solid color xanh đậm */
 .txt_login {
-    -fx-text-fill: linear-gradient(to bottom right, #478dff, #146dff);
-    -fx-effect: dropshadow(three-pass-box, rgba(165, 60, 220, 0.4), 10, 0, 0, 4);
+    -fx-text-fill: #146dff;
+    -fx-effect: dropshadow(three-pass-box, rgba(20, 109, 255, 0.3), 10, 0, 0, 4);
 }
 
 .btn-login {
@@ -14,10 +17,9 @@
     -fx-background-radius: 20;
     -fx-cursor: hand;
     -fx-font-weight: bold;
-    -fx-transition: 0.3s;
-    -fx-effect: dropshadow(three-pass-box, rgba(165, 60, 220, 0.4), 10, 0, 0, 4);
+    -fx-effect: dropshadow(three-pass-box, rgba(71, 141, 255, 0.4), 10, 0, 0, 4);
 }
 .btn-login:hover {
-    -fx-background-color: #00f;
-    -fx-text-fill: #fff;
+    -fx-background-color: #0052cc;
+    -fx-text-fill: white;
 }

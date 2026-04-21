@@ -113,14 +113,13 @@ public class ContractDAO implements IBaseDAO<Contracts, Integer>
             pstm.setInt(5, entity.getFuel_start());
 
             // Lấy chuỗi String từ Enum
-            pstm.setString(6, entity.getDeposit_type().name());
-
+            pstm.setString(6, entity.getDeposit_type().name().replace("_", " "));
             pstm.setDouble(7, entity.getDeposit_amount());
             pstm.setDouble(8, entity.getBase_price());
             pstm.setDouble(9, entity.getDiscount_amount());
             pstm.setDouble(10, entity.getTotal_price());
-            pstm.setString(11, entity.getPayment_status().name());
-            pstm.setString(12, entity.getStatus().name());
+            pstm.setString(11, entity.getPayment_status().name().replace("_", " "));
+            pstm.setString(12, entity.getStatus().name().replace("_", " "));
 
             // Rút trích ID từ các Object tham chiếu (Khóa ngoại)
             pstm.setInt(13, entity.getId_user().getId_user());

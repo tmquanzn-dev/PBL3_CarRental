@@ -8,376 +8,230 @@
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.layout.ColumnConstraints?>
-<?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Region?>
-<?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="1176.0" prefWidth="1100.0" spacing="25.0" stylesheets="@../css/dashboardview/dashboardstyle.css" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.rentalcar.controller.dashboard.DashboardController">
+<VBox maxHeight="-Infinity" maxWidth="-Infinity"
+      minHeight="-Infinity" minWidth="-Infinity"
+      prefHeight="1176.0" prefWidth="1100.0"
+      spacing="24.0"
+      stylesheets="@../css/dashboardview/dashboardstyle.css"
+      xmlns="http://javafx.com/javafx/8.0.171"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.example.rentalcar.controller.dashboard.DashboardController">
+
    <padding>
-      <Insets bottom="30.0" left="30.0" right="30.0" top="30.0" />
+      <Insets bottom="30.0" left="30.0" right="30.0" top="28.0"/>
    </padding>
+
    <children>
-      <HBox prefHeight="46.0" prefWidth="735.0">
+
+      <!-- ===== HEADER ===== -->
+      <HBox alignment="CENTER_LEFT" prefHeight="46.0">
          <children>
-            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Tổng quan">
-               <font>
-                  <Font name="System Bold" size="32.0" />
-               </font>
-            </Text>
-            <Region prefHeight="200.0" prefWidth="200.0" HBox.hgrow="ALWAYS" />
-            <Button mnemonicParsing="false" onAction="#showCreateContractModal" prefHeight="34.0" prefWidth="155.0" styleClass="btn-new" text="+ Tạo đơn mới" textFill="WHITE">
-               <font>
-                  <Font name="System Bold" size="18.0" />
-               </font>
+            <VBox spacing="4.0">
+               <children>
+                  <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Tổng quan">
+                     <font><Font name="System Bold" size="30.0"/></font>
+                  </Text>
+                  <Label style="-fx-text-fill: #94a3b8; -fx-font-size: 13px;"
+                         text="Xin chào! Đây là tổng quan hoạt động hôm nay."/>
+               </children>
+            </VBox>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Button mnemonicParsing="false" onAction="#showCreateContractModal"
+                    prefHeight="46.0" prefWidth="195.0"
+                    styleClass="btn-new" text="＋  Tạo đơn mới" textFill="WHITE">
+               <font><Font name="System Bold" size="15.0"/></font>
             </Button>
          </children>
       </HBox>
-      <GridPane hgap="40.0" prefHeight="306.0" prefWidth="1052.0" vgap="20.0">
-         <columnConstraints>
-            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="50.0" prefWidth="100.0" />
-            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="50.0" prefWidth="100.0" />
-         </columnConstraints>
-         <rowConstraints>
-            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-         </rowConstraints>
+
+      <!-- ===== 4 STAT CARDS ===== -->
+      <HBox prefHeight="120.0" spacing="20.0">
          <children>
-            <AnchorPane prefHeight="140.0" prefWidth="200.0" styleClass="card-blue">
+
+            <!-- Card 1: Doanh thu hôm nay -->
+            <AnchorPane prefHeight="120.0" styleClass="card-blue" HBox.hgrow="ALWAYS">
                <children>
-                  <Label styleClass="card-" text="Doanh thu hôm nay">
-                     <padding>
-                        <Insets left="20.0" top="15.0" />
-                     </padding>
-                     <font>
-                        <Font size="14.0" />
-                     </font></Label>
-                  <Label layoutX="20.0" layoutY="43.0" text="2.450.000 đ">
-                     <font>
-                        <Font name="System Bold" size="28.0" />
-                     </font>
+                  <Label styleClass="card-title" text="Doanh thu hôm nay"
+                         AnchorPane.leftAnchor="18.0" AnchorPane.topAnchor="14.0"/>
+                  <Label fx:id="label_today_revenue" styleClass="card-value" text="--"
+                         AnchorPane.leftAnchor="18.0" AnchorPane.topAnchor="40.0">
+                     <font><Font name="System Bold" size="22.0"/></font>
                   </Label>
-                  <Label layoutX="20.0" layoutY="92.0" text="↗  +12% so với hôm qua">
-                     <font>
-                        <Font size="14.0" />
-                     </font>
-                  </Label>
-               </children>
-            </AnchorPane>
-            <AnchorPane layoutX="10.0" layoutY="10.0" prefHeight="140.0" prefWidth="200.0" styleClass="card-blue">
-               <children>
-                  <Label styleClass="card-" text="Doanh thu hôm nay">
-                     <padding>
-                        <Insets left="20.0" top="15.0" />
-                     </padding>
-                     <font>
-                        <Font size="14.0" />
-                     </font>
-                  </Label>
-                  <Label layoutX="20.0" layoutY="43.0" text="2.450.000 đ">
-                     <font>
-                        <Font name="System Bold" size="28.0" />
-                     </font>
-                  </Label>
-                  <Label layoutX="20.0" layoutY="92.0" text="↗  +12% so với hôm qua">
-                     <font>
-                        <Font size="14.0" />
-                     </font>
-                  </Label>
-               </children>
-            </AnchorPane>
-            <AnchorPane layoutX="10.0" layoutY="10.0" prefHeight="140.0" prefWidth="200.0" styleClass="card-blue">
-               <children>
-                  <Label styleClass="card-" text="Doanh thu hôm nay">
-                     <padding>
-                        <Insets left="20.0" top="15.0" />
-                     </padding>
-                     <font>
-                        <Font size="14.0" />
-                     </font>
-                  </Label>
-                  <Label layoutX="20.0" layoutY="43.0" text="2.450.000 đ">
-                     <font>
-                        <Font name="System Bold" size="28.0" />
-                     </font>
-                  </Label>
-                  <Label layoutX="20.0" layoutY="92.0" text="↗  +12% so với hôm qua">
-                     <font>
-                        <Font size="14.0" />
-                     </font>
-                  </Label>
-               </children>
-            </AnchorPane>
-            <AnchorPane layoutX="10.0" layoutY="10.0" prefHeight="140.0" prefWidth="200.0" styleClass="card-blue">
-               <children>
-                  <Label styleClass="card-title" text="Doanh thu hôm nay">
-                     <padding>
-                        <Insets left="20.0" top="10.0" />
-                     </padding>
-                     <font>
-                        <Font size="16.0" />
-                     </font>
-                  </Label>
-                  <Label fx:id="label_today_revenue" layoutX="20.0" layoutY="43.0" styleClass="card-value">
-                     <font>
-                        <Font name="System Bold" size="28.0" />
-                     </font>
-                  </Label>
-                  <Label layoutX="20.0" layoutY="92.0" styleClass="card-sub" text="↗  +12% so với hôm qua">
-                     <font>
-                        <Font size="16.0" />
-                     </font>
-                  </Label>
-                  <Label layoutX="307.0" layoutY="10.0" styleClass="card-icon">
-                     <font>
-                        <Font size="45.0" />
-                     </font>
-                  </Label>
-                  <ImageView fitHeight="50.0" fitWidth="50.0" layoutX="429.0" layoutY="26.0" opacity="0.18" pickOnBounds="true" preserveRatio="true">
-                     <image>
-                        <Image url="@../image/dashboardform/dollar.png" />
-                     </image>
+                  <Label styleClass="card-sub" text="↗  So với hôm qua"
+                         AnchorPane.leftAnchor="18.0" AnchorPane.topAnchor="85.0"/>
+                  <ImageView fitHeight="48.0" fitWidth="48.0" opacity="0.18"
+                             pickOnBounds="true" preserveRatio="true"
+                             AnchorPane.rightAnchor="16.0" AnchorPane.topAnchor="22.0">
+                     <image><Image url="@../image/dashboardform/dollar.png"/></image>
                   </ImageView>
                </children>
             </AnchorPane>
-            <AnchorPane layoutX="10.0" layoutY="10.0" prefHeight="140.0" prefWidth="200.0" styleClass="card-green" GridPane.columnIndex="1">
+
+            <!-- Card 2: Doanh thu tháng -->
+            <AnchorPane prefHeight="120.0" styleClass="card-green" HBox.hgrow="ALWAYS">
                <children>
-                  <Label styleClass="card-title" text="Doanh thu tháng này">
-                     <padding>
-                        <Insets left="20.0" top="10.0" />
-                     </padding>
-                     <font>
-                        <Font size="16.0" />
-                     </font>
+                  <Label styleClass="card-title" text="Doanh thu tháng này"
+                         AnchorPane.leftAnchor="18.0" AnchorPane.topAnchor="14.0"/>
+                  <Label fx:id="label_monthly_revenue" styleClass="card-value" text="--"
+                         AnchorPane.leftAnchor="18.0" AnchorPane.topAnchor="40.0">
+                     <font><Font name="System Bold" size="22.0"/></font>
                   </Label>
-                  <Label fx:id="label_monthly_revenue" layoutX="20.0" layoutY="40.0" styleClass="card-value" text="15.500.000 đ">
-                     <font>
-                        <Font name="System Bold" size="28.0" />
-                     </font>
-                  </Label>
-                  <Label layoutX="20.0" layoutY="92.0" styleClass="card-sub" text="📈 +15% so với tháng trước">
-                     <font>
-                        <Font size="16.0" />
-                     </font>
-                  </Label>
-                  <Label layoutX="307.0" layoutY="10.0" styleClass="card-icon">
-                     <font>
-                        <Font size="45.0" />
-                     </font>
-                  </Label>
-                  <ImageView fitHeight="50.0" fitWidth="50.0" layoutX="421.0" layoutY="26.0" opacity="0.18" pickOnBounds="true" preserveRatio="true">
-                     <image>
-                        <Image url="@../image/dashboardform/growth.png" />
-                     </image>
+                  <Label styleClass="card-sub" text="📈  Tháng hiện tại"
+                         AnchorPane.leftAnchor="18.0" AnchorPane.topAnchor="85.0"/>
+                  <ImageView fitHeight="48.0" fitWidth="48.0" opacity="0.18"
+                             pickOnBounds="true" preserveRatio="true"
+                             AnchorPane.rightAnchor="16.0" AnchorPane.topAnchor="22.0">
+                     <image><Image url="@../image/dashboardform/growth.png"/></image>
                   </ImageView>
                </children>
             </AnchorPane>
-            <AnchorPane layoutX="10.0" layoutY="10.0" prefHeight="140.0" prefWidth="200.0" styleClass="card-purple" GridPane.rowIndex="1">
+
+            <!-- Card 3: Đơn đang hoạt động -->
+            <AnchorPane prefHeight="120.0" styleClass="card-purple" HBox.hgrow="ALWAYS">
                <children>
-                  <Label styleClass="card-title" text="Đơn đang hoạt động">
-                     <padding>
-                        <Insets left="20.0" top="10.0" />
-                     </padding>
-                     <font>
-                        <Font size="16.0" />
-                     </font>
+                  <Label styleClass="card-title" text="Đơn đang hoạt động"
+                         AnchorPane.leftAnchor="18.0" AnchorPane.topAnchor="14.0"/>
+                  <Label fx:id="label_active_contracts" styleClass="card-value" text="--"
+                         AnchorPane.leftAnchor="18.0" AnchorPane.topAnchor="38.0">
+                     <font><Font name="System Bold" size="30.0"/></font>
                   </Label>
-                  <Label fx:id="label_active_contracts" layoutX="20.0" layoutY="40.0" styleClass="card-value" text="12">
-                     <font>
-                        <Font name="System Bold" size="28.0" />
-                     </font>
-                  </Label>
-                  <Label layoutX="20.0" layoutY="90.0" styleClass="card-sub" text="🕒 3 đơn đang quá hạn trả">
-                     <font>
-                        <Font size="16.0" />
-                     </font>
-                  </Label>
-                  <Label layoutX="307.0" layoutY="10.0" styleClass="card-icon">
-                     <font>
-                        <Font size="45.0" />
-                     </font>
-                  </Label>
-                  <ImageView fitHeight="50.0" fitWidth="50.0" layoutX="430.0" layoutY="26.0" opacity="0.18" pickOnBounds="true" preserveRatio="true">
-                     <image>
-                        <Image url="@../image/dashboardform/invoice.png" />
-                     </image>
+                  <Label styleClass="card-sub" text="🕒  Đơn đang thuê xe"
+                         AnchorPane.leftAnchor="18.0" AnchorPane.topAnchor="85.0"/>
+                  <ImageView fitHeight="48.0" fitWidth="48.0" opacity="0.18"
+                             pickOnBounds="true" preserveRatio="true"
+                             AnchorPane.rightAnchor="16.0" AnchorPane.topAnchor="22.0">
+                     <image><Image url="@../image/dashboardform/invoice.png"/></image>
                   </ImageView>
                </children>
             </AnchorPane>
-            <AnchorPane layoutX="10.0" layoutY="10.0" prefHeight="140.0" prefWidth="200.0" styleClass="card-orange" GridPane.columnIndex="1" GridPane.rowIndex="1">
+
+            <!-- Card 4: Xe đang cho thuê -->
+            <AnchorPane prefHeight="120.0" styleClass="card-orange" HBox.hgrow="ALWAYS">
                <children>
-                  <Label styleClass="card-title" text="Xe đang cho thuê">
-                     <padding>
-                        <Insets left="20.0" top="10.0" />
-                     </padding>
-                     <font>
-                        <Font size="16.0" />
-                     </font>
+                  <Label styleClass="card-title" text="Xe đang cho thuê"
+                         AnchorPane.leftAnchor="18.0" AnchorPane.topAnchor="14.0"/>
+                  <Label fx:id="label_status" styleClass="card-value" text="--"
+                         AnchorPane.leftAnchor="18.0" AnchorPane.topAnchor="38.0">
+                     <font><Font name="System Bold" size="30.0"/></font>
                   </Label>
-                  <Label fx:id="label_status" layoutX="20.0" layoutY="40.0" styleClass="card-value">
-                     <font>
-                        <Font name="System Bold" size="28.0" />
-                     </font>
-                  </Label>
-                  <Label fx:id="label_status_available" layoutX="20.0" layoutY="92.0" styleClass="card-sub">
-                     <font>
-                        <Font size="16.0" />
-                     </font>
-                  </Label>
-                  <Label layoutX="296.0" layoutY="18.0" styleClass="card-icon">
-                     <font>
-                        <Font size="45.0" />
-                     </font>
-                  </Label>
-                  <ImageView fitHeight="57.0" fitWidth="70.0" layoutX="414.0" layoutY="23.0" opacity="0.18" pickOnBounds="true" preserveRatio="true">
-                     <image>
-                        <Image url="@../image/dashboardform/card-moto.png" />
-                     </image>
+                  <Label fx:id="label_status_available" styleClass="card-sub" text="--"
+                         AnchorPane.leftAnchor="18.0" AnchorPane.topAnchor="85.0"/>
+                  <ImageView fitHeight="56.0" fitWidth="70.0" opacity="0.18"
+                             pickOnBounds="true" preserveRatio="true"
+                             AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="20.0">
+                     <image><Image url="@../image/dashboardform/card-moto.png"/></image>
                   </ImageView>
                </children>
             </AnchorPane>
+
          </children>
-      </GridPane>
-      <VBox prefHeight="286.0" prefWidth="1040.0" spacing="20.0">
+      </HBox>
+
+      <!-- ===== 3 ALERT BANNERS ===== -->
+      <VBox spacing="12.0">
          <children>
-            <HBox alignment="CENTER_LEFT" prefHeight="80.0" prefWidth="200.0" styleClass="alert-red">
+
+            <!-- Alert đỏ: Đơn quá hạn -->
+            <HBox alignment="CENTER_LEFT" prefHeight="68.0" styleClass="alert-red">
+               <padding><Insets left="20.0" right="20.0"/></padding>
                <children>
-                  <Label>
-                     <HBox.margin>
-                        <Insets bottom="40.0" left="20.0" />
-                     </HBox.margin>
-                     <graphic>
-                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                           <image>
-                              <Image url="@../image/dashboardform/exclamation.png" />
-                           </image>
-                        </ImageView>
-                     </graphic>
-                  </Label>
-                  <VBox prefHeight="59.0" prefWidth="1000.0">
+                  <ImageView fitHeight="22.0" fitWidth="22.0" pickOnBounds="true" preserveRatio="true">
+                     <image><Image url="@../image/dashboardform/exclamation.png"/></image>
+                  </ImageView>
+                  <VBox spacing="3.0">
+                     <HBox.margin><Insets left="14.0"/></HBox.margin>
                      <children>
-                        <Text fill="#510404" strokeType="OUTSIDE" strokeWidth="0.0" text="Đơn quá hạn">
-                           <VBox.margin>
-                              <Insets left="14.0" top="8.0" />
-                           </VBox.margin>
-                           <font>
-                              <Font size="18.0" />
-                           </font>
-                        </Text>
-                        <Text fill="#e16969" strokeType="OUTSIDE" strokeWidth="0.0" text="3 đơn chưa trả xe đúng hạn">
-                           <VBox.margin>
-                              <Insets left="14.0" top="14.0" />
-                           </VBox.margin>
-                           <font>
-                              <Font size="16.0" />
-                           </font>
-                        </Text>
+                        <Label styleClass="alert-title-red" text="Đơn quá hạn"/>
+                        <Label fx:id="label_overdue_count" styleClass="alert-sub-red"
+                               text="3 đơn chưa trả xe đúng hạn"/>
                      </children>
                   </VBox>
                </children>
             </HBox>
-            <HBox alignment="CENTER_LEFT" layoutX="10.0" layoutY="10.0" prefHeight="80.0" prefWidth="200.0" styleClass="alert-yellow">
+
+            <!-- Alert vàng: Xe bảo dưỡng -->
+            <HBox alignment="CENTER_LEFT" prefHeight="68.0" styleClass="alert-yellow">
+               <padding><Insets left="20.0" right="20.0"/></padding>
                <children>
-                  <Label>
-                     <HBox.margin>
-                        <Insets bottom="40.0" left="20.0" />
-                     </HBox.margin>
-                     <graphic>
-                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                           <image>
-                              <Image url="@../image/mainform/btn-bell.png" />
-                           </image>
-                        </ImageView>
-                     </graphic>
-                  </Label>
-                  <VBox prefHeight="59.0" prefWidth="1000.0">
+                  <ImageView fitHeight="22.0" fitWidth="22.0" pickOnBounds="true" preserveRatio="true">
+                     <image><Image url="@../image/mainform/btn-bell.png"/></image>
+                  </ImageView>
+                  <VBox spacing="3.0">
+                     <HBox.margin><Insets left="14.0"/></HBox.margin>
                      <children>
-                        <Text fill="#510404" strokeType="OUTSIDE" strokeWidth="0.0" text="Xe cần bảo dưỡng">
-                           <VBox.margin>
-                              <Insets left="14.0" top="8.0" />
-                           </VBox.margin>
-                           <font>
-                              <Font size="18.0" />
-                           </font>
-                        </Text>
-                        <Text fill="#d09029" strokeType="OUTSIDE" strokeWidth="0.0" text="2 xe đạt km bảo dưỡng">
-                           <VBox.margin>
-                              <Insets left="14.0" top="14.0" />
-                           </VBox.margin>
-                           <font>
-                              <Font size="16.0" />
-                           </font>
-                        </Text>
+                        <Label styleClass="alert-title-yellow" text="Xe cần bảo dưỡng"/>
+                        <Label fx:id="label_maintenance_count" styleClass="alert-sub-yellow"
+                               text="2 xe đã đạt km bảo dưỡng"/>
                      </children>
                   </VBox>
                </children>
             </HBox>
-            <HBox alignment="CENTER_LEFT" layoutX="10.0" layoutY="10.0" prefHeight="80.0" prefWidth="200.0" styleClass="alert-blue">
+
+            <!-- Alert xanh: Voucher sắp hết -->
+            <HBox alignment="CENTER_LEFT" prefHeight="68.0" styleClass="alert-blue">
+               <padding><Insets left="20.0" right="20.0"/></padding>
                <children>
-                  <Label>
-                     <HBox.margin>
-                        <Insets bottom="40.0" left="20.0" />
-                     </HBox.margin>
-                     <graphic>
-                        <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                           <image>
-                              <Image url="@../image/dashboardform/marketing.png" />
-                           </image>
-                        </ImageView>
-                     </graphic>
-                  </Label>
-                  <VBox prefHeight="59.0" prefWidth="1000.0">
+                  <ImageView fitHeight="22.0" fitWidth="22.0" pickOnBounds="true" preserveRatio="true">
+                     <image><Image url="@../image/dashboardform/marketing.png"/></image>
+                  </ImageView>
+                  <VBox spacing="3.0">
+                     <HBox.margin><Insets left="14.0"/></HBox.margin>
                      <children>
-                        <Text fill="#510404" strokeType="OUTSIDE" strokeWidth="0.0" text="Voucher sắp hết">
-                           <VBox.margin>
-                              <Insets left="14.0" top="8.0" />
-                           </VBox.margin>
-                           <font>
-                              <Font size="18.0" />
-                           </font>
-                        </Text>
-                        <Text fill="#3b82f6" strokeType="OUTSIDE" strokeWidth="0.0" text="WELCOME2024 còn 5 lượt">
-                           <VBox.margin>
-                              <Insets left="14.0" top="14.0" />
-                           </VBox.margin>
-                           <font>
-                              <Font size="16.0" />
-                           </font>
-                        </Text>
+                        <Label styleClass="alert-title-blue" text="Voucher sắp hết lượt"/>
+                        <Label fx:id="label_voucher_warning" styleClass="alert-sub-blue"
+                               text="WELCOME2024 còn 5 lượt"/>
                      </children>
                   </VBox>
                </children>
             </HBox>
+
          </children>
       </VBox>
-      <VBox prefHeight="369.0" prefWidth="1040.0" spacing="15.0" styleClass="table_container" stylesheets="@../css/dashboardview/dashboardstyle.css">
+
+      <!-- ===== BẢNG ĐƠN GẦN ĐÂY ===== -->
+      <VBox spacing="0.0" styleClass="table_container" VBox.vgrow="ALWAYS">
          <padding>
-            <Insets bottom="20.0" />
+            <Insets bottom="16.0" left="20.0" right="20.0" top="16.0"/>
          </padding>
          <children>
-            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Đơn thuê gần đây">
-               <font>
-                  <Font name="Arial" size="24.0" />
-               </font>
-               <VBox.margin>
-                  <Insets left="20.0" top="20.0" />
-               </VBox.margin>
-            </Text>
-            <TableView fx:id="tableContracts" prefHeight="318.0" prefWidth="1040.0">
+
+            <!-- Table header -->
+            <HBox alignment="CENTER_LEFT" style="-fx-padding: 0 0 12 0;">
+               <children>
+                  <Label style="-fx-font-weight: bold; -fx-font-size: 18px; -fx-text-fill: #1e293b;"
+                         text="Đơn thuê gần đây"/>
+                  <Region HBox.hgrow="ALWAYS"/>
+                  <Label fx:id="label_recent_count"
+                         style="-fx-text-fill: #94a3b8; -fx-font-size: 13px;
+                                      -fx-background-color: #f1f5f9; -fx-padding: 4 12;
+                                      -fx-background-radius: 12;"
+                         text="5 đơn gần nhất"/>
+               </children>
+            </HBox>
+
+            <!-- TableView -->
+            <TableView fx:id="tableContracts" prefHeight="380.0" VBox.vgrow="ALWAYS">
+               <columnResizePolicy>
+                  <TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/>
+               </columnResizePolicy>
                <columns>
-                  <TableColumn fx:id="colCode" prefWidth="141.0" text="Mã HĐ" />
-                  <TableColumn fx:id="colCustomer" prefWidth="217.0" text="KHÁCH HÀNG" />
-                  <TableColumn fx:id="colVehicle" prefWidth="203.0" text="BIỂN SỐ XE" />
-                  <TableColumn fx:id="colStatus" prefWidth="162.0" text="TRẠNG THÁI" />
-                  <TableColumn fx:id="colTotal" prefWidth="178.0" text="TỔNG TIỀN" />
-                  <TableColumn fx:id="colAction" prefWidth="138.0" text="THAO TÁC" />
+                  <TableColumn fx:id="colCode"     prefWidth="140.0" text="MÃ HĐ"/>
+                  <TableColumn fx:id="colCustomer" prefWidth="220.0" text="KHÁCH HÀNG"/>
+                  <TableColumn fx:id="colVehicle"  prefWidth="180.0" text="BIỂN SỐ XE"/>
+                  <TableColumn fx:id="colStatus"   prefWidth="160.0" text="TRẠNG THÁI"/>
+                  <TableColumn fx:id="colTotal"    prefWidth="170.0" text="TỔNG TIỀN"/>
+                  <TableColumn fx:id="colAction"   prefWidth="130.0" text="THAO TÁC"/>
                </columns>
             </TableView>
+
          </children>
       </VBox>
+
    </children>
 </VBox>

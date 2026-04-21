@@ -12,27 +12,72 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox spacing="20.0" stylesheets="@../../css/contractview/create_contract/style.css" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.rentalcar.controller.contract.booking.Step1Controller">
+<!--
+    Step1_Content.fxml – Bước 1: Thông tin khách hàng
+    Đường dẫn: src/main/resources/views/create_contract/Step1_Content.fxml
+    Controller: com.example.rentalcar.controller.contract.booking.Step1Controller
+-->
+<VBox spacing="16.0"
+      stylesheets="@../../css/contractview/create_contract/style.css"
+      xmlns="http://javafx.com/javafx/8.0.171"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.example.rentalcar.controller.contract.booking.Step1Controller">
+
+    <padding><Insets top="10.0" /></padding>
     <children>
+
+        <!-- Tiêu đề bước -->
         <Label text="Bước 1: Thông tin khách hàng" textFill="#334155">
-            <font>
-                <Font name="System Bold" size="20.0" />
-            </font>
+            <font><Font name="System Bold" size="20.0" /></font>
         </Label>
 
-        <VBox spacing="8.0">
+        <!-- Tra cứu CCCD -->
+        <VBox spacing="6.0">
             <children>
-                <Label text="Tra cứu nhanh số CCCD" textFill="#64748b" />
+                <Label text="Tra cứu nhanh theo số CCCD" textFill="#64748b" />
                 <HBox spacing="10.0">
                     <children>
-                        <TextField fx:id="txtSearchCCCD" prefHeight="45.0" promptText="🔍 Nhập số CCCD để tìm kiếm..." style="-fx-background-radius: 8;" HBox.hgrow="ALWAYS" />
-                        <Button mnemonicParsing="false" prefHeight="45.0" prefWidth="100.0" style="-fx-background-color: #f1f5f9; -fx-border-color: #cbd5e1; -fx-border-radius: 8;" text="Tìm kiếm" />
+                        <TextField fx:id="txtSearchCCCD"
+                                   prefHeight="44.0"
+                                   promptText="🔍  Nhập số CCCD..."
+                                   style="-fx-background-radius: 8; -fx-border-color: #cbd5e1; -fx-border-radius: 8; -fx-padding: 0 12;"
+                                   HBox.hgrow="ALWAYS" />
+                        <Button mnemonicParsing="false"
+                                onAction="#handleSearchCCCD"
+                                prefHeight="44.0" prefWidth="120.0"
+                                style="-fx-background-color: #146dff; -fx-text-fill: white; -fx-background-radius: 8; -fx-font-weight: bold; -fx-cursor: hand;"
+                                text="Tìm kiếm" />
                     </children>
                 </HBox>
             </children>
         </VBox>
 
-        <GridPane hgap="20.0" vgap="15.0">
+        <!-- ⛔ BLACKLIST WARNING – ẩn mặc định, hiện khi phát hiện blacklist -->
+        <HBox fx:id="boxBlacklistWarning"
+              alignment="CENTER_LEFT"
+              spacing="12.0"
+              managed="false"
+              visible="false"
+              style="-fx-background-color: #fff1f2; -fx-background-radius: 10;
+                     -fx-border-color: #ef4444; -fx-border-radius: 10; -fx-border-width: 0 0 0 4;
+                     -fx-padding: 14 18;">
+            <children>
+                <Label text="⛔" style="-fx-font-size: 22px;" />
+                <VBox spacing="3.0">
+                    <children>
+                        <Label text="KHÁCH HÀNG BỊ CẤM THUÊ XE"
+                               style="-fx-font-weight: bold; -fx-text-fill: #b91c1c; -fx-font-size: 14px;" />
+                        <Label fx:id="lblBlacklistReason"
+                               text="Lý do: Chưa có thông tin"
+                               style="-fx-text-fill: #ef4444; -fx-font-size: 13px;"
+                               wrapText="true" />
+                    </children>
+                </VBox>
+            </children>
+        </HBox>
+
+        <!-- Form thông tin khách -->
+        <GridPane hgap="20.0" vgap="14.0">
             <columnConstraints>
                 <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
                 <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
@@ -42,51 +87,72 @@
                 <RowConstraints minHeight="10.0" prefHeight="65.0" vgrow="SOMETIMES" />
             </rowConstraints>
             <children>
-                <VBox spacing="5.0">
+
+                <VBox spacing="5.0" GridPane.columnIndex="0" GridPane.rowIndex="0">
                     <children>
-                        <Label text="Họ tên khách hàng *" textFill="#64748b" />
-                        <TextField fx:id="txtName" prefHeight="40.0" promptText="Nguyễn Văn A" style="-fx-background-radius: 5;" />
+                        <Label text="Họ tên khách hàng *" textFill="#64748b">
+                            <font><Font name="System Bold" size="12.0" /></font>
+                        </Label>
+                        <TextField fx:id="txtName" prefHeight="42.0"
+                                   promptText="Nguyễn Văn A"
+                                   style="-fx-background-radius: 8; -fx-border-color: #cbd5e1; -fx-border-radius: 8; -fx-padding: 0 12;" />
                     </children>
                 </VBox>
-                <VBox spacing="5.0" GridPane.columnIndex="1">
+
+                <VBox spacing="5.0" GridPane.columnIndex="1" GridPane.rowIndex="0">
                     <children>
-                        <Label text="Số điện thoại *" textFill="#64748b" />
-                        <TextField fx:id="txtPhone" prefHeight="40.0" promptText="0905xxxxxx" style="-fx-background-radius: 5;" />
+                        <Label text="Số điện thoại *" textFill="#64748b">
+                            <font><Font name="System Bold" size="12.0" /></font>
+                        </Label>
+                        <TextField fx:id="txtPhone" prefHeight="42.0"
+                                   promptText="0905xxxxxx"
+                                   style="-fx-background-radius: 8; -fx-border-color: #cbd5e1; -fx-border-radius: 8; -fx-padding: 0 12;" />
                     </children>
                 </VBox>
+
                 <VBox spacing="5.0" GridPane.columnSpan="2" GridPane.rowIndex="1">
                     <children>
-                        <Label text="Địa chỉ hiện tại" textFill="#64748b" />
-                        <TextField fx:id="txtAddress" prefHeight="40.0" promptText="Số nhà, tên đường..." style="-fx-background-radius: 5;" />
+                        <Label text="Địa chỉ hiện tại" textFill="#64748b">
+                            <font><Font name="System Bold" size="12.0" /></font>
+                        </Label>
+                        <TextField fx:id="txtAddress" prefHeight="42.0"
+                                   promptText="Số nhà, tên đường, phường/xã..."
+                                   style="-fx-background-radius: 8; -fx-border-color: #cbd5e1; -fx-border-radius: 8; -fx-padding: 0 12;" />
                     </children>
                 </VBox>
+
             </children>
         </GridPane>
 
-        <HBox spacing="25.0" VBox.vgrow="ALWAYS">
+        <!-- Upload CCCD -->
+        <HBox spacing="20.0" VBox.vgrow="ALWAYS">
             <children>
                 <VBox alignment="CENTER" spacing="10.0" styleClass="image-upload-box" HBox.hgrow="ALWAYS">
                     <children>
-                        <Label text="📷 Mặt trước CCCD" textFill="#64748b">
+                        <Label text="📷  Mặt trước CCCD" textFill="#64748b">
                             <font><Font name="System Bold" size="13.0" /></font>
                         </Label>
-                        <ImageView fx:id="imgFront" fitHeight="150.0" fitWidth="250.0" pickOnBounds="true" preserveRatio="true" />
-                        <Button mnemonicParsing="false" style="-fx-padding: 5 15; -fx-font-size: 12px;" styleClass="btn-secondary" text="Tải ảnh lên" />
+                        <ImageView fx:id="imgFront" fitHeight="130.0" fitWidth="220.0"
+                                   pickOnBounds="true" preserveRatio="true" />
+                        <Button mnemonicParsing="false"
+                                style="-fx-padding: 5 15; -fx-font-size: 12px;" styleClass="btn-secondary"
+                                text="Tải ảnh lên" />
                     </children>
                 </VBox>
                 <VBox alignment="CENTER" spacing="10.0" styleClass="image-upload-box" HBox.hgrow="ALWAYS">
                     <children>
-                        <Label text="📷 Mặt sau CCCD" textFill="#64748b">
+                        <Label text="📷  Mặt sau CCCD" textFill="#64748b">
                             <font><Font name="System Bold" size="13.0" /></font>
                         </Label>
-                        <ImageView fx:id="imgBack" fitHeight="150.0" fitWidth="250.0" pickOnBounds="true" preserveRatio="true" />
-                        <Button mnemonicParsing="false" style="-fx-padding: 5 15; -fx-font-size: 12px;" styleClass="btn-secondary" text="Tải ảnh lên" />
+                        <ImageView fx:id="imgBack" fitHeight="130.0" fitWidth="220.0"
+                                   pickOnBounds="true" preserveRatio="true" />
+                        <Button mnemonicParsing="false"
+                                style="-fx-padding: 5 15; -fx-font-size: 12px;" styleClass="btn-secondary"
+                                text="Tải ảnh lên" />
                     </children>
                 </VBox>
             </children>
         </HBox>
+
     </children>
-    <padding>
-        <Insets top="10.0" />
-    </padding>
 </VBox>

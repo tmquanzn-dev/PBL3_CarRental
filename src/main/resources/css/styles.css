@@ -1,32 +1,30 @@
+/* styles.css - Fix: gradient KHÔNG được dùng ở -fx-text-fill */
 .root {
     -fx-font-family: "Segoe UI";
 }
 
 .logomenu {
-    -fx-background-radius: 20
+    -fx-background-radius: 20;
 }
 
+/* Dùng solid color thay vì gradient ở text */
 .avataUser {
     -fx-background-radius: 50%;
     -fx-background-color: linear-gradient(from 0% 0% to 100% 100%, #fada61 0%, #ff9188 50%, #ff5acd 100%);
-
 }
 
 .btn_menu {
-       -fx-background-color: transparent;
-       -fx-cursor: hand;
-       -fx-background-radius: 10;
-       -fx-font-weight: bold;
-       -fx-font-size: 18px;
-       -fx-text-fill: #333;
-       -fx-transition: all 0.3s ease;
-       -fx-transition: 0.3s;
+    -fx-background-color: transparent;
+    -fx-cursor: hand;
+    -fx-background-radius: 10;
+    -fx-font-weight: bold;
+    -fx-font-size: 18px;
+    -fx-text-fill: #333;
 }
 
 .btn_menu:hover {
-    -fx-background-color:  #f0f5ff;
+    -fx-background-color: #f0f5ff;
     -fx-effect: dropshadow(three-pass-box, rgba(71, 141, 255, 0.4), 15, 0.1, 0, 4);
-    -fx-translate-y: -2px;
 }
 
 .active_menu {
@@ -37,5 +35,3 @@
     -fx-border-width: 0 0 0 3;
     -fx-background-radius: 0 10 10 0;
 }
-
-

@@ -1,90 +1,91 @@
+/* ======================================================
+   DASHBOARD STYLE
+   Đồng bộ với contractstyle.css & customerstyle.css
+   Palette: Blue #146dff / Slate #1e293b / Gray #f8fafc
+====================================================== */
+
 .root {
     -fx-background-color: #f4f7f6;
     -fx-font-family: "Segoe UI", Arial, sans-serif;
 }
-.card-blue {
-    -fx-background-radius: 10;
-    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 15, 0, 0, 10);
+
+/* ======================================================
+   STAT CARDS
+====================================================== */
+.card-blue, .card-green, .card-purple, .card-orange {
+    -fx-background-radius: 12;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.10), 15, 0, 0, 8);
+}
+
+.card-blue   { -fx-background-color: linear-gradient(to bottom right, #478dff, #146dff); }
+.card-green  { -fx-background-color: linear-gradient(to bottom right, #34d399, #10b981); }
+.card-purple { -fx-background-color: linear-gradient(to bottom right, #a855f7, #7c3aed); }
+.card-orange { -fx-background-color: linear-gradient(to bottom right, #fb923c, #f97316); }
+
+.card-title  { -fx-text-fill: white; -fx-font-size: 14px; -fx-opacity: 0.92; }
+.card-value  { -fx-text-fill: white; -fx-font-size: 30px; -fx-font-weight: bold; }
+.card-sub    { -fx-text-fill: white; -fx-font-size: 12px; -fx-opacity: 0.85; }
+.card-icon   { -fx-text-fill: white; -fx-font-size: 36px; -fx-opacity: 0.18; }
+
+/* ======================================================
+   NÚT TẠO ĐƠN
+====================================================== */
+.btn-new {
     -fx-background-color: linear-gradient(to bottom right, #478dff, #146dff);
-}
-
-.card-green {
     -fx-background-radius: 10;
-    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 15, 0, 0, 10);
-    -fx-background-color: linear-gradient(to bottom right, #34d399, #10b981);
-}
-
-.card-purple {
-    -fx-background-radius: 10;
-    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 15, 0, 0, 10);
-    -fx-background-color: linear-gradient(to bottom right, #a855f7, #7c3aed);
-}
-
-.card-orange {
-    -fx-background-radius: 10;
-    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 15, 0, 0, 10);
-    -fx-background-color: linear-gradient(to bottom right, #fb923c, #f97316);
-}
-
-.card-title {
     -fx-text-fill: white;
-    -fx-font-size: 16px;
-    -fx-opacity: 0.9;
-}
-
-.card-value {
-    -fx-text-fill: white;
-    -fx-font-size: 32px;
     -fx-font-weight: bold;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(three-pass-box, rgba(71,141,255,0.4), 12, 0, 0, 4);
 }
+.btn-new:hover { -fx-background-color: #0052cc; }
 
-.card-sub {
-    -fx-text-fill: white;
-    -fx-font-size: 14px;
-    -fx-opacity: 0.8;
-}
-
-.card-icon {
-    -fx-text-fill: white;
-    -fx-font-size: 45px;
-    -fx-opacity: 0.25;
-}
-
+/* ======================================================
+   ALERT BANNERS
+====================================================== */
 .alert-red {
-    -fx-background-radius: 10;
-    -fx-border-width: 0 0 0 3;
-    -fx-border-radius: 10;
     -fx-background-color: #fff1f2;
+    -fx-background-radius: 10;
     -fx-border-color: #ef4444;
+    -fx-border-width: 0 0 0 4;
+    -fx-border-radius: 0 10 10 0;
 }
 
 .alert-yellow {
-    -fx-background-radius: 10;
-    -fx-border-width: 0 0 0 3;
-    -fx-border-radius: 10;
     -fx-background-color: #fffbeb;
+    -fx-background-radius: 10;
     -fx-border-color: #f59e0b;
+    -fx-border-width: 0 0 0 4;
+    -fx-border-radius: 0 10 10 0;
 }
 
 .alert-blue {
-    -fx-background-radius: 10;
-    -fx-border-width: 0 0 0 3;
-    -fx-border-radius: 10;
     -fx-background-color: #eff6ff;
+    -fx-background-radius: 10;
     -fx-border-color: #3b82f6;
+    -fx-border-width: 0 0 0 4;
+    -fx-border-radius: 0 10 10 0;
 }
 
+.alert-title-red    { -fx-text-fill: #b91c1c; -fx-font-weight: bold; -fx-font-size: 14px; }
+.alert-title-yellow { -fx-text-fill: #92400e; -fx-font-weight: bold; -fx-font-size: 14px; }
+.alert-title-blue   { -fx-text-fill: #1e40af; -fx-font-weight: bold; -fx-font-size: 14px; }
+.alert-sub-red      { -fx-text-fill: #ef4444; -fx-font-size: 13px; }
+.alert-sub-yellow   { -fx-text-fill: #d97706; -fx-font-size: 13px; }
+.alert-sub-blue     { -fx-text-fill: #3b82f6; -fx-font-size: 13px; }
+
+/* ======================================================
+   TABLE CONTAINER
+====================================================== */
 .table_container {
     -fx-background-color: white;
-    -fx-background-radius: 15px;
+    -fx-background-radius: 15;
     -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.05), 10, 0, 0, 5);
 }
-.table_container .text {
-    -fx-font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
-    -fx-font-weight: bold;
-    -fx-font-size: 15px;
-    -fx-fill: #333333;
-}
+
+/* ======================================================
+   TABLE VIEW
+====================================================== */
 .table-view {
     -fx-background-color: transparent;
     -fx-border-color: transparent;
@@ -92,8 +93,8 @@
 
 .table-view .column-header-background {
     -fx-background-color: transparent;
-    -fx-border-width: 0 0 1 0;
-    -fx-border-color: #E0E0E0;
+    -fx-border-width: 0 0 2 0;
+    -fx-border-color: #f1f5f9;
 }
 
 .table-view .column-header {
@@ -102,134 +103,56 @@
 }
 
 .table-view .column-header .label {
-    -fx-text-fill: #888888;
+    -fx-text-fill: #94a3b8;
     -fx-font-weight: bold;
-    -fx-font-size: 13px;
+    -fx-font-size: 12px;
     -fx-alignment: CENTER_LEFT;
-    -fx-padding: 0 0 0 10px;
+    -fx-padding: 0 0 0 12px;
 }
+
+.table-view .table-row-cell {
+    -fx-cell-size: 60px;
+    -fx-background-color: transparent;
+    -fx-border-width: 0 0 1 0;
+    -fx-border-color: #f8fafc;
+}
+
+.table-view .table-row-cell:hover    { -fx-background-color: #f8faff; }
+.table-view .table-row-cell:selected { -fx-background-color: #eff6ff; }
 
 .table-view .table-cell {
     -fx-border-color: transparent;
     -fx-alignment: CENTER_LEFT;
-    -fx-padding: 0 0 0 10px;
+    -fx-padding: 0 0 0 12px;
     -fx-font-size: 14px;
+    -fx-text-fill: #1e293b;
 }
 
-.table-row-cell {
-    -fx-cell-size: 55px;
-    -fx-background-color: transparent;
-    -fx-border-width: 0 0 1 0;
-    -fx-border-color: #F0F0F0;
-}
-
-.table-row-cell:hover {
-    -fx-background-color: #F9F9F9;
-}
-.btn-new {
-   -fx-background-radius: 10;
-   -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 15, 0, 0, 10);
-   -fx-background-color: linear-gradient(to bottom right, #478dff, #146dff);
-   -fx-cursor: hand;
-}
-
-.btn-new: hover {
-    -fx-background-color: #0052cc
-}
-
-.table-view {
-    -fx-background-color: transparent;
-    -fx-border-color: transparent;
-}
-
-.table-view .column-header-background {
-    -fx-background-color: transparent;
-    -fx-border-width: 0 0 1 0;
-    -fx-border-color: #E0E0E0;
-}
-.table-view .column-header {
-    -fx-background-color: transparent;
-    -fx-border-color: transparent;
-}
-.table-view .column-header .label {
-    -fx-text-fill: #888888;
-    -fx-font-weight: bold;
-    -fx-font-size: 13px;
-}
-
-
-.table-view .table-cell {
-    -fx-border-color: transparent;
-    -fx-alignment: CENTER_LEFT;
-    -fx-padding: 0 0 0 10px;
-    -fx-font-size: 14px;
-}
-
-
-.table-row-cell {
-    -fx-cell-size: 55px;
-    -fx-background-color: transparent;
-    -fx-border-width: 0 0 1 0;
-    -fx-border-color: #F0F0F0;
-}
-.table-row-cell:hover {
-    -fx-background-color: #F9F9F9;
-}
-
-
+/* ======================================================
+   STATUS PILLS
+====================================================== */
 .status-pill {
-    -fx-padding: 5px 12px;
-    -fx-background-radius: 15px;
-    -fx-font-size: 13px;
+    -fx-padding: 5 14;
+    -fx-background-radius: 20;
+    -fx-font-size: 12px;
     -fx-font-weight: bold;
-    -fx-alignment: center;
 }
 
-.status-blue {
-    -fx-background-color: #E8F0FE;
-    -fx-text-fill: #1A73E8;
-}
-.status-yellow {
-    -fx-background-color: #FEF7E0;
-    -fx-text-fill: #F29900;
-}
-.status-green {
-    -fx-background-color: #E6F4EA;
-    -fx-text-fill: #1E8E3E;
-}
-.status-gray {
-    -fx-background-color: #F1F3F4;
-    -fx-text-fill: #5F6368;
-}
+.status-blue   { -fx-background-color: #dbeafe; -fx-text-fill: #1d4ed8; }
+.status-yellow { -fx-background-color: #fef3c7; -fx-text-fill: #b45309; }
+.status-green  { -fx-background-color: #dcfce7; -fx-text-fill: #15803d; }
+.status-gray   { -fx-background-color: #f1f5f9; -fx-text-fill: #64748b; }
+.status-red    { -fx-background-color: #fee2e2; -fx-text-fill: #b91c1c; }
 
-
-.btn-action {
-    -fx-background-color: transparent;
-    -fx-cursor: hand;
-    -fx-font-size: 18px;
-}
-.btn-view {
-    -fx-text-fill: #1A73E8;
-}
-.btn-print {
-    -fx-text-fill: #1E8E3E;
-}
-
+/* ======================================================
+   ACTION BUTTONS
+====================================================== */
 .btn-action {
     -fx-background-color: transparent;
     -fx-border-color: transparent;
     -fx-cursor: hand;
-    -fx-padding: 5;
-    -fx-background-radius: 5;
+    -fx-padding: 6;
+    -fx-background-radius: 6;
 }
-
-.btn-action:hover {
-    -fx-background-color: #F0F0F0;
-}
-
-
-.btn-action:pressed {
-    -fx-background-color: #E0E0E0;
-}
-
-
+.btn-action:hover   { -fx-background-color: #f1f5f9; }
+.btn-action:pressed { -fx-background-color: #e2e8f0; }

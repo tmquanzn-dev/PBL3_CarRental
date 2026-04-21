@@ -1,123 +1,222 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.DatePicker?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Spinner?>
 <?import javafx.scene.control.TextField?>
-<?import javafx.scene.image.Image?>
-<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
 
-<VBox spacing="25.0" stylesheets="@../../css/contractview/create_contract/step3.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1">
+<!--
+    Step3_Content.fxml – Bước 3: Thời gian, đặt cọc, voucher
+    Đường dẫn: src/main/resources/views/create_contract/Step3_Content.fxml
+    Controller: com.example.rentalcar.controller.contract.booking.Step3Controller
+-->
+<VBox spacing="16.0"
+      stylesheets="@../../css/contractview/create_contract/style.css"
+      xmlns="http://javafx.com/javafx/8.0.171"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.example.rentalcar.controller.contract.booking.Step3Controller">
+
+    <padding><Insets top="10.0" /></padding>
     <children>
-        <Label style="-fx-font-weight: bold; -fx-font-size: 1.8em; -fx-text-fill: #0f172a;" text="Bước 3: Chọn thời gian và đặt cọc" />
 
-        <GridPane hgap="40.0" VBox.vgrow="ALWAYS">
+        <!-- Tiêu đề -->
+        <Label text="Bước 3: Thời gian &amp; Đặt cọc" textFill="#334155">
+            <font><Font name="System Bold" size="20.0" /></font>
+        </Label>
+
+        <!-- 2 cột chính -->
+        <GridPane hgap="28.0" vgap="0.0">
             <columnConstraints>
                 <ColumnConstraints hgrow="SOMETIMES" percentWidth="50.0" />
                 <ColumnConstraints hgrow="SOMETIMES" percentWidth="50.0" />
             </columnConstraints>
+            <rowConstraints>
+                <RowConstraints vgrow="SOMETIMES" />
+            </rowConstraints>
 
             <children>
-                <VBox spacing="20.0" GridPane.columnIndex="0">
+
+                <!-- ── CỘT TRÁI: Thời gian thuê ── -->
+                <VBox spacing="14.0" GridPane.columnIndex="0">
                     <children>
-                        <Label style="-fx-font-weight: bold; -fx-text-fill: #334155;" text="Thời gian thuê xe" />
 
-                        <VBox spacing="8.0">
+                        <Label text="⏰  Thời gian thuê xe"
+                               style="-fx-font-weight: bold; -fx-text-fill: #334155; -fx-font-size: 14px;" />
+
+                        <!-- Ngày & giờ bắt đầu -->
+                        <VBox spacing="6.0">
                             <children>
-                                <Label style="-fx-font-weight: bold;" text="Ngày bắt đầu thuê (*)" textFill="#475569" />
-                                <DatePicker fx:id="dpStart" maxWidth="Infinity" promptText="dd/MM/yyyy" styleClass="modern-input" />
-                            </children>
-                        </VBox>
-
-                        <VBox spacing="8.0">
-                            <children>
-                                <Label style="-fx-font-weight: bold;" text="Ngày kết thúc dự kiến (*)" textFill="#475569" />
-                                <DatePicker fx:id="dpEnd" maxWidth="Infinity" promptText="dd/MM/yyyy" styleClass="modern-input" />
-                            </children>
-                        </VBox>
-
-                        <HBox alignment="CENTER_LEFT" spacing="10.0">
-                            <children>
-                                <Label text="Tổng thời gian thuê:" textFill="#64748b" />
-                                <Label fx:id="lblTotalDays" style="-fx-font-weight: bold; -fx-text-fill: #0f172a;" text="0 ngày" />
-                            </children>
-                        </HBox>
-                    </children>
-                </VBox>
-
-                <VBox spacing="20.0" GridPane.columnIndex="1">
-                    <children>
-                        <Label style="-fx-font-weight: bold; -fx-text-fill: #334155;" text="Thông tin đặt cọc" />
-
-                        <VBox spacing="8.0">
-                            <children>
-                                <Label style="-fx-font-weight: bold;" text="Hình thức cọc (*)" textFill="#475569" />
-                                <ComboBox fx:id="cbDepositType" maxWidth="Infinity" promptText="Chọn hình thức" styleClass="modern-input" />
-                            </children>
-                        </VBox>
-
-                        <VBox spacing="8.0">
-                            <children>
-                                <Label style="-fx-font-weight: bold;" text="Số tiền cọc (*)" textFill="#475569" />
-                                <TextField fx:id="txtDepositAmount" promptText="Ví dụ: 1.000.000" styleClass="modern-input" />
-                            </children>
-                        </VBox>
-
-                        <VBox spacing="8.0">
-                            <children>
-                                <Label style="-fx-font-weight: bold;" text="Tài sản thế chấp" textFill="#475569" />
-                                <TextField fx:id="txtCollateral" promptText="Ví dụ: Để lại xe máy Sirius..." styleClass="modern-input" />
-                            </children>
-                        </VBox>
-                    </children>
-                </VBox>
-            </children>
-            <padding>
-                <Insets bottom="10.0" top="10.0" />
-            </padding>
-         <rowConstraints>
-            <RowConstraints />
-         </rowConstraints>
-        </GridPane>
-
-        <Region VBox.vgrow="ALWAYS" />
-
-        <VBox alignment="BOTTOM_RIGHT" spacing="10.0">
-            <children>
-                <HBox alignment="CENTER_RIGHT">
-                    <children>
-                        <VBox alignment="CENTER_RIGHT" styleClass="total-amount-box">
-                            <padding>
-                                <Insets bottom="15.0" left="35.0" right="35.0" top="15.0" />
-                            </padding>
-                            <children>
-                                <Label style="-fx-font-weight: bold; -fx-font-size: 0.9em;" text="TỔNG CỘNG NIÊM YẾT" textFill="#64748b" />
-                                <HBox alignment="CENTER_RIGHT" spacing="12.0">
+                                <Label text="Ngày bắt đầu *" textFill="#64748b" style="-fx-font-weight: bold;" />
+                                <HBox spacing="8.0" alignment="CENTER_LEFT">
                                     <children>
-                                        <ImageView fitHeight="36.0" fitWidth="36.0" pickOnBounds="true" preserveRatio="true">
-                                            <image>
-                                                <Image url="@../../image/dollar.png" />
-                                            </image>
-                                        </ImageView>
-                                        <Label fx:id="lblTotalPrice" styleClass="price-text" text="0 đ" />
+                                        <DatePicker fx:id="dpStart" prefHeight="42.0"
+                                                    style="-fx-background-radius: 8;"
+                                                    HBox.hgrow="ALWAYS" />
+                                        <Spinner fx:id="spinStartHour" prefWidth="65.0" prefHeight="42.0"
+                                                 style="-fx-background-radius: 8;" />
+                                        <Label text=":" style="-fx-font-weight: bold;" />
+                                        <Spinner fx:id="spinStartMin" prefWidth="65.0" prefHeight="42.0"
+                                                 style="-fx-background-radius: 8;" />
                                     </children>
                                 </HBox>
                             </children>
                         </VBox>
+
+                        <!-- Ngày & giờ kết thúc -->
+                        <VBox spacing="6.0">
+                            <children>
+                                <Label text="Ngày kết thúc dự kiến *" textFill="#64748b" style="-fx-font-weight: bold;" />
+                                <HBox spacing="8.0" alignment="CENTER_LEFT">
+                                    <children>
+                                        <DatePicker fx:id="dpEnd" prefHeight="42.0"
+                                                    style="-fx-background-radius: 8;"
+                                                    HBox.hgrow="ALWAYS" />
+                                        <Spinner fx:id="spinEndHour" prefWidth="65.0" prefHeight="42.0"
+                                                 style="-fx-background-radius: 8;" />
+                                        <Label text=":" style="-fx-font-weight: bold;" />
+                                        <Spinner fx:id="spinEndMin" prefWidth="65.0" prefHeight="42.0"
+                                                 style="-fx-background-radius: 8;" />
+                                    </children>
+                                </HBox>
+                            </children>
+                        </VBox>
+
+                        <!-- Hiển thị tổng thời gian -->
+                        <HBox alignment="CENTER_LEFT" spacing="8.0"
+                              style="-fx-background-color: #f0fdf4; -fx-background-radius: 8; -fx-padding: 10 14;">
+                            <children>
+                                <Label text="⏱  Tổng thời gian:" textFill="#64748b" />
+                                <Label fx:id="lblTotalDays"
+                                       text="--"
+                                       style="-fx-font-weight: bold; -fx-text-fill: #0f172a;" />
+                            </children>
+                        </HBox>
+
                     </children>
-                </HBox>
-                <Label style="-fx-font-style: italic; -fx-font-size: 0.85em;" text="Lưu ý: Tổng tiền thực tế có thể thay đổi dựa trên tình trạng xe lúc hoàn trả." textFill="#94a3b8" />
+                </VBox>
+
+                <!-- ── CỘT PHẢI: Đặt cọc & Voucher ── -->
+                <VBox spacing="14.0" GridPane.columnIndex="1">
+                    <children>
+
+                        <Label text="💳  Đặt cọc &amp; Voucher"
+                               style="-fx-font-weight: bold; -fx-text-fill: #334155; -fx-font-size: 14px;" />
+
+                        <!-- Hình thức cọc -->
+                        <VBox spacing="6.0">
+                            <children>
+                                <Label text="Hình thức đặt cọc *" textFill="#64748b" style="-fx-font-weight: bold;" />
+                                <ComboBox fx:id="cbDepositType" maxWidth="Infinity" prefHeight="42.0"
+                                          style="-fx-background-radius: 8;" />
+                            </children>
+                        </VBox>
+
+                        <!-- Số tiền cọc -->
+                        <VBox spacing="6.0">
+                            <children>
+                                <Label text="Số tiền cọc (VNĐ)" textFill="#64748b" style="-fx-font-weight: bold;" />
+                                <TextField fx:id="txtDepositAmount" prefHeight="42.0"
+                                           promptText="VD: 500000 (bỏ trống nếu không cọc)"
+                                           style="-fx-background-radius: 8; -fx-border-color: #cbd5e1; -fx-border-radius: 8; -fx-padding: 0 12;" />
+                            </children>
+                        </VBox>
+
+                        <!-- Voucher -->
+                        <VBox spacing="6.0">
+                            <children>
+                                <Label text="Mã giảm giá (Tùy chọn)" textFill="#64748b" style="-fx-font-weight: bold;" />
+                                <HBox spacing="8.0">
+                                    <children>
+                                        <TextField fx:id="txtVoucherCode" prefHeight="42.0"
+                                                   promptText="Nhập mã voucher..."
+                                                   style="-fx-background-radius: 8; -fx-border-color: #cbd5e1; -fx-border-radius: 8; -fx-padding: 0 12;"
+                                                   HBox.hgrow="ALWAYS" />
+                                        <Button mnemonicParsing="false" onAction="#handleApplyVoucher"
+                                                prefHeight="42.0" prefWidth="80.0"
+                                                style="-fx-background-color: #10b981; -fx-text-fill: white; -fx-background-radius: 8; -fx-cursor: hand; -fx-font-weight: bold;"
+                                                text="Áp dụng" />
+                                    </children>
+                                </HBox>
+                                <!-- Thông báo kết quả voucher -->
+                                <Label fx:id="lblVoucherMsg" text="" managed="false" visible="false"
+                                       style="-fx-font-size: 12px;" />
+
+                                <!-- Box hiển thị voucher đã áp dụng -->
+                                <HBox fx:id="boxVoucherApplied"
+                                      alignment="CENTER_LEFT" spacing="10.0"
+                                      managed="false" visible="false"
+                                      style="-fx-background-color: #f0fdf4; -fx-background-radius: 8;
+                                             -fx-border-color: #86efac; -fx-border-radius: 8; -fx-padding: 8 12;">
+                                    <children>
+                                        <Label text="🎫" style="-fx-font-size: 16px;" />
+                                        <Label fx:id="lblVoucherDetail"
+                                               text=""
+                                               style="-fx-font-weight: bold; -fx-text-fill: #15803d;" HBox.hgrow="ALWAYS" />
+                                        <Button mnemonicParsing="false" onAction="#handleRemoveVoucher"
+                                                style="-fx-background-color: transparent; -fx-text-fill: #ef4444; -fx-cursor: hand; -fx-font-size: 13px;"
+                                                text="✕" />
+                                    </children>
+                                </HBox>
+                            </children>
+                        </VBox>
+
+                    </children>
+                </VBox>
+
+            </children>
+        </GridPane>
+
+        <!-- ── TỔNG TIỀN ── -->
+        <VBox alignment="CENTER_RIGHT" spacing="0.0">
+            <children>
+                <VBox style="-fx-background-color: white; -fx-background-radius: 14;
+                             -fx-border-color: #e2e8f0; -fx-border-radius: 14; -fx-border-width: 1.5;
+                             -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.06), 12, 0, 0, 4);
+                             -fx-padding: 16 24;">
+                    <children>
+
+                        <HBox alignment="CENTER_LEFT" spacing="8.0">
+                            <children>
+                                <Label text="Tiền thuê cơ bản:" textFill="#64748b" prefWidth="160.0" />
+                                <Label fx:id="lblBasePrice" text="0 đ"
+                                       style="-fx-font-weight: bold; -fx-text-fill: #1e293b;" />
+                            </children>
+                        </HBox>
+
+                        <HBox alignment="CENTER_LEFT" spacing="8.0">
+                            <children>
+                                <Label text="Giảm giá (Voucher):" textFill="#64748b" prefWidth="160.0" />
+                                <Label fx:id="lblDiscount" text="0 đ"
+                                       style="-fx-text-fill: #10b981; -fx-font-weight: bold;" />
+                            </children>
+                        </HBox>
+
+                        <!-- Đường kẻ phân cách -->
+                        <Region prefHeight="1.0" style="-fx-background-color: #e2e8f0;" VBox.vgrow="NEVER" />
+
+                        <HBox alignment="CENTER_LEFT" spacing="8.0">
+                            <children>
+                                <Label text="TỔNG CỘNG:" textFill="#334155"
+                                       style="-fx-font-weight: bold; -fx-font-size: 14px;" prefWidth="160.0" />
+                                <Label fx:id="lblTotalPrice" text="0 đ"
+                                       style="-fx-font-size: 22px; -fx-font-weight: bold; -fx-text-fill: #146dff;" />
+                            </children>
+                        </HBox>
+
+                    </children>
+                </VBox>
             </children>
         </VBox>
+
     </children>
-    <padding>
-        <Insets bottom="15.0" left="20.0" right="20.0" top="10.0" />
-    </padding>
 </VBox>

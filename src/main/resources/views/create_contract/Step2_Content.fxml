@@ -4,25 +4,81 @@
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.FlowPane?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
 
-<VBox spacing="15.0" stylesheets="@../../css/contractview/create_contract/style.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1">
+<!--
+    Step2_Content.fxml – Bước 2: Chọn xe thuê
+    Đường dẫn: src/main/resources/views/create_contract/Step2_Content.fxml
+    Controller: com.example.rentalcar.controller.contract.booking.Step2Controller
+-->
+<VBox spacing="14.0"
+      stylesheets="@../../css/contractview/create_contract/style.css"
+      xmlns="http://javafx.com/javafx/8.0.171"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.example.rentalcar.controller.contract.booking.Step2Controller">
+
+    <padding><Insets top="10.0" /></padding>
     <children>
-        <Label style="-fx-font-weight: bold; -fx-font-size: 20px;" text="Bước 2: Chọn xe thuê" />
-        <HBox spacing="15.0">
+
+        <!-- Tiêu đề -->
+        <Label text="Bước 2: Chọn xe thuê" textFill="#334155">
+            <font><Font name="System Bold" size="20.0" /></font>
+        </Label>
+
+        <!-- Thanh lọc -->
+        <HBox spacing="12.0" alignment="CENTER_LEFT">
             <children>
-                <ComboBox fx:id="cbBrand" prefHeight="40.0" prefWidth="180.0" promptText="Tất cả hãng" />
-                <ComboBox fx:id="cbType" prefHeight="40.0" prefWidth="180.0" promptText="Tất cả loại" />
+                <TextField fx:id="txtSearch"
+                           prefHeight="40.0" prefWidth="220.0"
+                           promptText="🔍  Biển số, tên xe..."
+                           style="-fx-background-radius: 8; -fx-border-color: #cbd5e1; -fx-border-radius: 8; -fx-padding: 0 10;" />
+
+                <ComboBox fx:id="cbBrand"
+                          prefHeight="40.0" prefWidth="150.0"
+                          promptText="Tất cả hãng"
+                          style="-fx-background-radius: 8; -fx-border-color: #cbd5e1; -fx-border-radius: 8;" />
+
+                <ComboBox fx:id="cbType"
+                          prefHeight="40.0" prefWidth="150.0"
+                          promptText="Tất cả loại"
+                          style="-fx-background-radius: 8; -fx-border-color: #cbd5e1; -fx-border-radius: 8;" />
+
+                <javafx.scene.control.Button
+                        mnemonicParsing="false"
+                        onAction="#handleFilter"
+                        prefHeight="40.0" prefWidth="90.0"
+                        style="-fx-background-color: #0ea5e9; -fx-text-fill: white; -fx-background-radius: 8; -fx-cursor: hand; -fx-font-weight: bold;"
+                        text="Lọc" />
+
+                <Region HBox.hgrow="ALWAYS" />
+
+                <!-- Label hiển thị xe đang chọn -->
+                <Label fx:id="lblSelectedVehicle"
+                       text="Chưa chọn xe"
+                       style="-fx-text-fill: #94a3b8; -fx-font-size: 13px;" />
             </children>
         </HBox>
-        <ScrollPane fitToWidth="true" hbarPolicy="NEVER" styleClass="custom-scroll" VBox.vgrow="ALWAYS">
+
+        <!-- FlowPane chứa card xe -->
+        <ScrollPane fitToWidth="true"
+                    hbarPolicy="NEVER"
+                    vbarPolicy="AS_NEEDED"
+                    style="-fx-background-color: transparent; -fx-background: transparent;"
+                    VBox.vgrow="ALWAYS">
             <content>
-                <FlowPane fx:id="flowPaneVehicles" hgap="25.0" vgap="25.0">
-                    <padding><Insets bottom="10.0" left="10.0" right="10.0" top="10.0" /></padding>
+                <FlowPane fx:id="flowPaneVehicles"
+                          hgap="18.0" vgap="18.0">
+                    <padding>
+                        <Insets bottom="10.0" left="4.0" right="4.0" top="4.0" />
+                    </padding>
                 </FlowPane>
             </content>
         </ScrollPane>
+
     </children>
 </VBox>

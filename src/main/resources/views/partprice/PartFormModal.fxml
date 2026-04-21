@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<VBox prefWidth="480.0" spacing="20.0"
+      style="-fx-background-color: white; -fx-background-radius: 14;"
+      stylesheets="@../../css/partpriceview/partpricestyle.css"
+      xmlns="http://javafx.com/javafx/8.0.171"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.example.rentalcar.controller.partprice.PartFormController">
+
+    <padding>
+        <Insets bottom="30.0" left="36.0" right="36.0" top="26.0" />
+    </padding>
+
+    <children>
+        <!-- HEADER -->
+        <HBox alignment="CENTER_LEFT">
+            <children>
+                <VBox spacing="3.0">
+                    <children>
+                        <Label fx:id="lblTitle"
+                               style="-fx-font-size: 22px; -fx-font-weight: bold; -fx-text-fill: #1e293b;"
+                               text="Thêm phụ tùng mới"/>
+                        <Label fx:id="lblSubtitle"
+                               style="-fx-text-fill: #94a3b8; -fx-font-size: 13px;"
+                               text="Nhập thông tin phụ tùng bên dưới"/>
+                    </children>
+                </VBox>
+                <Region HBox.hgrow="ALWAYS"/>
+                <Button mnemonicParsing="false" onAction="#handleClose"
+                        style="-fx-background-color: transparent; -fx-text-fill: #64748b;
+                               -fx-font-size: 20px; -fx-cursor: hand;"
+                        text="✕"/>
+            </children>
+        </HBox>
+
+        <Separator/>
+
+        <!-- FORM -->
+        <VBox spacing="16.0">
+            <children>
+                <!-- Tên phụ tùng -->
+                <VBox spacing="6.0">
+                    <children>
+                        <Label style="-fx-font-size: 13px; -fx-font-weight: bold; -fx-text-fill: #475569;"
+                               text="Tên phụ tùng *"/>
+                        <TextField fx:id="txtPartName"
+                                   promptText="VD: Đèn pha, Gương chiếu hậu, Vỏ xe trước..."
+                                   style="-fx-background-color: white; -fx-border-color: #cbd5e1;
+                                          -fx-border-radius: 8; -fx-background-radius: 8;
+                                          -fx-padding: 0 14; -fx-pref-height: 44px;
+                                          -fx-font-size: 14px; -fx-text-fill: #334155;"/>
+                    </children>
+                </VBox>
+
+                <!-- Loại xe -->
+                <VBox spacing="6.0">
+                    <children>
+                        <Label style="-fx-font-size: 13px; -fx-font-weight: bold; -fx-text-fill: #475569;"
+                               text="Loại xe áp dụng *"/>
+                        <ComboBox fx:id="cbVehicleType" maxWidth="Infinity"
+                                  style="-fx-background-color: white; -fx-border-color: #cbd5e1;
+                                         -fx-border-radius: 8; -fx-background-radius: 8;
+                                         -fx-pref-height: 44px; -fx-font-size: 14px;"/>
+                    </children>
+                </VBox>
+
+                <!-- Đơn giá -->
+                <VBox spacing="6.0">
+                    <children>
+                        <Label style="-fx-font-size: 13px; -fx-font-weight: bold; -fx-text-fill: #475569;"
+                               text="Đơn giá thay thế (VNĐ) *"/>
+                        <TextField fx:id="txtPrice"
+                                   promptText="VD: 250000"
+                                   style="-fx-background-color: white; -fx-border-color: #cbd5e1;
+                                          -fx-border-radius: 8; -fx-background-radius: 8;
+                                          -fx-padding: 0 14; -fx-pref-height: 44px;
+                                          -fx-font-size: 14px; -fx-text-fill: #334155;"/>
+                        <!-- Live preview -->
+                        <Label fx:id="lblPricePreview"
+                               style="-fx-text-fill: #146dff; -fx-font-weight: bold; -fx-font-size: 13px;"
+                               text=""/>
+                    </children>
+                </VBox>
+
+                <!-- Hướng dẫn -->
+                <VBox spacing="5.0"
+                      style="-fx-background-color: #eff6ff; -fx-background-radius: 10;
+                             -fx-border-color: #bfdbfe; -fx-border-radius: 10; -fx-padding: 14;">
+                    <children>
+                        <Label style="-fx-font-weight: bold; -fx-text-fill: #1d4ed8; -fx-font-size: 13px;"
+                               text="💡 Lưu ý khi điền đơn giá:"/>
+                        <Label wrapText="true"
+                               style="-fx-text-fill: #3b82f6; -fx-font-size: 12px;"
+                               text="• Đây là giá phụ tùng THAY THẾ khi khách làm hỏng xe"/>
+                        <Label wrapText="true"
+                               style="-fx-text-fill: #3b82f6; -fx-font-size: 12px;"
+                               text="• Chọn 'Tất cả' nếu áp dụng cho mọi loại xe"/>
+                        <Label wrapText="true"
+                               style="-fx-text-fill: #3b82f6; -fx-font-size: 12px;"
+                               text="• Hệ thống sẽ tự động tra bảng này khi nhân viên tick lỗi hỏng"/>
+                    </children>
+                </VBox>
+            </children>
+        </VBox>
+
+        <!-- Toast message -->
+        <Label fx:id="lblMsg" text="" visible="false"
+               style="-fx-font-size: 13px; -fx-font-weight: bold;"/>
+
+        <Separator/>
+
+        <!-- ACTION BUTTONS -->
+        <HBox alignment="CENTER_RIGHT" spacing="12.0">
+            <children>
+                <Button mnemonicParsing="false" onAction="#handleClose"
+                        prefHeight="42.0" prefWidth="100.0"
+                        style="-fx-background-color: #fff1f2; -fx-text-fill: #e11d48;
+                               -fx-background-radius: 10; -fx-font-weight: bold; -fx-cursor: hand;"
+                        text="Hủy bỏ"/>
+                <Button fx:id="btnSave" mnemonicParsing="false" onAction="#handleSave"
+                        prefHeight="42.0" prefWidth="160.0"
+                        style="-fx-background-color: linear-gradient(to right, #478dff, #146dff);
+                               -fx-text-fill: white; -fx-font-weight: bold;
+                               -fx-background-radius: 10; -fx-cursor: hand;
+                               -fx-effect: dropshadow(three-pass-box, rgba(71,141,255,0.4),10,0,0,3);"
+                        text="💾  Lưu phụ tùng">
+                    <font><Font name="System Bold" size="13.0"/></font>
+                </Button>
+            </children>
+        </HBox>
+    </children>
+</VBox>
