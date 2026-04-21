@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<VBox prefWidth="660.0" spacing="20.0" styleClass="modal-container"
+      stylesheets="@../../css/voucherview/voucherstyle.css"
+      xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.example.rentalcar.controller.voucher.VoucherFormController">
+
+    <padding>
+        <Insets bottom="30.0" left="36.0" right="36.0" top="26.0" />
+    </padding>
+
+    <children>
+        <!-- HEADER -->
+        <HBox alignment="CENTER_LEFT">
+            <children>
+                <VBox spacing="3.0">
+                    <children>
+                        <Label fx:id="lblTitle" styleClass="header-title" text="Tạo voucher mới" />
+                        <Label fx:id="lblSubtitle" style="-fx-text-fill: #94a3b8; -fx-font-size: 13px;"
+                               text="Điền thông tin mã giảm giá bên dưới" />
+                    </children>
+                </VBox>
+                <Region HBox.hgrow="ALWAYS" />
+                <Button mnemonicParsing="false" onAction="#handleClose"
+                        styleClass="btn-close" text="✕" />
+            </children>
+        </HBox>
+
+        <Separator />
+
+        <!-- FORM FIELDS -->
+        <GridPane hgap="18.0" vgap="14.0">
+            <columnConstraints>
+                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+            </columnConstraints>
+            <rowConstraints>
+                <RowConstraints minHeight="65.0" />
+                <RowConstraints minHeight="65.0" />
+                <RowConstraints minHeight="65.0" />
+                <RowConstraints minHeight="65.0" />
+                <RowConstraints minHeight="80.0" />
+            </rowConstraints>
+            <children>
+                <!-- Mã voucher -->
+                <VBox spacing="5.0" GridPane.columnIndex="0" GridPane.rowIndex="0">
+                    <children>
+                        <Label styleClass="input-label" text="Mã Voucher *" />
+                        <TextField fx:id="txtCode" styleClass="modern-input"
+                                   promptText="VD: SUMMER2026, WELCOME10..." />
+                    </children>
+                </VBox>
+
+                <!-- Loại giảm giá -->
+                <VBox spacing="5.0" GridPane.columnIndex="1" GridPane.rowIndex="0">
+                    <children>
+                        <Label styleClass="input-label" text="Loại giảm giá *" />
+                        <ComboBox fx:id="cbDiscountType" maxWidth="Infinity"
+                                  styleClass="modern-combo" />
+                    </children>
+                </VBox>
+
+                <!-- Giá trị giảm -->
+                <VBox spacing="5.0" GridPane.columnIndex="0" GridPane.rowIndex="1">
+                    <children>
+                        <Label fx:id="lblValueHint" styleClass="input-label" text="Số tiền giảm (VNĐ) *" />
+                        <TextField fx:id="txtDiscountValue" styleClass="modern-input"
+                                   promptText="VD: 50000" />
+                    </children>
+                </VBox>
+
+                <!-- Preview giá trị -->
+                <VBox alignment="CENTER" spacing="6.0" styleClass="preview-box"
+                      GridPane.columnIndex="1" GridPane.rowIndex="1">
+                    <children>
+                        <Label styleClass="preview-label" text="Giá trị áp dụng" />
+                        <Label fx:id="lblPreviewValue" styleClass="preview-value" text="--" />
+                    </children>
+                </VBox>
+
+                <!-- Giới hạn lượt dùng -->
+                <VBox spacing="5.0" GridPane.columnIndex="0" GridPane.rowIndex="2">
+                    <children>
+                        <Label styleClass="input-label" text="Giới hạn lượt dùng *" />
+                        <TextField fx:id="txtUsageLimit" styleClass="modern-input"
+                                   promptText="VD: 100" />
+                    </children>
+                </VBox>
+
+                <!-- Trạng thái bật/tắt -->
+                <VBox spacing="5.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                    <children>
+                        <Label styleClass="input-label" text="Trạng thái" />
+                        <ComboBox fx:id="cbStatus" maxWidth="Infinity"
+                                  styleClass="modern-combo" />
+                    </children>
+                </VBox>
+
+                <!-- Ngày bắt đầu -->
+                <VBox spacing="5.0" GridPane.columnIndex="0" GridPane.rowIndex="3">
+                    <children>
+                        <Label styleClass="input-label" text="Ngày bắt đầu *" />
+                        <DatePicker fx:id="dpFrom" maxWidth="Infinity"
+                                    styleClass="modern-input" promptText="dd/MM/yyyy" />
+                    </children>
+                </VBox>
+
+                <!-- Ngày kết thúc -->
+                <VBox spacing="5.0" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                    <children>
+                        <Label styleClass="input-label" text="Ngày kết thúc *" />
+                        <DatePicker fx:id="dpTo" maxWidth="Infinity"
+                                    styleClass="modern-input" promptText="dd/MM/yyyy" />
+                    </children>
+                </VBox>
+
+                <!-- Mô tả -->
+                <VBox spacing="5.0" GridPane.columnSpan="2" GridPane.rowIndex="4">
+                    <children>
+                        <Label styleClass="input-label" text="Mô tả voucher" />
+                        <TextArea fx:id="txtDescription" prefHeight="70.0"
+                                  style="-fx-background-color: white; -fx-border-color: #cbd5e1;
+                                         -fx-border-radius: 8; -fx-background-radius: 8;
+                                         -fx-padding: 8 14; -fx-font-size: 14px;"
+                                  promptText="Nhập mô tả ngắn về điều kiện áp dụng..."
+                                  wrapText="true" />
+                    </children>
+                </VBox>
+            </children>
+        </GridPane>
+
+        <!-- Toast message -->
+        <Label fx:id="lblMsg" text="" visible="false"
+               style="-fx-font-size: 13px; -fx-font-weight: bold;" />
+
+        <Separator />
+
+        <!-- ACTION BUTTONS -->
+        <HBox alignment="CENTER_RIGHT" spacing="12.0">
+            <children>
+                <Button mnemonicParsing="false" onAction="#handleClose"
+                        styleClass="btn-cancel" text="Hủy bỏ" />
+                <Button fx:id="btnSave" mnemonicParsing="false" onAction="#handleSave"
+                        styleClass="btn-primary" text="💾  Lưu voucher" />
+            </children>
+        </HBox>
+    </children>
+</VBox>
