@@ -1,55 +1,201 @@
-.main-bg { -fx-background-color: #f0f3f9; }
-
-.header-title { -fx-font-family: "System"; -fx-font-size: 28px; -fx-font-weight: bold; -fx-text-fill: #1e293b; }
-.header-subtitle { -fx-font-size: 15px; -fx-text-fill: #64748b; }
-
-.filter-box {
-    -fx-background-color: white;
-    -fx-background-radius: 15;
-    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.06), 15, 0, 0, 8);
-}
-.filter-label { -fx-font-weight: bold; -fx-text-fill: #475569; -fx-font-size: 15px; }
-
-/* Input và Button */
-.btn-primary {
-    -fx-background-color: linear-gradient(to bottom right, #478dff, #146dff);
-    -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 10; -fx-cursor: hand; -fx-font-size: 15px;
+/* ======================================================
+   REPORT / ANALYTICS STYLE
+   Đồng bộ với dashboardstyle.css & customerstyle.css
+====================================================== */
+.root {
+    -fx-background-color: #f4f7f6;
+    -fx-font-family: "Segoe UI", Arial, sans-serif;
 }
 
-/* --- KPI CARDS (Đã thu nhỏ lại một chút để xếp dọc) --- */
+/* ======================================================
+   KPI CARDS
+====================================================== */
 .kpi-card {
-    -fx-background-radius: 18;
-    -fx-padding: 20;
-    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.08), 18, 0, 0, 9);
-    -fx-min-height: 120;
-    -fx-spacing: 12;
+    -fx-background-radius: 14;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.09), 14, 0, 0, 6);
 }
-.card-revenue { -fx-background-color: linear-gradient(to bottom right, #00b09b, #96c93d); }
-.card-rentals { -fx-background-color: linear-gradient(to bottom right, #4facfe, #00f2fe); }
-.card-customers { -fx-background-color: linear-gradient(to bottom right, #f83600, #f9d423); }
+.kpi-blue   { -fx-background-color: linear-gradient(to bottom right, #478dff, #146dff); }
+.kpi-green  { -fx-background-color: linear-gradient(to bottom right, #34d399, #10b981); }
+.kpi-purple { -fx-background-color: linear-gradient(to bottom right, #a78bfa, #7c3aed); }
+.kpi-orange { -fx-background-color: linear-gradient(to bottom right, #fb923c, #f97316); }
 
-.kpi-title { -fx-text-fill: rgba(255,255,255,0.9); -fx-font-size: 16px; -fx-font-weight: bold; }
-.kpi-value { -fx-text-fill: white; -fx-font-size: 32px; -fx-font-weight: 900; }
+.kpi-label  { -fx-text-fill: white; -fx-font-size: 13px; -fx-opacity: 0.9; }
+.kpi-value  { -fx-text-fill: white; -fx-font-size: 28px; -fx-font-weight: bold; }
+.kpi-sub    { -fx-text-fill: white; -fx-font-size: 12px; -fx-opacity: 0.8; }
+.kpi-icon   { -fx-text-fill: white; -fx-font-size: 32px; -fx-opacity: 0.2; }
 
-/* --- Chart Container --- */
-.chart-container {
+/* ======================================================
+   SECTION PANELS (chart / table wrapper)
+====================================================== */
+.panel {
     -fx-background-color: white;
-    -fx-background-radius: 20;
-    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.05), 20, 0, 0, 10);
+    -fx-background-radius: 14;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.05), 10, 0, 0, 4);
 }
 
-/* Custom cột biểu đồ */
-.default-color0.chart-bar {
-    -fx-bar-fill: #478dff;
+.panel-title {
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #1e293b;
+}
+
+.panel-subtitle {
+    -fx-font-size: 12px;
+    -fx-text-fill: #94a3b8;
+}
+
+/* ======================================================
+   YEAR SELECTOR (filter)
+====================================================== */
+.year-picker {
+    -fx-background-color: #f1f5f9;
+    -fx-background-radius: 8;
+    -fx-border-color: transparent;
+    -fx-font-size: 13px;
+    -fx-text-fill: #475569;
+    -fx-cursor: hand;
+}
+
+.btn-year {
+    -fx-background-color: transparent;
+    -fx-text-fill: #64748b;
+    -fx-font-size: 16px;
+    -fx-cursor: hand;
+    -fx-padding: 2 8;
+}
+.btn-year:hover { -fx-text-fill: #146dff; }
+
+.year-label {
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #1e293b;
+    -fx-min-width: 50px;
+    -fx-alignment: center;
+}
+
+/* ======================================================
+   BAR CHART STYLE
+====================================================== */
+.bar-chart-container {
+    -fx-padding: 0;
+}
+
+.chart {
+    -fx-background-color: transparent;
+    -fx-padding: 0;
+}
+.chart-plot-background    { -fx-background-color: transparent; }
+.chart-vertical-grid-lines   { -fx-stroke: transparent; }
+.chart-horizontal-grid-lines { -fx-stroke: #f1f5f9; -fx-stroke-width: 1; }
+.chart-alternative-row-fill  { -fx-fill: transparent; }
+.chart-alternative-column-fill { -fx-fill: transparent; }
+
+.axis {
+    -fx-tick-label-fill: #94a3b8;
+    -fx-tick-label-font-size: 11px;
+}
+.axis-label { -fx-text-fill: #94a3b8; -fx-font-size: 11px; }
+
+/* Bar màu xanh gradient */
+.default-color0.chart-bar { -fx-bar-fill: #146dff; }
+
+/* Tooltip bar */
+.chart-bar:hover { -fx-bar-fill: #0052cc; }
+
+/* ======================================================
+   LEGEND
+====================================================== */
+.chart-legend {
+    -fx-background-color: transparent;
+}
+.chart-legend-item-symbol {
+    -fx-background-radius: 4;
+}
+
+/* ======================================================
+   PIE CHART
+====================================================== */
+.default-color0.chart-pie { -fx-pie-color: #3b82f6; }
+.default-color1.chart-pie { -fx-pie-color: #10b981; }
+.default-color2.chart-pie { -fx-pie-color: #f59e0b; }
+.default-color3.chart-pie { -fx-pie-color: #ef4444; }
+
+.chart-pie-label { -fx-fill: #64748b; -fx-font-size: 11px; }
+.chart-pie-label-line { -fx-stroke: #cbd5e1; }
+
+/* ======================================================
+   BẢNG TOP XE / NHÂN VIÊN
+====================================================== */
+.rank-table {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+}
+.rank-table .column-header-background {
+    -fx-background-color: #f8fafc;
     -fx-background-radius: 8 8 0 0;
 }
-.chart-plot-background { -fx-background-color: transparent; }
-.chart-horizontal-grid-lines { -fx-stroke: #e2e8f0; -fx-stroke-dash-array: 5 5; }
+.rank-table .column-header {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+}
+.rank-table .column-header .label {
+    -fx-text-fill: #94a3b8;
+    -fx-font-weight: bold;
+    -fx-font-size: 12px;
+    -fx-padding: 0 0 0 12;
+}
+.rank-table .table-row-cell {
+    -fx-cell-size: 52px;
+    -fx-background-color: transparent;
+    -fx-border-width: 0 0 1 0;
+    -fx-border-color: #f1f5f9;
+}
+.rank-table .table-row-cell:hover { -fx-background-color: #f8faff; }
+.rank-table .table-cell {
+    -fx-border-color: transparent;
+    -fx-padding: 0 0 0 12;
+    -fx-font-size: 13px;
+    -fx-text-fill: #1e293b;
+}
 
+/* BADGE SỐ THỨ HẠNG */
+.rank-badge-1 { -fx-background-color: #fef3c7; -fx-text-fill: #b45309; -fx-background-radius: 50%; -fx-font-weight: bold; }
+.rank-badge-2 { -fx-background-color: #f1f5f9; -fx-text-fill: #475569; -fx-background-radius: 50%; -fx-font-weight: bold; }
+.rank-badge-3 { -fx-background-color: #fce7f3; -fx-text-fill: #be185d; -fx-background-radius: 50%; -fx-font-weight: bold; }
+.rank-badge-n { -fx-background-color: #f1f5f9; -fx-text-fill: #94a3b8; -fx-background-radius: 50%; }
 
-.default-color0.chart-pie { -fx-pie-color: #3b82f6; } /* Tay ga */
-.default-color1.chart-pie { -fx-pie-color: #10b981; } /* Xe số */
-.default-color2.chart-pie { -fx-pie-color: #f59e0b; } /* Xe côn */
-.chart-pie-label { -fx-fill: #475569; -fx-font-size: 13px; -fx-font-weight: bold; }
+/* ======================================================
+   REVENUE SUMMARY (big number)
+====================================================== */
+.revenue-total {
+    -fx-font-size: 32px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #146dff;
+}
 
+.revenue-period {
+    -fx-font-size: 12px;
+    -fx-text-fill: #94a3b8;
+}
 
+/* ======================================================
+   EXPORT BUTTON
+====================================================== */
+.btn-export {
+    -fx-background-color: #f1f5f9;
+    -fx-text-fill: #475569;
+    -fx-background-radius: 8;
+    -fx-font-weight: bold;
+    -fx-cursor: hand;
+    -fx-padding: 8 18;
+    -fx-font-size: 13px;
+}
+.btn-export:hover {
+    -fx-background-color: #e2e8f0;
+    -fx-text-fill: #1e293b;
+}
+
+/* ======================================================
+   SEPARATOR LINE
+====================================================== */
+.separator { -fx-background-color: #f1f5f9; }
