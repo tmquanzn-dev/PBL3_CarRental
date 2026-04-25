@@ -48,6 +48,10 @@ public class MainController {
             case "Luật tính giá" : fxmlFile = "rule/RuleManagement.fxml"; break;
             case "Báo cáo" : fxmlFile = "report/ReportView.fxml"; break;
             case "Cài đặt" : fxmlFile = "setting/SettingsView.fxml"; break;
+            case "Phụ tùng" : fxmlFile = "partprice/PartPriceManagement.fxml"; break;
+
+            case "Voucher" : fxmlFile = "voucher/VoucherManagement.fxml"; break;
+
 
 
 

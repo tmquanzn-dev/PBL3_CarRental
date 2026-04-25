@@ -2,6 +2,7 @@ package com.example.rentalcar.controller.partprice;
 
 import com.example.rentalcar.dao.PartPriceDAO;
 import com.example.rentalcar.models.PartPrices;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;

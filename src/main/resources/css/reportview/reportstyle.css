@@ -37,8 +37,10 @@
 
 /* ======================================================
    BAR CHART
-   *** QUAN TRỌNG: Chỉ dùng màu SOLID, KHÔNG LinearGradient ***
-   LinearGradient gây ClassCastException trên JavaFX 21
+   *** QUAN TRỌNG: Override hoàn toàn modena's LinearGradient ***
+   Modena stylesheet dùng LinearGradient cho .chart-bar gây
+   ClassCastException trên JavaFX 21. Phải override tất cả
+   các selector liên quan bằng solid color.
 ====================================================== */
 .chart {
     -fx-background-color: transparent;
@@ -47,17 +49,29 @@
 .chart-plot-background       { -fx-background-color: transparent; }
 .chart-vertical-grid-lines   { -fx-stroke: transparent; }
 .chart-horizontal-grid-lines { -fx-stroke: #f1f5f9; -fx-stroke-width: 1; }
-.chart-alternative-row-fill    { -fx-fill: transparent; }
-.chart-alternative-column-fill { -fx-fill: transparent; }
+.chart-alternative-row-fill    { -fx-fill: transparent; -fx-background-color: transparent; }
+.chart-alternative-column-fill { -fx-fill: transparent; -fx-background-color: transparent; }
 
 .axis            { -fx-tick-label-fill: #94a3b8; -fx-tick-label-font-size: 11px; }
 .axis-label      { -fx-text-fill: #94a3b8; -fx-font-size: 11px; }
 
-/* Màu bar — PHẢI là màu solid, KHÔNG phải LinearGradient */
-.default-color0.chart-bar { -fx-bar-fill: #146dff; }
+/* *** FIX CHÍNH: Override chart-bar solid color thay LinearGradient *** */
+/* Phải override cả .chart-bar gốc vì modena set -fx-background-color: LinearGradient */
+.chart-bar {
+    -fx-background-color: #146dff;
+    -fx-background-insets: 0;
+    -fx-background-radius: 4 4 0 0;
+}
+.default-color0.chart-bar { -fx-background-color: #146dff; }
+.default-color1.chart-bar { -fx-background-color: #3b82f6; }
+.default-color2.chart-bar { -fx-background-color: #60a5fa; }
+.default-color3.chart-bar { -fx-background-color: #93c5fd; }
 
-/* Hover effect — solid color, không gradient */
-.chart-bar:hover { -fx-bar-fill: #0052cc; }
+.chart-bar:hover {
+    -fx-background-color: #0052cc;
+    -fx-background-insets: 0;
+    -fx-background-radius: 4 4 0 0;
+}
 
 .chart-legend               { -fx-background-color: transparent; }
 .chart-legend-item-symbol   { -fx-background-radius: 4; }
