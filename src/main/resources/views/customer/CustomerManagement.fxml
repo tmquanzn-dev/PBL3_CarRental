@@ -2,6 +2,7 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
@@ -13,87 +14,150 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="1176.0" prefWidth="1100.0" spacing="25.0" stylesheets="@../../css/customerview/customerstyle.css" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.rentalcar.controller.customer.CustomerController">
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
+      prefHeight="1176.0" prefWidth="1100.0" spacing="22.0"
+      stylesheets="@../../css/customerview/customerstyle.css"
+      xmlns="http://javafx.com/javafx/8.0.171"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.example.rentalcar.controller.customer.CustomerController">
+
     <padding>
-        <Insets bottom="30.0" left="30.0" right="30.0" top="30.0" />
+        <Insets bottom="30.0" left="30.0" right="30.0" top="28.0" />
     </padding>
+
     <children>
-        <HBox alignment="CENTER_LEFT" prefHeight="46.0" prefWidth="1040.0" stylesheets="@../../css/customerview/customerstyle.css">
+
+        <!-- ===== HEADER ===== -->
+        <HBox alignment="CENTER_LEFT" prefHeight="46.0">
             <children>
-                <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Quản lý khách hàng">
-                    <font>
-                        <Font name="System Bold" size="32.0" />
-                    </font>
-                </Text>
+                <VBox spacing="4.0">
+                    <children>
+                        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Quản lý khách hàng">
+                            <font><Font name="System Bold" size="30.0" /></font>
+                        </Text>
+                        <Label style="-fx-text-fill: #94a3b8; -fx-font-size: 13px;"
+                               text="Danh sách toàn bộ khách hàng và quản lý danh sách đen" />
+                    </children>
+                </VBox>
                 <Region HBox.hgrow="ALWAYS" />
-                <Button fx:id="btnAddNewCustomer" mnemonicParsing="false" onAction="#showAddCustomerModal" prefHeight="40.0" prefWidth="203.0" styleClass="btn-new" text="+ Thêm khách mới" textFill="WHITE">
-                    <font>
-                        <Font name="System Bold" size="18.0" />
-                    </font>
+                <Button mnemonicParsing="false" onAction="#showAddCustomerModal"
+                        prefHeight="46.0" prefWidth="200.0" styleClass="btn-new"
+                        text="＋  Thêm khách mới" textFill="WHITE">
+                    <font><Font name="System Bold" size="15.0" /></font>
                 </Button>
             </children>
         </HBox>
 
-        <HBox prefHeight="140.0" prefWidth="1040.0" spacing="40.0" stylesheets="@../../css/customerview/customerstyle.css">
+        <!-- ===== 3 STAT CARDS ===== -->
+        <HBox prefHeight="120.0" spacing="24.0">
             <children>
-                <AnchorPane prefHeight="140.0" prefWidth="320.0" styleClass="card-blue">
+                <AnchorPane prefHeight="120.0" styleClass="card-blue" HBox.hgrow="ALWAYS">
                     <children>
-                        <Label opacity="0.9" styleClass="card-title" text="Tổng Khách Hàng" AnchorPane.leftAnchor="20.0" AnchorPane.topAnchor="15.0" />
-                        <Label fx:id="lblTotalCustomers" styleClass="card-value" text="156" AnchorPane.leftAnchor="20.0" AnchorPane.topAnchor="45.0" />
-                        <Label styleClass="card-sub" text="Cập nhật hôm nay" AnchorPane.leftAnchor="20.0" AnchorPane.topAnchor="95.0" />
+                        <Label styleClass="card-title" text="Tổng khách hàng"
+                               AnchorPane.leftAnchor="18.0" AnchorPane.topAnchor="14.0" />
+                        <Label fx:id="lblTotalCustomers" styleClass="card-value" text="--"
+                               AnchorPane.leftAnchor="18.0" AnchorPane.topAnchor="40.0">
+                            <font><Font name="System Bold" size="28.0" /></font>
+                        </Label>
+                        <Label styleClass="card-sub" text="Cập nhật hôm nay"
+                               AnchorPane.leftAnchor="18.0" AnchorPane.topAnchor="85.0" />
+                        <Label styleClass="card-icon" text="👥"
+                               AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="12.0">
+                            <font><Font size="34.0" /></font>
+                        </Label>
                     </children>
                 </AnchorPane>
 
-                <AnchorPane prefHeight="140.0" prefWidth="320.0" styleClass="card-green">
+                <AnchorPane prefHeight="120.0" styleClass="card-green" HBox.hgrow="ALWAYS">
                     <children>
-                        <Label styleClass="card-title" text="Khách Mới (Tháng)" AnchorPane.leftAnchor="20.0" AnchorPane.topAnchor="15.0" />
-                        <Label fx:id="lblNewCustomers" styleClass="card-value" text="+24" AnchorPane.leftAnchor="20.0" AnchorPane.topAnchor="45.0" />
-                        <Label styleClass="card-sub" text="Tăng 5% so với tháng trước" AnchorPane.leftAnchor="20.0" AnchorPane.topAnchor="95.0" />
+                        <Label styleClass="card-title" text="Khách mới (tháng)"
+                               AnchorPane.leftAnchor="18.0" AnchorPane.topAnchor="14.0" />
+                        <Label fx:id="lblNewCustomers" styleClass="card-value" text="0"
+                               AnchorPane.leftAnchor="18.0" AnchorPane.topAnchor="40.0">
+                            <font><Font name="System Bold" size="28.0" /></font>
+                        </Label>
+                        <Label styleClass="card-sub" text="Trong tháng này"
+                               AnchorPane.leftAnchor="18.0" AnchorPane.topAnchor="85.0" />
+                        <Label styleClass="card-icon" text="🆕"
+                               AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="12.0">
+                            <font><Font size="34.0" /></font>
+                        </Label>
                     </children>
                 </AnchorPane>
 
-                <AnchorPane prefHeight="140.0" prefWidth="320.0" styleClass="card-red">
+                <AnchorPane prefHeight="120.0" styleClass="card-red" HBox.hgrow="ALWAYS">
                     <children>
-                        <Label styleClass="card-title" text="Trong Blacklist" AnchorPane.leftAnchor="20.0" AnchorPane.topAnchor="15.0" />
-                        <Label fx:id="lblBlacklist" styleClass="card-value" text="3" AnchorPane.leftAnchor="20.0" AnchorPane.topAnchor="45.0" />
-                        <Label styleClass="card-sub" text="Rủi ro cao, cấm cho thuê" AnchorPane.leftAnchor="20.0" AnchorPane.topAnchor="95.0" />
+                        <Label styleClass="card-title" text="Trong danh sách đen"
+                               AnchorPane.leftAnchor="18.0" AnchorPane.topAnchor="14.0" />
+                        <Label fx:id="lblBlacklist" styleClass="card-value" text="--"
+                               AnchorPane.leftAnchor="18.0" AnchorPane.topAnchor="40.0">
+                            <font><Font name="System Bold" size="28.0" /></font>
+                        </Label>
+                        <Label styleClass="card-sub" text="Bị cấm thuê xe"
+                               AnchorPane.leftAnchor="18.0" AnchorPane.topAnchor="85.0" />
+                        <Label styleClass="card-icon" text="⛔"
+                               AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="12.0">
+                            <font><Font size="34.0" /></font>
+                        </Label>
                     </children>
                 </AnchorPane>
             </children>
         </HBox>
 
-        <HBox alignment="CENTER_LEFT" prefHeight="60.0" prefWidth="1040.0" spacing="15.0">
+        <!-- ===== SEARCH BAR ===== -->
+        <HBox alignment="CENTER_LEFT" spacing="12.0">
             <children>
-                <TextField fx:id="txtSearch" prefHeight="45.0" prefWidth="350.0" promptText="🔍 Nhập Tên hoặc CCCD để tìm kiếm..." styleClass="search-field" />
-                <Button fx:id="btnSearch" mnemonicParsing="false" onAction="#handleSearch" prefHeight="45.0" prefWidth="120.0" styleClass="btn-search" text="Tìm kiếm" />
-                <Button fx:id="btnReload" mnemonicParsing="false" onAction="#loadDataToTable" prefHeight="45.0" prefWidth="100.0" styleClass="btn-reload" text="Làm mới" />
+                <TextField fx:id="txtSearch" prefHeight="44.0" prefWidth="320.0"
+                           promptText="🔍  Tìm tên, CCCD, số điện thoại..." styleClass="search-field">
+                    <font><Font size="14.0" /></font>
+                </TextField>
+
+                <!-- Filter: Tất cả / Bình thường / Blacklist -->
+                <ComboBox fx:id="cbFilter" prefHeight="44.0" prefWidth="160.0"
+                          style="-fx-background-color: white; -fx-border-color: #cbd5e1;
+                                 -fx-border-radius: 8; -fx-background-radius: 8;
+                                 -fx-font-size: 14px;" />
+
+                <Button mnemonicParsing="false" onAction="#handleSearch"
+                        prefHeight="44.0" prefWidth="110.0" styleClass="btn-search" text="Tìm kiếm">
+                    <font><Font name="System Bold" size="13.0" /></font>
+                </Button>
+                <Button mnemonicParsing="false" onAction="#loadDataToTable"
+                        prefHeight="44.0" prefWidth="90.0" styleClass="btn-reload" text="Làm mới">
+                    <font><Font name="System Bold" size="13.0" /></font>
+                </Button>
             </children>
         </HBox>
 
-        <VBox prefHeight="650.0" prefWidth="1040.0" spacing="15.0" styleClass="table_container" VBox.vgrow="ALWAYS">
+        <!-- ===== TABLE ===== -->
+        <VBox prefHeight="700.0" spacing="0.0" styleClass="table_container" VBox.vgrow="ALWAYS">
             <padding>
-                <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+                <Insets bottom="16.0" left="20.0" right="20.0" top="16.0" />
             </padding>
             <children>
-                <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Danh sách khách hàng">
-                    <font>
-                        <Font name="System Bold" size="22.0" />
-                    </font>
-                </Text>
-                <TableView fx:id="tableCustomers" prefHeight="550.0" prefWidth="1000.0" VBox.vgrow="ALWAYS">
+                <HBox alignment="CENTER_LEFT" style="-fx-padding: 0 0 12 0;">
+                    <children>
+                        <Label style="-fx-font-weight: bold; -fx-font-size: 18px; -fx-text-fill: #1e293b;"
+                               text="Danh sách khách hàng" />
+                        <Region HBox.hgrow="ALWAYS" />
+                    </children>
+                </HBox>
+
+                <TableView fx:id="tableCustomers" prefHeight="640.0" VBox.vgrow="ALWAYS">
                     <columnResizePolicy>
                         <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
                     </columnResizePolicy>
                     <columns>
-                        <TableColumn fx:id="colName" prefWidth="189.99996948242188" text="HỌ TÊN" />
-                        <TableColumn fx:id="colCccd" prefWidth="163.0" text="CCCD" />
-                        <TableColumn fx:id="colPhone" prefWidth="175.0" text="SỐ ĐIỆN THOẠI" />
-                        <TableColumn fx:id="colRentalCount" prefWidth="136.0" text="SỐ LẦN THUÊ" />
-                        <TableColumn fx:id="colStatus" prefWidth="174.0" text="TRẠNG THÁI" />
-                        <TableColumn fx:id="colAction" prefWidth="158.0" text="THAO TÁC" />
+                        <TableColumn fx:id="colName"        prefWidth="220.0" text="HỌ TÊN" />
+                        <TableColumn fx:id="colCccd"        prefWidth="160.0" text="CCCD" />
+                        <TableColumn fx:id="colPhone"       prefWidth="150.0" text="SỐ ĐIỆN THOẠI" />
+                        <TableColumn fx:id="colRentalCount" prefWidth="120.0" text="SỐ LẦN THUÊ" />
+                        <TableColumn fx:id="colStatus"      prefWidth="150.0" text="TRẠNG THÁI" />
+                        <TableColumn fx:id="colAction"      prefWidth="200.0" text="THAO TÁC" />
                     </columns>
                 </TableView>
             </children>
         </VBox>
+
     </children>
 </VBox>

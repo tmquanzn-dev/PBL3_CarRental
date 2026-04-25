@@ -2,6 +2,7 @@ package com.example.rentalcar.controller.customer;
 
 import com.example.rentalcar.bll.CustomerBLL;
 import com.example.rentalcar.models.Customers;
+import com.example.rentalcar.utils.AppSession;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -15,158 +16,141 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.text.Text;
-import javafx.scene.layout.StackPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
+import javafx.scene.text.Text;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
 import java.net.URL;
 import java.util.List;
-import java.util.Locale;
+import java.util.Optional;
 import java.util.ResourceBundle;
 
 public class CustomerController implements Initializable {
 
-    // Khai báo 3 Label của 3 card thống kê
+    // ── Cards ────────────────────────────────────────────
     @FXML private Label lblTotalCustomers;
     @FXML private Label lblNewCustomers;
     @FXML private Label lblBlacklist;
 
-    // Khai báo các cột và bảng dữ liệu
-    @FXML private TableView<Customers> tableCustomers;
-    @FXML private TableColumn<Customers, String> colCccd;
-    @FXML private TableColumn<Customers, String> colName;
-    @FXML private TableColumn<Customers, String> colPhone;
-    @FXML private TableColumn<Customers, Integer> colRentalCount;
-    @FXML private TableColumn<Customers, Boolean> colStatus;
-    @FXML private TableColumn<Customers, Void> colAction;
+    // ── Search ────────────────────────────────────────────
+    @FXML private TextField txtSearch;
+    @FXML private ComboBox<String> cbFilter;
 
+    // ── Table ─────────────────────────────────────────────
+    @FXML private TableView<Customers>              tableCustomers;
+    @FXML private TableColumn<Customers, String>    colCccd;
+    @FXML private TableColumn<Customers, String>    colName;
+    @FXML private TableColumn<Customers, String>    colPhone;
+    @FXML private TableColumn<Customers, Integer>   colRentalCount;
+    @FXML private TableColumn<Customers, Boolean>   colStatus;
+    @FXML private TableColumn<Customers, Void>      colAction;
 
-    // Gọi BLL
     private final CustomerBLL customerBLL = new CustomerBLL();
-    private ObservableList<Customers> customerList;
+    private ObservableList<Customers> masterList;
 
+    // ─────────────────────────────────────────────────────
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        setupFilter();
         setupTableColumns();
         loadData();
         tableCustomers.setFixedCellSize(60.0);
     }
 
-    private void setupTableColumns()
-    {
-        colCccd.setCellValueFactory(cellData ->
-                new javafx.beans.property.SimpleStringProperty(cellData.getValue().getCccd())
-        );
+    // ── Filter ComboBox ──────────────────────────────────
+    private void setupFilter() {
+        if (cbFilter != null) {
+            cbFilter.getItems().addAll("Tất cả", "Bình thường", "Blacklist");
+            cbFilter.setValue("Tất cả");
+            cbFilter.setOnAction(e -> applyFilter());
+        }
+    }
+
+    // ── Table Columns ────────────────────────────────────
+    private void setupTableColumns() {
+        colCccd.setCellValueFactory(cd ->
+                new javafx.beans.property.SimpleStringProperty(cd.getValue().getCccd()));
+
         colPhone.setCellValueFactory(new PropertyValueFactory<>("phone"));
 
+        // Cột tên: avatar + tên
         colName.setCellValueFactory(new PropertyValueFactory<>("full_name"));
-        colName.setCellFactory(column -> new TableCell<Customers, String>() {
+        colName.setCellFactory(col -> new TableCell<>() {
             @Override
             protected void updateItem(String name, boolean empty) {
                 super.updateItem(name, empty);
-
                 if (empty || name == null || name.isBlank()) {
-                    setGraphic(null);
-                    setText(null);
-                } else {
-                    // Vẽ Avatar tròn
-                    Circle avatar = new Circle(15, Color.web("#478dff"));
-                    Text initial = new Text(name.substring(0, 1).toUpperCase());
-                    initial.setFill(Color.WHITE);
-
-                    StackPane stackAvatar = new StackPane(avatar, initial);
-                    Label lblName = new Label(name);
-                    HBox box = new HBox(15, stackAvatar, lblName);
-                    box.setAlignment(Pos.CENTER_LEFT);
-                    setGraphic(box);
-                    setText(null);
+                    setGraphic(null); return;
                 }
+                Circle avatar = new Circle(15, Color.web("#478dff"));
+                Text initial = new Text(name.substring(0, 1).toUpperCase());
+                initial.setFill(Color.WHITE);
+                StackPane sp = new StackPane(avatar, initial);
+                Label lbl = new Label(name);
+                HBox box = new HBox(12, sp, lbl);
+                box.setAlignment(Pos.CENTER_LEFT);
+                setGraphic(box);
+                setText(null);
             }
         });
 
+        // Cột số lần thuê
         colRentalCount.setCellValueFactory(new PropertyValueFactory<>("rental_count"));
-        colRentalCount.setCellFactory(column -> new TableCell<Customers, Integer>()
-        {
+        colRentalCount.setCellFactory(col -> new TableCell<>() {
             @Override
-            protected void updateItem(Integer count, boolean empty)
-            {
+            protected void updateItem(Integer count, boolean empty) {
                 super.updateItem(count, empty);
-                if (empty || count == null)
-                    setGraphic(null);
-                else
-                {
-                    Label badge = new Label(count + " lần");
-                    badge.setStyle("-fx-background-color: #e0e7ff; -fx-text-fill: #4338ca; " +
-                            "-fx-padding: 4 12; -fx-background-radius: 12; -fx-font-weight: bold;");
-                    HBox box = new HBox(badge);
-                    box.setAlignment(Pos.CENTER);
-                    setGraphic(box);
-                }
-
+                if (empty || count == null) { setGraphic(null); return; }
+                Label badge = new Label(count + " lần");
+                badge.setStyle("-fx-background-color: #e0e7ff; -fx-text-fill: #4338ca; " +
+                        "-fx-padding: 4 12; -fx-background-radius: 12; -fx-font-weight: bold;");
+                HBox box = new HBox(badge);
+                box.setAlignment(Pos.CENTER);
+                setGraphic(box);
             }
         });
 
-        colStatus.setCellValueFactory(cellData ->
-                new javafx.beans.property.SimpleBooleanProperty(cellData.getValue().isIs_blacklist())
-        );
-        colStatus.setCellFactory(column -> new TableCell<Customers, Boolean>() {
+        // Cột trạng thái
+        colStatus.setCellValueFactory(cd ->
+                new javafx.beans.property.SimpleBooleanProperty(cd.getValue().isIs_blacklist()));
+        colStatus.setCellFactory(col -> new TableCell<>() {
             @Override
             protected void updateItem(Boolean isBlacklist, boolean empty) {
                 super.updateItem(isBlacklist, empty);
-                if (empty || isBlacklist == null) {
-                    setGraphic(null);
-                } else {
-                    Label pill = new Label(isBlacklist ? "Blacklist" : "Bình thường");
-
-                    pill.getStyleClass().add("status-pill");
-
-                    if (isBlacklist) {
-                        pill.getStyleClass().add("status-yellow");
-                    } else {
-                        pill.getStyleClass().add("status-green");
-                    }
-
-                    HBox box = new HBox(pill);
-                    box.setAlignment(Pos.CENTER_LEFT);
-                    setGraphic(box);
-                }
+                if (empty || isBlacklist == null) { setGraphic(null); return; }
+                Label pill = new Label(isBlacklist ? "⛔ Blacklist" : "✅ Bình thường");
+                pill.getStyleClass().add("status-pill");
+                pill.getStyleClass().add(isBlacklist ? "status-yellow" : "status-green");
+                HBox box = new HBox(pill);
+                box.setAlignment(Pos.CENTER_LEFT);
+                setGraphic(box);
             }
         });
 
-        colAction.setCellFactory(column -> new TableCell<Customers, Void>() {
-            private final Button btnView = new Button();
-            private final Button btnEdit = new Button();
-            private final Button btnDelete = new Button();
-            private final HBox pane = new HBox(12, btnView, btnEdit, btnDelete);
+        // Cột thao tác: Xem | Sửa | Blacklist Toggle
+        colAction.setCellFactory(col -> new TableCell<>() {
+            private final Button btnView      = new Button();
+            private final Button btnEdit      = new Button();
+            private final Button btnBlacklist = new Button();
+            private final HBox   pane         = new HBox(10, btnView, btnEdit, btnBlacklist);
 
             {
                 pane.setAlignment(Pos.CENTER_LEFT);
                 btnView.getStyleClass().add("btn-action");
                 btnEdit.getStyleClass().add("btn-action");
-                btnDelete.getStyleClass().add("btn-action");
+                btnBlacklist.getStyleClass().add("btn-action");
 
                 loadIcon(btnView, "/image/dashboardform/view.png");
                 loadIcon(btnEdit, "/image/dashboardform/edit.png");
-                loadIcon(btnDelete, "/image/dashboardform/delete.png");
 
-                btnView.setOnAction(event -> {
-                    Customers selectedCustomer = getTableView().getItems().get(getIndex());
-                    if (selectedCustomer != null) {
-                        showDetailModal(selectedCustomer);
-                    }
-                });
-
-                btnEdit.setOnAction(event -> {
-                    Customers selectedCustomer = getTableView().getItems().get(getIndex());
-                    if (selectedCustomer != null)
-                        showEditCustomerModal(selectedCustomer);
-
-                } );
+                btnView.setOnAction(e -> showDetailModal(getTableRow().getItem()));
+                btnEdit.setOnAction(e -> showEditModal(getTableRow().getItem()));
+                btnBlacklist.setOnAction(e -> handleBlacklistToggle(getTableRow().getItem()));
             }
 
             private void loadIcon(Button btn, String path) {
@@ -177,121 +161,218 @@ public class CustomerController implements Initializable {
                         iv.setFitHeight(18); iv.setFitWidth(18);
                         btn.setGraphic(iv);
                     }
-                } catch (Exception ex) { }
+                } catch (Exception ignored) {}
             }
 
             @Override
             protected void updateItem(Void item, boolean empty) {
                 super.updateItem(item, empty);
-                setGraphic(empty ? null : pane);
+                if (empty || getTableRow().getItem() == null) { setGraphic(null); return; }
+
+                Customers c = getTableRow().getItem();
+                // Đổi icon và tooltip theo trạng thái blacklist
+                if (c.isIs_blacklist()) {
+                    btnBlacklist.setText("✅ Gỡ BL");
+                    btnBlacklist.setStyle("-fx-background-color: #dcfce7; -fx-text-fill: #15803d; " +
+                            "-fx-background-radius: 6; -fx-cursor: hand; -fx-font-size: 11px; -fx-padding: 4 8;");
+                } else {
+                    btnBlacklist.setText("⛔ BL");
+                    btnBlacklist.setStyle("-fx-background-color: #fee2e2; -fx-text-fill: #b91c1c; " +
+                            "-fx-background-radius: 6; -fx-cursor: hand; -fx-font-size: 11px; -fx-padding: 4 8;");
+                }
+                btnBlacklist.setGraphic(null);
+                setGraphic(pane);
             }
         });
     }
 
+    // ── Load Data ─────────────────────────────────────────
     private void loadData() {
         try {
-            // 1. Lấy danh sách khách hàng từ BLL
             List<Customers> list = customerBLL.getAllCustomers();
-
-            if (list != null) {
-                customerList = FXCollections.observableArrayList(list);
-                tableCustomers.setItems(customerList);
-                int tongKhach = list.size();
-                lblTotalCustomers.setText(String.valueOf(tongKhach));
-                int soLuongBlacklist = 0;
-                for (int i = 0; i < list.size(); i++) {
-                    Customers c = list.get(i);
-                    if (c.isIs_blacklist() == true)
-                        soLuongBlacklist = soLuongBlacklist + 1;
-
-                }
-                lblBlacklist.setText(String.valueOf(soLuongBlacklist));
-                lblNewCustomers.setText("0");
-            }
+            if (list == null) return;
+            masterList = FXCollections.observableArrayList(list);
+            tableCustomers.setItems(masterList);
+            updateStats(list);
         } catch (Exception e) {
-            System.out.println("Lỗi rồi: " + e.getMessage());
+            showError("Lỗi tải dữ liệu: " + e.getMessage());
         }
     }
 
-    // Hàm mở popup thêm khách hàng mới
+    private void updateStats(List<Customers> list) {
+        lblTotalCustomers.setText(String.valueOf(list.size()));
+        long bl = list.stream().filter(Customers::isIs_blacklist).count();
+        lblBlacklist.setText(String.valueOf(bl));
+        lblNewCustomers.setText("0"); // TODO: tính theo tháng
+    }
+
+    // ── Search & Filter ───────────────────────────────────
+    @FXML
+    void handleSearch(ActionEvent event) {
+        applyFilter();
+    }
+
+    private void applyFilter() {
+        if (masterList == null) return;
+        String keyword    = txtSearch != null ? txtSearch.getText().trim().toLowerCase() : "";
+        String filterVal  = cbFilter  != null ? cbFilter.getValue() : "Tất cả";
+
+        ObservableList<Customers> filtered = masterList.filtered(c -> {
+            boolean matchKey = keyword.isEmpty()
+                    || c.getFull_name().toLowerCase().contains(keyword)
+                    || c.getCccd().toLowerCase().contains(keyword)
+                    || (c.getPhone() != null && c.getPhone().contains(keyword));
+
+            boolean matchFilter = "Tất cả".equals(filterVal)
+                    || ("Blacklist".equals(filterVal) && c.isIs_blacklist())
+                    || ("Bình thường".equals(filterVal) && !c.isIs_blacklist());
+
+            return matchKey && matchFilter;
+        });
+
+        tableCustomers.setItems(filtered);
+    }
+
+    // ── Blacklist Toggle ──────────────────────────────────
+    private void handleBlacklistToggle(Customers customer) {
+        if (customer == null) return;
+
+        if (customer.isIs_blacklist()) {
+            // Gỡ khỏi blacklist
+            Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
+            confirm.setTitle("Gỡ khỏi danh sách đen");
+            confirm.setHeaderText(null);
+            confirm.setContentText("Bạn có chắc muốn gỡ \"" + customer.getFull_name() + "\" khỏi danh sách đen?");
+            confirm.showAndWait().filter(r -> r == ButtonType.OK).ifPresent(r -> {
+                try {
+                    customerBLL.removeFromBlacklist(customer.getId_customer());
+                    loadData();
+                    showInfo("Đã gỡ khách hàng khỏi danh sách đen thành công!");
+                } catch (Exception ex) {
+                    showError(ex.getMessage());
+                }
+            });
+        } else {
+            // Thêm vào blacklist → mở modal nhập lý do
+            showBlacklistModal(customer);
+        }
+    }
+
+    private void showBlacklistModal(Customers customer) {
+        try {
+            FXMLLoader loader = new FXMLLoader(
+                    getClass().getResource("/views/customer/BlacklistModal.fxml"));
+            Parent root = loader.load();
+
+            BlacklistModalController ctrl = loader.getController();
+            ctrl.setCustomer(customer, result -> {
+                if (result) {
+                    loadData();
+                }
+            });
+
+            Stage stage = new Stage();
+            stage.setScene(new Scene(root));
+            stage.setTitle("Thêm vào danh sách đen");
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.centerOnScreen();
+            stage.showAndWait();
+        } catch (Exception e) {
+            // Fallback: dùng TextInputDialog nếu chưa có FXML
+            TextInputDialog dialog = new TextInputDialog();
+            dialog.setTitle("Thêm vào danh sách đen");
+            dialog.setHeaderText("Khách hàng: " + customer.getFull_name());
+            dialog.setContentText("Nhập lý do đưa vào danh sách đen:");
+
+            Optional<String> result = dialog.showAndWait();
+            result.ifPresent(reason -> {
+                if (reason.isBlank()) {
+                    showError("Lý do không được để trống!");
+                    return;
+                }
+                try {
+                    customerBLL.addToBlacklist(customer.getId_customer(), reason);
+                    loadData();
+                    showInfo("Đã thêm khách hàng vào danh sách đen!");
+                } catch (Exception ex) {
+                    showError(ex.getMessage());
+                }
+            });
+        }
+    }
+
+    // ── Modals ────────────────────────────────────────────
     @FXML
     void showAddCustomerModal(ActionEvent event) {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/views/customer/AddCustomerModal.fxml"));
+            FXMLLoader loader = new FXMLLoader(
+                    getClass().getResource("/views/customer/AddCustomerModal.fxml"));
             Parent root = loader.load();
-
-            Stage modalStage = new Stage();
-            modalStage.setScene(new Scene(root));
-
-            modalStage.setTitle("Thêm khách mới");
-
-            modalStage.initModality(Modality.APPLICATION_MODAL);
-            modalStage.initStyle(StageStyle.UNDECORATED);
-            modalStage.centerOnScreen();
-            modalStage.showAndWait();
-
+            Stage stage = new Stage();
+            stage.setScene(new Scene(root));
+            stage.setTitle("Thêm khách mới");
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.initStyle(StageStyle.UNDECORATED);
+            stage.centerOnScreen();
+            stage.showAndWait();
             loadData();
-
         } catch (Exception e) {
-            System.err.println("Lỗi khi mở modal Thêm Khách Hàng: " + e.getMessage());
-            e.printStackTrace();
+            showError("Lỗi mở modal: " + e.getMessage());
         }
     }
 
     private void showDetailModal(Customers customer) {
+        if (customer == null) return;
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/views/customer/CustomerDetailModal.fxml"));
+            FXMLLoader loader = new FXMLLoader(
+                    getClass().getResource("/views/customer/CustomerDetailModal.fxml"));
             Parent root = loader.load();
-
-            CustomerDetailController controller = loader.getController();
-            controller.setCustomerData(customer);
-
-            Stage modalStage = new Stage();
-            modalStage.setScene(new Scene(root));
-            modalStage.setTitle("Chi tiết khách hàng");
-            modalStage.initModality(Modality.APPLICATION_MODAL);
-            modalStage.centerOnScreen();
-            modalStage.showAndWait();
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+            CustomerDetailController ctrl = loader.getController();
+            ctrl.setCustomerData(customer);
+            Stage stage = new Stage();
+            stage.setScene(new Scene(root));
+            stage.setTitle("Chi tiết khách hàng");
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.centerOnScreen();
+            stage.showAndWait();
+        } catch (Exception e) { e.printStackTrace(); }
     }
 
-    private void showEditCustomerModal(Customers customer)
-    {
-        try
-        {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/views/customer/CustomerEditModal.fxml"));
+    private void showEditModal(Customers customer) {
+        if (customer == null) return;
+        try {
+            FXMLLoader loader = new FXMLLoader(
+                    getClass().getResource("/views/customer/CustomerEditModal.fxml"));
             Parent root = loader.load();
-
-            CustomerEditController controller = loader.getController();
-            controller.setCustomerData(customer);
-
-            Stage modalStage = new Stage();
-            modalStage.setScene(new Scene(root));
-            modalStage.setTitle("Chỉnh sửa khách hàng");
-            modalStage.initModality(Modality.APPLICATION_MODAL);
-            modalStage.centerOnScreen();
-            modalStage.showAndWait();
+            CustomerEditController ctrl = loader.getController();
+            ctrl.setCustomerData(customer);
+            Stage stage = new Stage();
+            stage.setScene(new Scene(root));
+            stage.setTitle("Chỉnh sửa khách hàng");
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.centerOnScreen();
+            stage.showAndWait();
             loadData();
-        } catch (Exception e)
-        {
-            e.printStackTrace();
-        }
+        } catch (Exception e) { e.printStackTrace(); }
     }
 
-    // Hàm xử lý tìm kiếm
-    @FXML
-    void handleSearch(ActionEvent event) {
-        System.out.println("Đang tìm kiếm khách hàng...");
-    }
-
-    // Hàm làm mới bảng dữ liệu
     @FXML
     void loadDataToTable(ActionEvent event) {
-        System.out.println("Đang load lại dữ liệu vào bảng...");
+        txtSearch.clear();
+        if (cbFilter != null) cbFilter.setValue("Tất cả");
+        loadData();
     }
 
+    // ── Helpers ───────────────────────────────────────────
+    private void showError(String msg) {
+        Alert a = new Alert(Alert.AlertType.ERROR);
+        a.setTitle("Lỗi"); a.setHeaderText(null); a.setContentText(msg);
+        a.showAndWait();
+    }
 
+    private void showInfo(String msg) {
+        Alert a = new Alert(Alert.AlertType.INFORMATION);
+        a.setTitle("Thông báo"); a.setHeaderText(null); a.setContentText(msg);
+        a.showAndWait();
+    }
 }
