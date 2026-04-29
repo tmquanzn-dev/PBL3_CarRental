@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.image.ImageView?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ComboBox?>
@@ -118,27 +119,51 @@
                                 <Separator />
 
                                 <!-- Avatar + thông tin nhanh -->
-                                <HBox alignment="CENTER_LEFT" spacing="25.0" style="-fx-background-color: linear-gradient(to right, #eff6ff, #f0f9ff); -fx-background-radius: 14; -fx-padding: 22;">
+                                <HBox alignment="CENTER_LEFT" spacing="25.0"
+                                      style="-fx-background-color: linear-gradient(to right, #eff6ff, #f0f9ff);
+             -fx-background-radius: 14; -fx-padding: 22;"
+                                      xmlns="http://javafx.com/javafx/8.0.171">
                                     <children>
-                                        <StackPane styleClass="avatar-circle-large">
+
+                                        <!--  AVATAR: StackPane chứa ImageView + chữ cái đầu  -->
+                                        <StackPane fx:id="avatarStack" styleClass="avatar-circle-large"
+                                                   style="-fx-min-width: 90; -fx-min-height: 90;
+                          -fx-max-width: 90; -fx-max-height: 90;
+                          -fx-background-radius: 50; -fx-clip: true;">
                                             <children>
-                                                <Label fx:id="lblAvatarInitial" styleClass="avatar-initial-large" text="A" />
+                                                <!-- Ảnh đại diện (ẩn mặc định, hiện khi đã upload) -->
+                                                <ImageView fx:id="imgAvatar"
+                                                           fitWidth="90.0" fitHeight="90.0"
+                                                           preserveRatio="false"
+                                                           visible="false" />
+                                                <!-- Chữ cái đầu (hiện khi chưa có ảnh) -->
+                                                <Label fx:id="lblAvatarInitial"
+                                                       styleClass="avatar-initial-large" text="A" />
                                             </children>
                                         </StackPane>
+
+                                        <!-- Thông tin profile nhanh -->
                                         <VBox spacing="6.0" HBox.hgrow="ALWAYS">
                                             <children>
-                                                <Label fx:id="lblProfileName" styleClass="profile-name" text="Admin User" />
+                                                <Label fx:id="lblProfileName"  styleClass="profile-name"   text="Admin User" />
                                                 <HBox alignment="CENTER_LEFT" spacing="8.0">
                                                     <children>
-                                                        <Label fx:id="lblProfileRole" styleClass="profile-role" text="Quản lý" />
-                                                        <Label fx:id="lblProfileStatus" styleClass="badge-green" text="● Đang hoạt động" />
+                                                        <Label fx:id="lblProfileRole"   styleClass="profile-role"   text="Quản lý" />
+                                                        <Label fx:id="lblProfileStatus" styleClass="badge-green"    text="● Đang hoạt động" />
                                                     </children>
                                                 </HBox>
-                                                <Label fx:id="lblProfileUsername" style="-fx-text-fill: #64748b; -fx-font-size: 13px;" text="@admin01" />
+                                                <Label fx:id="lblProfileUsername"
+                                                       style="-fx-text-fill: #64748b; -fx-font-size: 13px;" text="@admin01" />
                                             </children>
                                         </VBox>
-                                        <Button mnemonicParsing="false" style="-fx-font-size: 13px; -fx-padding: 9 18;" styleClass="btn-secondary" text="Đổi ảnh đại diện">
-                                        </Button>
+
+                                        <!-- Nút đổi ảnh đại diện – gắn onAction vào handleChangeAvatar -->
+                                        <Button mnemonicParsing="false"
+                                                onAction="#handleChangeAvatar"
+                                                style="-fx-font-size: 13px; -fx-padding: 9 18;"
+                                                styleClass="btn-secondary"
+                                                text="📷  Đổi ảnh đại diện" />
+
                                     </children>
                                 </HBox>
 

@@ -11,22 +11,29 @@
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
 
-<VBox prefWidth="700.0" spacing="15.0" styleClass="modal-container" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.rentalcar.controller.vehicle.AddVehicleController">
+<VBox prefWidth="700.0" spacing="15.0" styleClass="modal-container"
+      xmlns="http://javafx.com/javafx/8.0.171"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.example.rentalcar.controller.vehicle.AddVehicleController">
     <padding>
         <Insets bottom="25.0" left="30.0" right="30.0" top="25.0" />
     </padding>
     <children>
-        <HBox alignment="CENTER_LEFT">
-            <children>
-                <VBox spacing="3.0">
-                    <Label styleClass="header-title" text="Thêm phương tiện mới" />
-                    <Label style="-fx-text-fill: #64748b;" text="Vui lòng điền thông tin kỹ thuật và định mức giá" />
-                </VBox>
-            </children>
-        </HBox>
 
+        <!-- HEADER -->
+        <VBox spacing="3.0">
+            <children>
+                <Label styleClass="header-title" text="Thêm phương tiện mới" />
+                <Label style="-fx-text-fill: #64748b; -fx-font-size: 13px;"
+                       text="Vui lòng điền thông tin kỹ thuật và định mức giá" />
+            </children>
+        </VBox>
+
+        <!-- FORM CÁC TRƯỜNG NHẬP -->
         <GridPane hgap="20.0" vgap="12.0">
             <columnConstraints>
                 <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
@@ -96,33 +103,79 @@
                     <Label styleClass="input-label" text="Giá trị mua xe (Dùng tính ROI)" />
                     <TextField fx:id="txtPurchasePrice" promptText="40000000" styleClass="modern-input" />
                 </VBox>
+
             </children>
         </GridPane>
 
-        <VBox alignment="CENTER" spacing="8.0" styleClass="image-upload-box">
-            <padding>
-                <Insets bottom="10.0" top="10.0" />
-            </padding>
+        <!-- ====================================================
+             UPLOAD ẢNH XE – có preview to và nút chọn ảnh rõ ràng
+        ==================================================== -->
+        <VBox spacing="10.0"
+              style="-fx-border-color: #cbd5e1; -fx-border-style: dashed; -fx-border-width: 2;
+                     -fx-background-color: #f8fafc; -fx-background-radius: 12; -fx-border-radius: 12;
+                     -fx-padding: 16;">
             <children>
-                <Label styleClass="upload-label" text="📷 Tải lên hình ảnh phương tiện" />
-                <ImageView fx:id="imgVehicle" fitHeight="100.0" fitWidth="150.0" pickOnBounds="true" preserveRatio="true" visible="false" />
-                <Button mnemonicParsing="false" styleClass="btn-upload" text="Tải ảnh lên" />
-                <TextField fx:id="txtImageUrl" maxWidth="350.0" promptText="Hoặc nhập đường dẫn ảnh..." styleClass="modern-input" />
+
+                <Label style="-fx-font-weight: bold; -fx-text-fill: #475569; -fx-font-size: 13px;"
+                       text="📷  Ảnh phương tiện" />
+
+                <HBox alignment="CENTER_LEFT" spacing="20.0">
+                    <children>
+
+                        <!-- Preview ảnh -->
+                        <StackPane prefWidth="200.0" prefHeight="130.0"
+                                   style="-fx-background-color: #e2e8f0; -fx-background-radius: 10;
+                                          -fx-border-color: #cbd5e1; -fx-border-radius: 10; -fx-border-width: 1;">
+                            <children>
+                                <ImageView fx:id="imgVehiclePreview"
+                                           fitWidth="196.0" fitHeight="126.0"
+                                           preserveRatio="true" pickOnBounds="true" />
+                            </children>
+                        </StackPane>
+
+                        <!-- Nút và trạng thái -->
+                        <VBox spacing="10.0" HBox.hgrow="ALWAYS">
+                            <children>
+                                <Label text="Chọn ảnh xe để hiển thị trên card"
+                                       style="-fx-text-fill: #64748b; -fx-font-size: 13px;" />
+                                <Label text="Định dạng: JPG, PNG, WEBP • Tối đa: 5MB"
+                                       style="-fx-text-fill: #94a3b8; -fx-font-size: 12px;" />
+
+                                <Button fx:id="btnUploadImage"
+                                        mnemonicParsing="false"
+                                        onAction="#handleUploadVehicleImage"
+                                        prefHeight="40.0" prefWidth="160.0"
+                                        style="-fx-background-color: #146dff; -fx-text-fill: white;
+                                               -fx-background-radius: 8; -fx-cursor: hand;
+                                               -fx-font-weight: bold; -fx-font-size: 13px;"
+                                        text="📂  Chọn ảnh từ máy tính" />
+
+                                <!-- Label trạng thái (ẩn mặc định) -->
+                                <Label fx:id="lblImagePath"
+                                       text=""
+                                       style="-fx-text-fill: #16a34a; -fx-font-size: 12px; -fx-font-weight: bold;"
+                                       visible="false" managed="false" />
+                            </children>
+                        </VBox>
+
+                    </children>
+                </HBox>
+
             </children>
         </VBox>
 
+        <!-- BUTTONS -->
         <HBox alignment="CENTER_RIGHT" spacing="15.0">
-            <VBox.margin>
-                <Insets top="5.0" />
-            </VBox.margin>
+            <VBox.margin><Insets top="5.0" /></VBox.margin>
             <children>
                 <Button mnemonicParsing="false" onAction="#handleCancel" styleClass="btn-cancel" text="Hủy bỏ" />
-                <Button mnemonicParsing="false" onAction="#handleSave" styleClass="btn-primary" text="💾 Lưu phương tiện" />
+                <Button mnemonicParsing="false" onAction="#handleSave"   styleClass="btn-primary" text="💾  Lưu phương tiện" />
             </children>
         </HBox>
+
     </children>
 
     <stylesheets>
-        <URL value="@../../css/customerview/modal_style.css" />
+        <URL value="@../../css/vehicleview/formstyle.css" />
     </stylesheets>
 </VBox>
