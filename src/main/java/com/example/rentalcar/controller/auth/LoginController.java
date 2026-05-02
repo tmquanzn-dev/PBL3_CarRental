@@ -1,7 +1,6 @@
 package com.example.rentalcar.controller.auth;
 
 import com.example.rentalcar.bll.UserBLL;
-import com.example.rentalcar.dao.UserDAO;
 import com.example.rentalcar.models.Users;
 import com.example.rentalcar.utils.AppSession;
 import javafx.event.ActionEvent;
@@ -18,73 +17,55 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 
-public class LoginController
-{
+public class LoginController {
+
+    @FXML private TextField     txtUsername;
+    @FXML private PasswordField txtPassword;
+    @FXML private Button        btnLogin;
+
+    private final UserBLL userBLL = new UserBLL();
 
     @FXML
-    private TextField txtUsername;
+    void onLoginClick(ActionEvent event) {
+        String username = txtUsername.getText().trim();
+        String password = txtPassword.getText();
 
-    @FXML
-    private PasswordField txtPassword;
-
-    @FXML
-    private Button btnLogin;
-
-    @FXML
-    void onLoginClick(ActionEvent event)
-    {
-        String user = txtUsername.getText().trim();
-        String pass = txtPassword.getText();
-
-        // 1. Validate form cơ bản tránh bug ngớ ngẩn
-        if (user.isEmpty() || pass.isEmpty())
-        {
+        if (username.isEmpty() || password.isEmpty()) {
             showAlert("Vui lòng nhập đầy đủ tên đăng nhập và mật khẩu!");
             return;
         }
-        UserBLL userBLL = new UserBLL();
 
-        // 2. Sử dụng hàm findByUsername theo chuẩn DAO chúng ta vừa thiết kế
-        Users loginUser = userBLL.getUserByUsername(user);
-
-        // 3. Kiểm tra mật khẩu (Thực tế sau này áp dụng thư viện BCrypt ở đây)
-        // Lưu ý: Nếu DB của bạn em cột mật khẩu tên khác thì đổi loginUser.getPassword_hash() cho khớp nhé
-        if (loginUser != null && pass.equals(loginUser.getPassword()))
-        {
-
-            // 4. Lưu Session chuẩn OOP
-            AppSession.setCurrentUser(loginUser);
-
-            try
-            {
-                FXMLLoader loader = new FXMLLoader(getClass().getResource("/views/MainView.fxml"));
-                Parent root = loader.load();
-                Scene scene = new Scene(root);
-                Node source = (Node) event.getSource();
-                Stage stage = (Stage) source.getScene().getWindow();
-                stage.setScene(scene);
-                stage.setTitle("Hệ thống quản lý thuê xe - VehicleRent Pro");
-                stage.centerOnScreen();
-                stage.show();
-            }
-            catch (IOException e)
-            {
-                e.printStackTrace();
-                showAlert("Lỗi không thể mở màn hình chính: " + e.getMessage());
-            }
-        }
-        else
-        {
-            showAlert("Sai tên đăng nhập hoặc mật khẩu!");
+        try {
+            // UserBLL.login() đã check: tồn tại, mật khẩu đúng, is_active=1
+            Users user = userBLL.login(username, password);
+            AppSession.setCurrentUser(user);
+            navigateToMain(event);
+        } catch (IllegalArgumentException ex) {
+            showAlert(ex.getMessage());
         }
     }
 
-    private void showAlert(String message)
-    {
-        Alert alert = new Alert(Alert.AlertType.ERROR);
-        alert.setTitle("LỖI ĐĂNG NHẬP");
-        alert.setHeaderText(null);
-        alert.setContentText(message);
-        alert.showAndWait();
+    private void navigateToMain(ActionEvent event) {
+        try {
+            Parent root = FXMLLoader.load(
+                    getClass().getResource("/views/MainView.fxml"));
+            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+            stage.setScene(new Scene(root));
+            stage.setTitle("VehicleRent Pro – " + AppSession.getRoleDisplayName());
+            stage.setResizable(true);
+            stage.centerOnScreen();
+            stage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+            showAlert("Lỗi mở màn hình chính: " + e.getMessage());
+        }
+    }
+
+    private void showAlert(String msg) {
+        Alert a = new Alert(Alert.AlertType.ERROR);
+        a.setTitle("Đăng nhập thất bại");
+        a.setHeaderText(null);
+        a.setContentText(msg);
+        a.showAndWait();
     }
 }

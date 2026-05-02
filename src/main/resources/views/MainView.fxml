@@ -10,307 +10,314 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
-<?import javafx.scene.paint.Color?>
-<?import javafx.scene.paint.LinearGradient?>
-<?import javafx.scene.paint.Stop?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane fx:id="mainBorderPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0" prefWidth="1200.0" style="-fx-background-color: #fff;" stylesheets="@../css/topbar/topbar.css" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.rentalcar.controller.MainController">
+<!--
+    MainView.fxml – Màn hình chính sau đăng nhập
+    Controller: MainController (phân quyền menu Admin/Staff)
+
+    Các fx:id quan trọng cho phân quyền:
+      lblUserName      → hiển thị tên người dùng trên topbar
+      lblUserRole      → hiển thị vai trò (Admin / Staff)
+      lblAvatarInitial → chữ cái đầu tên
+      btnEmployee      → Admin only (ẩn với Staff)
+      btnRule          → Admin only
+      btnPartPrice     → Admin only
+      btnReport        → Admin only
+-->
+<BorderPane fx:id="mainBorderPane"
+            maxHeight="-Infinity" maxWidth="-Infinity"
+            minHeight="-Infinity" minWidth="-Infinity"
+            prefHeight="800.0" prefWidth="1200.0"
+            style="-fx-background-color: #fff;"
+            stylesheets="@../css/topbar/topbar.css"
+            xmlns="http://javafx.com/javafx/8.0.171"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.example.rentalcar.controller.MainController">
+
     <top>
         <HBox prefHeight="137.0" prefWidth="1200.0" styleClass="top-bar" BorderPane.alignment="CENTER">
             <children>
-                <Button fx:id="btnMenu" mnemonicParsing="false" onAction="#handleHamburgerMenu" prefHeight="55.0" prefWidth="57.0" text="☰">
-                    <font>
-                        <Font name="System Bold" size="24.0" />
-                    </font>
-                    <HBox.margin>
-                        <Insets left="40.0" top="65.0" />
-                    </HBox.margin>
+                <!-- Hamburger -->
+                <Button fx:id="btnMenu"
+                        mnemonicParsing="false"
+                        onAction="#handleHamburgerMenu"
+                        prefHeight="55.0" prefWidth="57.0"
+                        text="☰">
+                    <font><Font name="System Bold" size="24.0" /></font>
+                    <HBox.margin><Insets left="40.0" top="65.0" /></HBox.margin>
                 </Button>
-                <Label alignment="CENTER" prefHeight="62.0" prefWidth="61.0" style="-fx-background-radius: 10; -fx-background-color: linear-gradient(to bottom right, #478dff, #146dff);" text="🏍" wrapText="true">
-                    <font>
-                        <Font size="34.0" />
-                    </font>
-                    <textFill>
-                        <LinearGradient endX="1.0" endY="0.8598484333717462" startX="1.0" startY="1.0">
-                            <stops>
-                                <Stop>
-                                    <color>
-                                        <Color />
-                                    </color>
-                                </Stop>
-                                <Stop offset="1.0">
-                                    <color>
-                                        <Color blue="1.0" green="1.0" red="1.0" />
-                                    </color>
-                                </Stop>
-                            </stops>
-                        </LinearGradient>
-                    </textFill>
-                    <HBox.margin>
-                        <Insets left="20.0" top="60.0" />
-                    </HBox.margin>
+
+                <!-- Logo icon -->
+                <Label alignment="CENTER" prefHeight="62.0" prefWidth="61.0"
+                       style="-fx-background-radius: 10; -fx-background-color: linear-gradient(to bottom right, #478dff, #146dff);"
+                       text="🏍">
+                    <font><Font size="34.0" /></font>
+                    <HBox.margin><Insets left="20.0" top="60.0" /></HBox.margin>
                 </Label>
+
+                <!-- App name -->
                 <VBox prefHeight="160.0" prefWidth="240.0">
                     <children>
-                        <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="48.0" prefWidth="220.0" text="VehicleRent Pro">
-                            <font>
-                                <Font name="System Bold" size="24.0" />
-                            </font>
-                            <VBox.margin>
-                                <Insets left="1.0" top="53.0" />
-                            </VBox.margin>
+                        <Label alignment="CENTER" contentDisplay="CENTER"
+                               prefHeight="48.0" prefWidth="220.0"
+                               text="VehicleRent Pro">
+                            <font><Font name="System Bold" size="24.0" /></font>
+                            <VBox.margin><Insets left="1.0" top="53.0" /></VBox.margin>
                         </Label>
                         <Label text="Hệ thống quản lý thuê xe">
-                            <font>
-                                <Font size="15.0" />
-                            </font>
-                            <VBox.margin>
-                                <Insets left="22.0" />
-                            </VBox.margin>
+                            <font><Font size="15.0" /></font>
+                            <VBox.margin><Insets left="22.0" /></VBox.margin>
                         </Label>
                     </children>
-                    <HBox.margin>
-                        <Insets left="5.0" />
-                    </HBox.margin>
+                    <HBox.margin><Insets left="5.0" /></HBox.margin>
                 </VBox>
+
+                <!-- Topbar phải: bell + avatar + tên + logout -->
                 <HBox prefHeight="138.0" prefWidth="777.0" HBox.hgrow="ALWAYS">
                     <children>
-                        <Button mnemonicParsing="false" prefHeight="55.0" prefWidth="57.0" style="-fx-background-color: #fff;">
+                        <!-- Nút chuông thông báo -->
+                        <Button mnemonicParsing="false" prefHeight="55.0" prefWidth="57.0"
+                                style="-fx-background-color: #fff;">
                             <graphic>
                                 <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
-                                    <image>
-                                        <Image url="@../image/mainform/btn-bell.png" />
-                                    </image>
+                                    <image><Image url="@../image/mainform/btn-bell.png" /></image>
                                 </ImageView>
                             </graphic>
-                            <HBox.margin>
-                                <Insets left="400.0" top="60.0" />
-                            </HBox.margin>
+                            <HBox.margin><Insets left="400.0" top="60.0" /></HBox.margin>
                         </Button>
+
+                        <!-- Avatar + Tên + Role -->
                         <HBox prefHeight="100.0" prefWidth="230.0">
                             <children>
-                                <Label alignment="CENTER" prefHeight="58.0" prefWidth="58.0" styleClass="avataUser" stylesheets="@../css/styles.css" text="A">
-                                    <font>
-                                        <Font size="34.0" />
-                                    </font>
-                                    <HBox.margin>
-                                        <Insets left="10.0" top="57.0" />
-                                    </HBox.margin>
+                                <!-- Avatar chữ cái đầu -->
+                                <Label fx:id="lblAvatarInitial"
+                                       alignment="CENTER" prefHeight="58.0" prefWidth="58.0"
+                                       styleClass="avataUser"
+                                       stylesheets="@../css/styles.css"
+                                       text="A">
+                                    <font><Font size="28.0" /></font>
+                                    <HBox.margin><Insets left="10.0" top="57.0" /></HBox.margin>
                                 </Label>
+
                                 <VBox prefHeight="160.0" prefWidth="161.0">
                                     <children>
-                                        <Label prefHeight="27.0" prefWidth="115.0" text="Admin User" textAlignment="CENTER">
-                                            <font>
-                                                <Font name="System Bold" size="18.0" />
-                                            </font>
-                                            <VBox.margin>
-                                                <Insets left="10.0" top="61.0" />
-                                            </VBox.margin>
+                                        <!-- Tên người dùng -->
+                                        <Label fx:id="lblUserName"
+                                               prefHeight="27.0" prefWidth="115.0"
+                                               text="Đang tải..." textAlignment="CENTER">
+                                            <font><Font name="System Bold" size="18.0" /></font>
+                                            <VBox.margin><Insets left="10.0" top="61.0" /></VBox.margin>
                                         </Label>
-                                        <Label text="Quản lý">
-                                            <VBox.margin>
-                                                <Insets left="10.0" top="3.0" />
-                                            </VBox.margin>
-                                            <font>
-                                                <Font size="16.0" />
-                                            </font>
+                                        <!-- Vai trò -->
+                                        <Label fx:id="lblUserRole" text="---">
+                                            <VBox.margin><Insets left="10.0" top="3.0" /></VBox.margin>
+                                            <font><Font size="14.0" /></font>
                                         </Label>
                                     </children>
                                 </VBox>
                             </children>
                         </HBox>
-                        <Button mnemonicParsing="false" onAction="#handleLogout" prefHeight="55.0" prefWidth="57.0" styleClass="btn-logout">
+
+                        <!-- Nút logout -->
+                        <Button mnemonicParsing="false"
+                                onAction="#handleLogout"
+                                prefHeight="55.0" prefWidth="57.0"
+                                styleClass="btn-logout">
                             <graphic>
                                 <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
-                                    <image>
-                                        <Image url="@../image/mainform/btn-logout.png" />
-                                    </image>
+                                    <image><Image url="@../image/mainform/btn-logout.png" /></image>
                                 </ImageView>
                             </graphic>
-                            <HBox.margin>
-                                <Insets top="60.0" />
-                            </HBox.margin>
+                            <HBox.margin><Insets top="60.0" /></HBox.margin>
                         </Button>
                     </children>
-                    <HBox.margin>
-                        <Insets />
-                    </HBox.margin>
                 </HBox>
             </children>
         </HBox>
     </top>
+
     <center>
         <StackPane alignment="TOP_LEFT" BorderPane.alignment="CENTER">
             <children>
-                <ScrollPane fitToWidth="true" hbarPolicy="NEVER" style="-fx-background-color: transparent; -fx-background: #f4f7fe;">
+
+                <!-- Content area -->
+                <ScrollPane fitToWidth="true" hbarPolicy="NEVER"
+                            style="-fx-background-color: transparent; -fx-background: #f4f7fe;">
                     <content>
-                        <StackPane fx:id="contentArea" prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS"/>
+                        <StackPane fx:id="contentArea"
+                                   prefHeight="200.0" prefWidth="200.0"
+                                   VBox.vgrow="ALWAYS" />
                     </content>
                 </ScrollPane>
 
-                <VBox fx:id="sideBar" maxWidth="250.0" prefWidth="250.0" style="-fx-background-color: #fff; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.15), 15, 0, 0, 0);" visible="false">
+                <!-- Sidebar menu -->
+                <VBox fx:id="sideBar"
+                      maxWidth="250.0" prefWidth="250.0"
+                      style="-fx-background-color: #fff; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.15), 15, 0, 0, 0);"
+                      visible="false">
                     <children>
-                        <Button fx:id="btnDashboard" contentDisplay="RIGHT" graphicTextGap="20.0" mnemonicParsing="false" onAction="#handleMenuClick" prefHeight="50.0" prefWidth="200.0" styleClass="btn_menu" stylesheets="@../css/styles.css" text="Tổng quan">
-                            <font>
-                                <Font size="18.0" />
-                            </font>
-                            <VBox.margin>
-                                <Insets left="25.0" />
-                            </VBox.margin>
+
+                        <!-- Tổng quan (tất cả) -->
+                        <Button fx:id="btnDashboard"
+                                contentDisplay="RIGHT" graphicTextGap="20.0"
+                                mnemonicParsing="false" onAction="#handleMenuClick"
+                                prefHeight="50.0" prefWidth="200.0"
+                                styleClass="btn_menu" stylesheets="@../css/styles.css"
+                                text="Tổng quan">
+                            <font><Font size="18.0" /></font>
+                            <VBox.margin><Insets left="25.0" /></VBox.margin>
                             <graphic>
                                 <ImageView fitHeight="23.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
-                                    <image>
-                                        <Image url="@../image/mainform/btn-home.png" />
-                                    </image>
+                                    <image><Image url="@../image/mainform/btn-home.png" /></image>
                                 </ImageView>
                             </graphic>
                         </Button>
-                        <Button contentDisplay="RIGHT" graphicTextGap="10.0" mnemonicParsing="false" prefHeight="50.0" prefWidth="200.0" styleClass="btn_menu" stylesheets="@../css/styles.css" text="Quản lý hóa đơn" fx:id="btnContract"
-                                onAction="#handleMenuClick">
-                            <font>
-                                <Font size="18.0" />
-                            </font>
-                            <VBox.margin>
-                                <Insets left="25.0" top="10.0" />
-                            </VBox.margin>
+
+                        <!-- Quản lý hóa đơn (tất cả) -->
+                        <Button fx:id="btnContract"
+                                contentDisplay="RIGHT" graphicTextGap="10.0"
+                                mnemonicParsing="false" onAction="#handleMenuClick"
+                                prefHeight="50.0" prefWidth="200.0"
+                                styleClass="btn_menu" stylesheets="@../css/styles.css"
+                                text="Quản lý hóa đơn">
+                            <font><Font size="18.0" /></font>
+                            <VBox.margin><Insets left="25.0" top="10.0" /></VBox.margin>
                             <graphic>
                                 <ImageView fitHeight="23.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
-                                    <image>
-                                        <Image url="@../image/mainform/btn-bill.png" />
-                                    </image>
+                                    <image><Image url="@../image/mainform/btn-bill.png" /></image>
                                 </ImageView>
                             </graphic>
                         </Button>
-                        <Button contentDisplay="RIGHT" graphicTextGap="60.0" mnemonicParsing="false" prefHeight="50.0" prefWidth="200.0" styleClass="btn_menu" stylesheets="@../css/styles.css" text="Quản lý xe"
-                                onAction="#handleMenuClick">
-                            <VBox.margin>
-                                <Insets left="25.0" top="10.0" />
-                            </VBox.margin>
-                            <font>
-                                <Font size="18.0" />
-                            </font>
+
+                        <!-- Quản lý xe (tất cả) -->
+                        <Button contentDisplay="RIGHT" graphicTextGap="60.0"
+                                mnemonicParsing="false" onAction="#handleMenuClick"
+                                prefHeight="50.0" prefWidth="200.0"
+                                styleClass="btn_menu" stylesheets="@../css/styles.css"
+                                text="Quản lý xe">
+                            <VBox.margin><Insets left="25.0" top="10.0" /></VBox.margin>
+                            <font><Font size="18.0" /></font>
                             <graphic>
                                 <ImageView fitHeight="23.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
-                                    <image>
-                                        <Image url="@../image/mainform/btn-motor.png" />
-                                    </image>
+                                    <image><Image url="@../image/mainform/btn-motor.png" /></image>
                                 </ImageView>
                             </graphic>
                         </Button>
-                        <Button alignment="CENTER" contentDisplay="RIGHT" graphicTextGap="51.0" mnemonicParsing="false" prefHeight="50.0" prefWidth="200.0" styleClass="btn_menu" stylesheets="@../css/styles.css" text="Khách hàng"
-                                onAction="#handleMenuClick">
-                            <font>
-                                <Font size="18.0" />
-                            </font>
-                            <VBox.margin>
-                                <Insets left="25.0" top="10.0" />
-                            </VBox.margin>
+
+                        <!-- Khách hàng (tất cả) -->
+                        <Button alignment="CENTER" contentDisplay="RIGHT" graphicTextGap="51.0"
+                                mnemonicParsing="false" onAction="#handleMenuClick"
+                                prefHeight="50.0" prefWidth="200.0"
+                                styleClass="btn_menu" stylesheets="@../css/styles.css"
+                                text="Khách hàng">
+                            <font><Font size="18.0" /></font>
+                            <VBox.margin><Insets left="25.0" top="10.0" /></VBox.margin>
                             <graphic>
                                 <ImageView fitHeight="23.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
-                                    <image>
-                                        <Image url="@../image/mainform/btn-customer.png" />
-                                    </image></ImageView>
-                            </graphic>
-                        </Button>
-                        <Button alignment="CENTER" contentDisplay="RIGHT" graphicTextGap="63.0" mnemonicParsing="false" prefHeight="50.0" prefWidth="200.0" styleClass="btn_menu" stylesheets="@../css/styles.css" text="Nhân viên"
-                                onAction="#handleMenuClick">
-                            <font>
-                                <Font size="18.0" />
-                            </font>
-                            <VBox.margin>
-                                <Insets left="25.0" top="10.0" />
-                            </VBox.margin>
-                            <graphic>
-                                <ImageView fitHeight="23.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
-                                    <image>
-                                        <Image url="@../image/mainform/btn-staff.png" />
-                                    </image>
+                                    <image><Image url="@../image/mainform/btn-customer.png" /></image>
                                 </ImageView>
                             </graphic>
                         </Button>
-                        <Button alignment="CENTER" contentDisplay="RIGHT" graphicTextGap="45.0" mnemonicParsing="false" prefHeight="50.0" prefWidth="200.0" styleClass="btn_menu" stylesheets="@../css/styles.css" text="Luật tính giá"
-                                onAction="#handleMenuClick">
-                            <VBox.margin>
-                                <Insets left="25.0" top="10.0" />
-                            </VBox.margin>
-                            <font>
-                                <Font size="18.0" />
-                            </font>
+
+                        <!-- Nhân viên (Admin only) – fx:id để MainController ẩn với Staff -->
+                        <Button fx:id="btnEmployee"
+                                alignment="CENTER" contentDisplay="RIGHT" graphicTextGap="63.0"
+                                mnemonicParsing="false" onAction="#handleMenuClick"
+                                prefHeight="50.0" prefWidth="200.0"
+                                styleClass="btn_menu" stylesheets="@../css/styles.css"
+                                text="Nhân viên">
+                            <font><Font size="18.0" /></font>
+                            <VBox.margin><Insets left="25.0" top="10.0" /></VBox.margin>
                             <graphic>
                                 <ImageView fitHeight="23.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
-                                    <image>
-                                        <Image url="@../image/mainform/btn-money.png" />
-                                    </image>
+                                    <image><Image url="@../image/mainform/btn-staff.png" /></image>
                                 </ImageView>
                             </graphic>
                         </Button>
-                        <Button alignment="CENTER" contentDisplay="RIGHT" graphicTextGap="74.0" mnemonicParsing="false" prefHeight="50.0" prefWidth="200.0" styleClass="btn_menu" stylesheets="@../css/styles.css" text="Voucher"
-                                onAction="#handleMenuClick">
-                            <font>
-                                <Font size="18.0" />
-                            </font>
-                            <VBox.margin>
-                                <Insets left="25.0" top="10.0" />
-                            </VBox.margin>
+
+                        <!-- Luật tính giá (Admin only) – fx:id để MainController ẩn với Staff -->
+                        <Button fx:id="btnRule"
+                                alignment="CENTER" contentDisplay="RIGHT" graphicTextGap="45.0"
+                                mnemonicParsing="false" onAction="#handleMenuClick"
+                                prefHeight="50.0" prefWidth="200.0"
+                                styleClass="btn_menu" stylesheets="@../css/styles.css"
+                                text="Luật tính giá">
+                            <VBox.margin><Insets left="25.0" top="10.0" /></VBox.margin>
+                            <font><Font size="18.0" /></font>
                             <graphic>
                                 <ImageView fitHeight="23.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
-                                    <image>
-                                        <Image url="@../image/mainform/btn-voucher.png" />
-                                    </image>
+                                    <image><Image url="@../image/mainform/btn-money.png" /></image>
                                 </ImageView>
                             </graphic>
                         </Button>
-                        <Button alignment="CENTER" contentDisplay="RIGHT" graphicTextGap="65.0" mnemonicParsing="false" prefHeight="50.0" prefWidth="200.0" styleClass="btn_menu" stylesheets="@../css/styles.css" text="Phụ tùng"
-                                onAction="#handleMenuClick">
-                            <VBox.margin>
-                                <Insets left="25.0" top="10.0" />
-                            </VBox.margin>
-                            <font>
-                                <Font size="18.0" />
-                            </font>
+
+                        <!-- Voucher (tất cả) -->
+                        <Button alignment="CENTER" contentDisplay="RIGHT" graphicTextGap="74.0"
+                                mnemonicParsing="false" onAction="#handleMenuClick"
+                                prefHeight="50.0" prefWidth="200.0"
+                                styleClass="btn_menu" stylesheets="@../css/styles.css"
+                                text="Voucher">
+                            <font><Font size="18.0" /></font>
+                            <VBox.margin><Insets left="25.0" top="10.0" /></VBox.margin>
                             <graphic>
                                 <ImageView fitHeight="23.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
-                                    <image>
-                                        <Image url="@../image/mainform/btn-components.png" />
-                                    </image>
+                                    <image><Image url="@../image/mainform/btn-voucher.png" /></image>
                                 </ImageView>
                             </graphic>
                         </Button>
-                        <Button alignment="CENTER" contentDisplay="RIGHT" graphicTextGap="75.0" mnemonicParsing="false" prefHeight="50.0" prefWidth="200.0" styleClass="btn_menu" stylesheets="@../css/styles.css" text="Báo cáo"
-                                onAction="#handleMenuClick">
-                            <font>
-                                <Font size="18.0" />
-                            </font>
-                            <VBox.margin>
-                                <Insets left="25.0" top="10.0" />
-                            </VBox.margin>
+
+                        <!-- Phụ tùng (Admin only) – fx:id để MainController ẩn với Staff -->
+                        <Button fx:id="btnPartPrice"
+                                alignment="CENTER" contentDisplay="RIGHT" graphicTextGap="65.0"
+                                mnemonicParsing="false" onAction="#handleMenuClick"
+                                prefHeight="50.0" prefWidth="200.0"
+                                styleClass="btn_menu" stylesheets="@../css/styles.css"
+                                text="Phụ tùng">
+                            <VBox.margin><Insets left="25.0" top="10.0" /></VBox.margin>
+                            <font><Font size="18.0" /></font>
                             <graphic>
                                 <ImageView fitHeight="23.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
-                                    <image>
-                                        <Image url="@../image/mainform/btn-report.png" />
-                                    </image>
+                                    <image><Image url="@../image/mainform/btn-components.png" /></image>
                                 </ImageView>
                             </graphic>
                         </Button>
-                        <Button alignment="CENTER" contentDisplay="RIGHT" graphicTextGap="83.0" mnemonicParsing="false" prefHeight="50.0" prefWidth="200.0" styleClass="btn_menu" stylesheets="@../css/styles.css" text="Cài đặt"
-                                onAction="#handleMenuClick">
-                            <VBox.margin>
-                                <Insets left="25.0" top="10.0" />
-                            </VBox.margin>
-                            <font>
-                                <Font size="18.0" />
-                            </font>
+
+                        <!-- Báo cáo (Admin only) – fx:id để MainController ẩn với Staff -->
+                        <Button fx:id="btnReport"
+                                alignment="CENTER" contentDisplay="RIGHT" graphicTextGap="75.0"
+                                mnemonicParsing="false" onAction="#handleMenuClick"
+                                prefHeight="50.0" prefWidth="200.0"
+                                styleClass="btn_menu" stylesheets="@../css/styles.css"
+                                text="Báo cáo">
+                            <font><Font size="18.0" /></font>
+                            <VBox.margin><Insets left="25.0" top="10.0" /></VBox.margin>
                             <graphic>
                                 <ImageView fitHeight="23.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
-                                    <image>
-                                        <Image url="@../image/mainform/btn-setting.png" />
-                                    </image>
+                                    <image><Image url="@../image/mainform/btn-report.png" /></image>
                                 </ImageView>
                             </graphic>
                         </Button>
+
+                        <!-- Cài đặt (tất cả – Staff chỉ thấy tab Hồ sơ + Bảo mật bên trong) -->
+                        <Button fx:id="btnSettings"
+                                alignment="CENTER" contentDisplay="RIGHT" graphicTextGap="83.0"
+                                mnemonicParsing="false" onAction="#handleMenuClick"
+                                prefHeight="50.0" prefWidth="200.0"
+                                styleClass="btn_menu" stylesheets="@../css/styles.css"
+                                text="Cài đặt">
+                            <VBox.margin><Insets left="25.0" top="10.0" /></VBox.margin>
+                            <font><Font size="18.0" /></font>
+                            <graphic>
+                                <ImageView fitHeight="23.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
+                                    <image><Image url="@../image/mainform/btn-setting.png" /></image>
+                                </ImageView>
+                            </graphic>
+                        </Button>
+
                     </children>
                 </VBox>
+
             </children>
         </StackPane>
     </center>

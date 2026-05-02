@@ -38,8 +38,8 @@ public class SettingsController implements Initializable {
 
     // ── PANEL PROFILE ────────────────────────────────────────────────────
     @FXML private Label     lblAvatarInitial;
-    @FXML private ImageView imgAvatar;          // ← ảnh đại diện thật
-    @FXML private StackPane avatarStack;        // StackPane chứa ảnh + chữ cái
+    @FXML private ImageView imgAvatar;
+    @FXML private StackPane avatarStack;
     @FXML private Label     lblProfileName, lblProfileRole, lblProfileStatus, lblProfileUsername;
     @FXML private TextField txtFullName, txtUsername, txtPhone, txtEmail, txtCccd, txtAddress;
     @FXML private Label     lblProfileMsg;
@@ -85,6 +85,9 @@ public class SettingsController implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
         currentUser = AppSession.getCurrentUser();
 
+        // ── Phân quyền: Staff chỉ thấy Hồ sơ + Bảo mật ──────
+        applyRoleRestrictions();
+
         setupGeneralCombos();
         setupPricingCombos();
         loadUserProfile();
@@ -96,16 +99,49 @@ public class SettingsController implements Initializable {
         showPanel(panelProfile);
     }
 
+    // ── Ẩn các tab Admin-only với Staff ──────────────────────
+    private void applyRoleRestrictions() {
+        boolean admin = AppSession.isAdmin();
+
+        // Staff không thấy các tab hệ thống
+        setNavVisible(btnNavGeneral,      admin);
+        setNavVisible(btnNavPricing,      admin);
+        setNavVisible(btnNavNotification, admin);
+        setNavVisible(btnNavDatabase,     admin);
+        setNavVisible(btnNavAbout,        admin);
+    }
+
+    private void setNavVisible(Button btn, boolean show) {
+        if (btn == null) return;
+        btn.setVisible(show);
+        btn.setManaged(show);
+    }
+
     // =========================================================
     //  NAV HANDLERS
     // =========================================================
     @FXML void handleNavProfile()      { switchNav(btnNavProfile);      showPanel(panelProfile); }
     @FXML void handleNavSecurity()     { switchNav(btnNavSecurity);     showPanel(panelSecurity); }
-    @FXML void handleNavGeneral()      { switchNav(btnNavGeneral);      showPanel(panelGeneral); }
-    @FXML void handleNavPricing()      { switchNav(btnNavPricing);      showPanel(panelPricing); }
-    @FXML void handleNavNotification() { switchNav(btnNavNotification); showPanel(panelNotification); }
-    @FXML void handleNavDatabase()     { switchNav(btnNavDatabase);     showPanel(panelDatabase); }
-    @FXML void handleNavAbout()        { switchNav(btnNavAbout);        showPanel(panelAbout); }
+    @FXML void handleNavGeneral()      {
+        if (!AppSession.isAdmin()) return;
+        switchNav(btnNavGeneral);      showPanel(panelGeneral);
+    }
+    @FXML void handleNavPricing()      {
+        if (!AppSession.isAdmin()) return;
+        switchNav(btnNavPricing);      showPanel(panelPricing);
+    }
+    @FXML void handleNavNotification() {
+        if (!AppSession.isAdmin()) return;
+        switchNav(btnNavNotification); showPanel(panelNotification);
+    }
+    @FXML void handleNavDatabase()     {
+        if (!AppSession.isAdmin()) return;
+        switchNav(btnNavDatabase);     showPanel(panelDatabase);
+    }
+    @FXML void handleNavAbout()        {
+        if (!AppSession.isAdmin()) return;
+        switchNav(btnNavAbout);        showPanel(panelAbout);
+    }
 
     private void showPanel(ScrollPane target) {
         ScrollPane[] all = { panelProfile, panelSecurity, panelGeneral,
@@ -133,11 +169,9 @@ public class SettingsController implements Initializable {
 
         String name = currentUser.getFull_name() != null ? currentUser.getFull_name() : "?";
 
-        // Chữ cái đầu (hiện khi chưa có ảnh)
         if (lblAvatarInitial != null)
             lblAvatarInitial.setText(name.substring(0, 1).toUpperCase());
 
-        // Load ảnh đại diện nếu đã có
         loadAvatarImage(currentUser);
 
         if (lblProfileName     != null) lblProfileName.setText(name);
@@ -154,20 +188,9 @@ public class SettingsController implements Initializable {
         if (txtAddress  != null) txtAddress.setText(currentUser.getAddress() != null ? currentUser.getAddress() : "");
     }
 
-    /**
-     * Load ảnh đại diện từ đường dẫn lưu trong địa chỉ (tạm dùng field address để lưu avatar_url
-     * vì DB chưa có cột avatar_url – bạn có thể thêm cột này sau).
-     *
-     * Quy ước: nếu email chứa "[avatar=uploads/avatars/xxx.png]" thì parse lấy path.
-     * Cách đơn giản hơn: thêm cột avatar_url vào bảng users.
-     */
     private void loadAvatarImage(Users user) {
         if (imgAvatar == null) return;
-
-        // Thử lấy avatar_url từ address field (tạm thời)
-        // TODO: Sau khi thêm cột avatar_url vào DB thì dùng user.getAvatarUrl()
         String avatarPath = parseAvatarPath(user.getAddress());
-
         if (avatarPath != null && !avatarPath.isBlank()) {
             ImageHelper.loadInto(imgAvatar, avatarPath);
             imgAvatar.setVisible(true);
@@ -178,7 +201,6 @@ public class SettingsController implements Initializable {
         }
     }
 
-    /** Parse "[avatar=path]" từ cuối chuỗi address */
     private String parseAvatarPath(String address) {
         if (address == null) return null;
         int start = address.lastIndexOf("[avatar=");
@@ -189,10 +211,8 @@ public class SettingsController implements Initializable {
         return null;
     }
 
-    /** Ghi avatar path vào address field (tạm thời, chờ thêm cột DB) */
     private String embedAvatarPath(String address, String avatarPath) {
         if (address == null) address = "";
-        // Xóa avatar cũ nếu có
         int start = address.lastIndexOf("[avatar=");
         if (start >= 0) {
             address = address.substring(0, start).trim();
@@ -201,33 +221,28 @@ public class SettingsController implements Initializable {
     }
 
     // =========================================================
-    //  ĐỔI ẢNH ĐẠI DIỆN ← CHỨC NĂNG MỚI
+    //  ĐỔI ẢNH ĐẠI DIỆN
     // =========================================================
     @FXML
     void handleChangeAvatar() {
         if (currentUser == null) return;
 
-        // Lấy Stage từ bất kỳ node nào đang visible
         Stage stage = null;
         if (btnNavProfile != null && btnNavProfile.getScene() != null)
             stage = (Stage) btnNavProfile.getScene().getWindow();
         if (stage == null) return;
 
-        // Mở FileChooser và lưu ảnh
         String path = ImageHelper.chooseAndSave(stage, ImageHelper.Category.AVATAR);
-        if (path == null) return; // Người dùng huỷ
+        if (path == null) return;
 
-        // Hiển thị ảnh ngay lập tức
         if (imgAvatar != null) {
             ImageHelper.loadInto(imgAvatar, path);
             imgAvatar.setVisible(true);
             if (lblAvatarInitial != null) lblAvatarInitial.setVisible(false);
         }
 
-        // Lưu đường dẫn vào DB (tạm nhúng vào address, chờ thêm cột avatar_url)
         String newAddress = embedAvatarPath(
-                txtAddress != null ? txtAddress.getText() : currentUser.getAddress(),
-                path);
+                txtAddress != null ? txtAddress.getText() : currentUser.getAddress(), path);
         currentUser.setAddress(newAddress);
         if (txtAddress != null) txtAddress.setText(newAddress);
 
@@ -247,13 +262,11 @@ public class SettingsController implements Initializable {
     void handleProfileSave() {
         try {
             if (currentUser == null) return;
-
             String newName = txtFullName != null ? txtFullName.getText().trim() : "";
             if (newName.isEmpty()) {
                 showMsg(lblProfileMsg, "❌  Họ tên không được để trống!", false);
                 return;
             }
-
             currentUser.setFull_name(newName);
             if (txtPhone   != null) currentUser.setPhone(txtPhone.getText().trim());
             if (txtEmail   != null) currentUser.setEmail(txtEmail.getText().trim());
@@ -289,19 +302,19 @@ public class SettingsController implements Initializable {
 
     private void updateStrengthBar(String pass) {
         int score = 0;
-        if (pass.length() >= 8)                    score++;
-        if (pass.matches(".*[A-Z].*"))             score++;
-        if (pass.matches(".*[0-9].*"))             score++;
-        if (pass.matches(".*[!@#$%^&*].*"))        score++;
+        if (pass.length() >= 8)             score++;
+        if (pass.matches(".*[A-Z].*"))      score++;
+        if (pass.matches(".*[0-9].*"))      score++;
+        if (pass.matches(".*[!@#$%^&*].*")) score++;
 
         String[] colors = {"#e2e8f0","#e2e8f0","#e2e8f0","#e2e8f0"};
         String strengthText  = "Chưa nhập";
         String strengthColor = "#94a3b8";
 
-        if (score >= 1) { colors[0] = "#ef4444"; strengthText = "Yếu";      strengthColor = "#ef4444"; }
+        if (score >= 1) { colors[0] = "#ef4444"; strengthText = "Yếu";       strengthColor = "#ef4444"; }
         if (score >= 2) { colors[1] = "#f59e0b"; strengthText = "Trung bình"; strengthColor = "#f59e0b"; }
-        if (score >= 3) { colors[2] = "#22c55e"; strengthText = "Mạnh";     strengthColor = "#22c55e"; }
-        if (score >= 4) { colors[3] = "#146dff"; strengthText = "Rất mạnh"; strengthColor = "#146dff"; }
+        if (score >= 3) { colors[2] = "#22c55e"; strengthText = "Mạnh";      strengthColor = "#22c55e"; }
+        if (score >= 4) { colors[3] = "#146dff"; strengthText = "Rất mạnh";  strengthColor = "#146dff"; }
         if (pass.isEmpty()) { strengthText = "Chưa nhập"; strengthColor = "#94a3b8"; }
 
         String style = "-fx-background-radius: 3; -fx-background-color: ";
@@ -324,18 +337,14 @@ public class SettingsController implements Initializable {
             String confPass = txtConfirmPassword != null ? txtConfirmPassword.getText() : "";
 
             if (oldPass.isEmpty() || newPass.isEmpty() || confPass.isEmpty()) {
-                showMsg(lblSecurityMsg, "❌  Vui lòng điền đầy đủ tất cả các ô mật khẩu!", false);
-                return;
+                showMsg(lblSecurityMsg, "❌  Vui lòng điền đầy đủ tất cả các ô mật khẩu!", false); return;
             }
             if (!newPass.equals(confPass)) {
-                showMsg(lblSecurityMsg, "❌  Mật khẩu mới và xác nhận không khớp!", false);
-                return;
+                showMsg(lblSecurityMsg, "❌  Mật khẩu mới và xác nhận không khớp!", false); return;
             }
             if (newPass.length() < 8) {
-                showMsg(lblSecurityMsg, "❌  Mật khẩu mới phải có ít nhất 8 ký tự!", false);
-                return;
+                showMsg(lblSecurityMsg, "❌  Mật khẩu mới phải có ít nhất 8 ký tự!", false); return;
             }
-
             boolean ok = userBLL.changePassword(currentUser.getId_user(), oldPass, newPass);
             if (ok) {
                 if (txtOldPassword     != null) txtOldPassword.clear();
@@ -363,8 +372,7 @@ public class SettingsController implements Initializable {
     @FXML
     void handleLogoutAll() {
         Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
-        confirm.setTitle("Xác nhận");
-        confirm.setHeaderText(null);
+        confirm.setTitle("Xác nhận"); confirm.setHeaderText(null);
         confirm.setContentText("Bạn có chắc muốn đăng xuất tất cả phiên hoạt động?");
         confirm.showAndWait().filter(r -> r == ButtonType.OK).ifPresent(r ->
                 showMsg(lblSecurityMsg, "✅  Đã đăng xuất tất cả phiên!", true));
@@ -376,11 +384,11 @@ public class SettingsController implements Initializable {
     }
 
     // =========================================================
-    //  GENERAL SETTINGS
+    //  GENERAL SETTINGS (Admin only)
     // =========================================================
     private void setupGeneralCombos() {
         Platform.runLater(() -> {
-            if (cbLanguage  != null) { cbLanguage.getItems().addAll("Tiếng Việt", "English"); cbLanguage.setValue("Tiếng Việt"); }
+            if (cbLanguage  != null) { cbLanguage.getItems().addAll("Tiếng Việt","English"); cbLanguage.setValue("Tiếng Việt"); }
             if (cbDateFormat!= null) { cbDateFormat.getItems().addAll("dd/MM/yyyy HH:mm","yyyy-MM-dd HH:mm","MM/dd/yyyy hh:mm a"); cbDateFormat.setValue("dd/MM/yyyy HH:mm"); }
             if (cbCurrency  != null) { cbCurrency.getItems().addAll("VNĐ (đ)","USD ($)"); cbCurrency.setValue("VNĐ (đ)"); }
             if (cbPageSize  != null) { cbPageSize.getItems().addAll("10 hàng","20 hàng","50 hàng","100 hàng"); cbPageSize.setValue("20 hàng"); }
@@ -393,6 +401,7 @@ public class SettingsController implements Initializable {
 
     @FXML
     void handleRestoreDefaults() {
+        if (!AppSession.isAdmin()) return;
         Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
         confirm.setTitle("Xác nhận"); confirm.setHeaderText(null);
         confirm.setContentText("Khôi phục toàn bộ cài đặt về mặc định?");
@@ -411,16 +420,16 @@ public class SettingsController implements Initializable {
     @FXML void handleGeneralSave() { showAlert("✅  Đã lưu cài đặt hệ thống thành công!", Alert.AlertType.INFORMATION); }
 
     // =========================================================
-    //  PRICING SETTINGS
+    //  PRICING SETTINGS (Admin only)
     // =========================================================
     private void setupPricingCombos() {
         Platform.runLater(() -> {
             if (cbLateCalcMode != null) {
-                cbLateCalcMode.getItems().addAll("Làm tròn lên theo giờ (mặc định)", "Tính chính xác theo phút");
+                cbLateCalcMode.getItems().addAll("Làm tròn lên theo giờ (mặc định)","Tính chính xác theo phút");
                 cbLateCalcMode.setValue("Làm tròn lên theo giờ (mặc định)");
             }
             if (cbFuelMultiplier != null) {
-                cbFuelMultiplier.getItems().addAll("x1.0 (không phụ phí)", "x1.2 (+20% phụ phí)", "x1.5 (+50% phụ phí)");
+                cbFuelMultiplier.getItems().addAll("x1.0 (không phụ phí)","x1.2 (+20% phụ phí)","x1.5 (+50% phụ phí)");
                 cbFuelMultiplier.setValue("x1.0 (không phụ phí)");
             }
             if (txtLatePenalty != null) txtLatePenalty.setText("100000");
@@ -447,12 +456,12 @@ public class SettingsController implements Initializable {
 
     @FXML
     void handlePricingSave() {
+        if (!AppSession.isAdmin()) return;
         try {
             double late = parseDouble(txtLatePenalty != null ? txtLatePenalty.getText() : "-1", -1);
             double fuel = parseDouble(txtFuelPrice   != null ? txtFuelPrice.getText()   : "-1", -1);
             if (late <= 0 || fuel <= 0) {
-                showAlert("❌  Vui lòng nhập giá trị hợp lệ (lớn hơn 0)!", Alert.AlertType.WARNING);
-                return;
+                showAlert("❌  Vui lòng nhập giá trị hợp lệ (lớn hơn 0)!", Alert.AlertType.WARNING); return;
             }
             showAlert("✅  Đã cập nhật cấu hình giá thành công!\n"
                     + "Phạt trễ: " + formatMoney(late) + "/giờ\n"
@@ -468,7 +477,7 @@ public class SettingsController implements Initializable {
     }
 
     // =========================================================
-    //  NOTIFICATION
+    //  NOTIFICATION (Admin only)
     // =========================================================
     @FXML void handleToggleNotiNewContract() { notiNew     = !notiNew;     updateToggle(toggleNotiNewContract, notiNew); }
     @FXML void handleToggleNotiOverdue()     { notiOverdue = !notiOverdue; updateToggle(toggleNotiOverdue, notiOverdue); }
@@ -477,10 +486,11 @@ public class SettingsController implements Initializable {
     @FXML void handleNotiSave() { showAlert("✅  Đã lưu cài đặt thông báo thành công!", Alert.AlertType.INFORMATION); }
 
     // =========================================================
-    //  DATABASE
+    //  DATABASE (Admin only)
     // =========================================================
     @FXML
     void handleTestConnection() {
+        if (!AppSession.isAdmin()) return;
         if (lblConnectionStatus == null) return;
         lblConnectionStatus.setText("⏳  Đang kiểm tra...");
         lblConnectionStatus.setStyle("-fx-text-fill: #f59e0b; -fx-font-size: 13px; -fx-font-weight: bold;");
@@ -509,9 +519,7 @@ public class SettingsController implements Initializable {
         }).start();
     }
 
-    @FXML void handleExportData() {
-        showAlert("📤  Tính năng xuất dữ liệu đang được phát triển!", Alert.AlertType.INFORMATION);
-    }
+    @FXML void handleExportData() { showAlert("📤  Tính năng xuất dữ liệu đang được phát triển!", Alert.AlertType.INFORMATION); }
     @FXML void handleImportData() {
         Alert c = new Alert(Alert.AlertType.WARNING);
         c.setTitle("Cảnh báo"); c.setHeaderText("Nhập dữ liệu sẽ ghi đè dữ liệu hiện tại!");

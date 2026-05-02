@@ -38,17 +38,17 @@ public class CustomerController implements Initializable {
     @FXML private Label lblBlacklist;
 
     // ── Search ────────────────────────────────────────────
-    @FXML private TextField txtSearch;
+    @FXML private TextField        txtSearch;
     @FXML private ComboBox<String> cbFilter;
 
     // ── Table ─────────────────────────────────────────────
-    @FXML private TableView<Customers>              tableCustomers;
-    @FXML private TableColumn<Customers, String>    colCccd;
-    @FXML private TableColumn<Customers, String>    colName;
-    @FXML private TableColumn<Customers, String>    colPhone;
-    @FXML private TableColumn<Customers, Integer>   colRentalCount;
-    @FXML private TableColumn<Customers, Boolean>   colStatus;
-    @FXML private TableColumn<Customers, Void>      colAction;
+    @FXML private TableView<Customers>            tableCustomers;
+    @FXML private TableColumn<Customers, String>  colCccd;
+    @FXML private TableColumn<Customers, String>  colName;
+    @FXML private TableColumn<Customers, String>  colPhone;
+    @FXML private TableColumn<Customers, Integer> colRentalCount;
+    @FXML private TableColumn<Customers, Boolean> colStatus;
+    @FXML private TableColumn<Customers, Void>    colAction;
 
     private final CustomerBLL customerBLL = new CustomerBLL();
     private ObservableList<Customers> masterList;
@@ -107,8 +107,8 @@ public class CustomerController implements Initializable {
                 super.updateItem(count, empty);
                 if (empty || count == null) { setGraphic(null); return; }
                 Label badge = new Label(count + " lần");
-                badge.setStyle("-fx-background-color: #e0e7ff; -fx-text-fill: #4338ca; " +
-                        "-fx-padding: 4 12; -fx-background-radius: 12; -fx-font-weight: bold;");
+                badge.setStyle("-fx-background-color: #e0e7ff; -fx-text-fill: #4338ca; "
+                        + "-fx-padding: 4 12; -fx-background-radius: 12; -fx-font-weight: bold;");
                 HBox box = new HBox(badge);
                 box.setAlignment(Pos.CENTER);
                 setGraphic(box);
@@ -132,7 +132,9 @@ public class CustomerController implements Initializable {
             }
         });
 
-        // Cột thao tác: Xem | Sửa | Blacklist Toggle
+        // ── Cột thao tác: Xem | Sửa | Blacklist Toggle ──────────
+        // Tất cả (Admin + Staff) đều xem/sửa/thêm KH được
+        // Chỉ Admin mới blacklist được (theo bảng phân quyền)
         colAction.setCellFactory(col -> new TableCell<>() {
             private final Button btnView      = new Button();
             private final Button btnEdit      = new Button();
@@ -148,9 +150,23 @@ public class CustomerController implements Initializable {
                 loadIcon(btnView, "/image/dashboardform/view.png");
                 loadIcon(btnEdit, "/image/dashboardform/edit.png");
 
-                btnView.setOnAction(e -> showDetailModal(getTableRow().getItem()));
-                btnEdit.setOnAction(e -> showEditModal(getTableRow().getItem()));
-                btnBlacklist.setOnAction(e -> handleBlacklistToggle(getTableRow().getItem()));
+                // ── Phân quyền: chỉ Admin blacklist được ─────────
+                btnBlacklist.setVisible(AppSession.isAdmin());
+                btnBlacklist.setManaged(AppSession.isAdmin());
+
+                btnView.setOnAction(e -> {
+                    Customers c = getTableRow().getItem();
+                    if (c != null) showDetailModal(c);
+                });
+                btnEdit.setOnAction(e -> {
+                    Customers c = getTableRow().getItem();
+                    if (c != null) showEditModal(c);
+                });
+                btnBlacklist.setOnAction(e -> {
+                    if (!AppSession.isAdmin()) return;
+                    Customers c = getTableRow().getItem();
+                    if (c != null) handleBlacklistToggle(c);
+                });
             }
 
             private void loadIcon(Button btn, String path) {
@@ -170,17 +186,19 @@ public class CustomerController implements Initializable {
                 if (empty || getTableRow().getItem() == null) { setGraphic(null); return; }
 
                 Customers c = getTableRow().getItem();
-                // Đổi icon và tooltip theo trạng thái blacklist
-                if (c.isIs_blacklist()) {
-                    btnBlacklist.setText("✅ Gỡ BL");
-                    btnBlacklist.setStyle("-fx-background-color: #dcfce7; -fx-text-fill: #15803d; " +
-                            "-fx-background-radius: 6; -fx-cursor: hand; -fx-font-size: 11px; -fx-padding: 4 8;");
-                } else {
-                    btnBlacklist.setText("⛔ BL");
-                    btnBlacklist.setStyle("-fx-background-color: #fee2e2; -fx-text-fill: #b91c1c; " +
-                            "-fx-background-radius: 6; -fx-cursor: hand; -fx-font-size: 11px; -fx-padding: 4 8;");
+                // Đổi icon/text nút blacklist theo trạng thái hiện tại
+                if (AppSession.isAdmin()) {
+                    if (c.isIs_blacklist()) {
+                        btnBlacklist.setText("✅ Gỡ BL");
+                        btnBlacklist.setStyle("-fx-background-color: #dcfce7; -fx-text-fill: #15803d; "
+                                + "-fx-background-radius: 6; -fx-cursor: hand; -fx-font-size: 11px; -fx-padding: 4 8;");
+                    } else {
+                        btnBlacklist.setText("⛔ BL");
+                        btnBlacklist.setStyle("-fx-background-color: #fee2e2; -fx-text-fill: #b91c1c; "
+                                + "-fx-background-radius: 6; -fx-cursor: hand; -fx-font-size: 11px; -fx-padding: 4 8;");
+                    }
+                    btnBlacklist.setGraphic(null);
                 }
-                btnBlacklist.setGraphic(null);
                 setGraphic(pane);
             }
         });
@@ -214,8 +232,8 @@ public class CustomerController implements Initializable {
 
     private void applyFilter() {
         if (masterList == null) return;
-        String keyword    = txtSearch != null ? txtSearch.getText().trim().toLowerCase() : "";
-        String filterVal  = cbFilter  != null ? cbFilter.getValue() : "Tất cả";
+        String keyword   = txtSearch != null ? txtSearch.getText().trim().toLowerCase() : "";
+        String filterVal = cbFilter  != null ? cbFilter.getValue() : "Tất cả";
 
         ObservableList<Customers> filtered = masterList.filtered(c -> {
             boolean matchKey = keyword.isEmpty()
@@ -224,7 +242,7 @@ public class CustomerController implements Initializable {
                     || (c.getPhone() != null && c.getPhone().contains(keyword));
 
             boolean matchFilter = "Tất cả".equals(filterVal)
-                    || ("Blacklist".equals(filterVal) && c.isIs_blacklist())
+                    || ("Blacklist".equals(filterVal)    && c.isIs_blacklist())
                     || ("Bình thường".equals(filterVal) && !c.isIs_blacklist());
 
             return matchKey && matchFilter;
@@ -233,7 +251,7 @@ public class CustomerController implements Initializable {
         tableCustomers.setItems(filtered);
     }
 
-    // ── Blacklist Toggle ──────────────────────────────────
+    // ── Blacklist Toggle (Admin only) ─────────────────────
     private void handleBlacklistToggle(Customers customer) {
         if (customer == null) return;
 
@@ -266,9 +284,7 @@ public class CustomerController implements Initializable {
 
             BlacklistModalController ctrl = loader.getController();
             ctrl.setCustomer(customer, result -> {
-                if (result) {
-                    loadData();
-                }
+                if (result) loadData();
             });
 
             Stage stage = new Stage();
@@ -278,22 +294,19 @@ public class CustomerController implements Initializable {
             stage.centerOnScreen();
             stage.showAndWait();
         } catch (Exception e) {
-            // Fallback: dùng TextInputDialog nếu chưa có FXML
+            // Fallback: TextInputDialog nếu chưa có FXML
             TextInputDialog dialog = new TextInputDialog();
             dialog.setTitle("Thêm vào danh sách đen");
             dialog.setHeaderText("Khách hàng: " + customer.getFull_name());
-            dialog.setContentText("Nhập lý do đưa vào danh sách đen:");
+            dialog.setContentText("Nhập lý do:");
 
             Optional<String> result = dialog.showAndWait();
             result.ifPresent(reason -> {
-                if (reason.isBlank()) {
-                    showError("Lý do không được để trống!");
-                    return;
-                }
+                if (reason.isBlank()) { showError("Lý do không được để trống!"); return; }
                 try {
                     customerBLL.addToBlacklist(customer.getId_customer(), reason);
                     loadData();
-                    showInfo("Đã thêm khách hàng vào danh sách đen!");
+                    showInfo("Đã thêm vào danh sách đen!");
                 } catch (Exception ex) {
                     showError(ex.getMessage());
                 }
@@ -302,6 +315,7 @@ public class CustomerController implements Initializable {
     }
 
     // ── Modals ────────────────────────────────────────────
+    // Staff và Admin đều được thêm khách (cần thiết khi tạo HĐ)
     @FXML
     void showAddCustomerModal(ActionEvent event) {
         try {
@@ -358,7 +372,7 @@ public class CustomerController implements Initializable {
 
     @FXML
     void loadDataToTable(ActionEvent event) {
-        txtSearch.clear();
+        if (txtSearch != null) txtSearch.clear();
         if (cbFilter != null) cbFilter.setValue("Tất cả");
         loadData();
     }

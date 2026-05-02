@@ -1,5 +1,6 @@
 package com.example.rentalcar.controller;
 
+import com.example.rentalcar.utils.AppSession;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -7,7 +8,7 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
-import javafx.scene.layout.AnchorPane;
+import javafx.scene.control.Label;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
@@ -15,83 +16,132 @@ import javafx.stage.Stage;
 import java.io.IOException;
 
 public class MainController {
-    @FXML
-    private VBox sideBar;
-    @FXML
-    private StackPane contentArea;
-    @FXML
-    private Button btnDashboard;
+
+    // ── Layout ────────────────────────────────────────────────
+    @FXML private VBox      sideBar;
+    @FXML private StackPane contentArea;
+
+    // ── Topbar ────────────────────────────────────────────────
+    @FXML private Label lblUserName;
+    @FXML private Label lblUserRole;
+    @FXML private Label lblAvatarInitial;
+
+    // ── Menu buttons ─────────────────────────────────────────
+    @FXML private Button btnDashboard;   // tất cả
+    @FXML private Button btnContract;    // tất cả
+    @FXML private Button btnVehicle;     // tất cả
+    @FXML private Button btnCustomer;    // tất cả
+    @FXML private Button btnVoucher;     // tất cả
+    @FXML private Button btnEmployee;    // Admin only
+    @FXML private Button btnRule;        // Admin only
+    @FXML private Button btnPartPrice;   // Admin only
+    @FXML private Button btnReport;      // Admin only
+    @FXML private Button btnSettings;    // tất cả
+
+    // ─────────────────────────────────────────────────────────
     @FXML
     public void initialize() {
+        loadUserInfoToTopbar();
+        applyRoleMenu();
+
         changeView("DashboardView.fxml");
         sideBar.setVisible(false);
-        if (btnDashboard != null)
-            setActiveMenu(btnDashboard);
+        if (btnDashboard != null) setActiveMenu(btnDashboard);
     }
 
+    // ── Hiển thị tên + role lên topbar ───────────────────────
+    private void loadUserInfoToTopbar() {
+        if (AppSession.getCurrentUser() == null) return;
+        String name = AppSession.getCurrentUser().getFull_name();
+        String role = AppSession.getRoleDisplayName();
+
+        if (lblUserName     != null) lblUserName.setText(name != null ? name : "User");
+        if (lblUserRole     != null) lblUserRole.setText(role);
+        if (lblAvatarInitial != null && name != null && !name.isBlank())
+            lblAvatarInitial.setText(name.substring(0, 1).toUpperCase());
+    }
+
+    // ── Ẩn/hiện menu theo role ────────────────────────────────
+    private void applyRoleMenu() {
+        boolean admin = AppSession.isAdmin();
+
+        // Chỉ Admin thấy các mục này
+        setVisible(btnEmployee, admin);
+        setVisible(btnRule,     admin);
+        setVisible(btnPartPrice,admin);
+        setVisible(btnReport,   admin);
+    }
+
+    private void setVisible(Button btn, boolean show) {
+        if (btn == null) return;
+        btn.setVisible(show);
+        btn.setManaged(show);   // khi ẩn không chiếm chỗ trong VBox
+    }
+
+    // ── Hamburger ─────────────────────────────────────────────
     @FXML
     void handleHamburgerMenu(ActionEvent event) {
-
         sideBar.setVisible(!sideBar.isVisible());
     }
+
+    // ── Click menu ────────────────────────────────────────────
     @FXML
     void handleMenuClick(ActionEvent e) {
-        Button btnClick = (Button) e.getSource();
-        setActiveMenu(btnClick);
-        String fxmlFile = "";
-        switch (btnClick.getText()) {
-            case "Tổng quan": fxmlFile = "DashboardView.fxml"; break;
-            case "Quản lý hóa đơn": fxmlFile = "ContractManagement.fxml"; break;
-            case "Quản lý xe": fxmlFile = "vehicle/VehicleManagement.fxml"; break;
-            case "Khách hàng": fxmlFile = "customer/CustomerManagement.fxml"; break;
-            case "Nhân viên" : fxmlFile = "employee/EmployeeManagement.fxml"; break;
-            case "Luật tính giá" : fxmlFile = "rule/RuleManagement.fxml"; break;
-            case "Báo cáo" : fxmlFile = "report/ReportView.fxml"; break;
-            case "Cài đặt" : fxmlFile = "setting/SettingsView.fxml"; break;
-            case "Phụ tùng" : fxmlFile = "partprice/PartPriceManagement.fxml"; break;
+        Button src = (Button) e.getSource();
+        setActiveMenu(src);
+        sideBar.setVisible(false);
 
-            case "Voucher" : fxmlFile = "voucher/VoucherManagement.fxml"; break;
+        String fxml = switch (src.getText().trim()) {
+            case "Tổng quan"        -> "DashboardView.fxml";
+            case "Quản lý hóa đơn" -> "ContractManagement.fxml";
+            case "Quản lý xe"      -> "vehicle/VehicleManagement.fxml";
+            case "Khách hàng"      -> "customer/CustomerManagement.fxml";
+            case "Voucher"         -> "voucher/VoucherManagement.fxml";
+            case "Nhân viên"       -> AppSession.isAdmin() ? "employee/EmployeeManagement.fxml"   : "";
+            case "Luật tính giá"   -> AppSession.isAdmin() ? "rule/RuleManagement.fxml"           : "";
+            case "Phụ tùng"        -> AppSession.isAdmin() ? "partprice/PartPriceManagement.fxml" : "";
+            case "Báo cáo"         -> AppSession.isAdmin() ? "report/ReportView.fxml"             : "";
+            case "Cài đặt"         -> "setting/SettingsView.fxml";
+            default                -> "";
+        };
 
-
-
-
-        }
-        if (!fxmlFile.isEmpty()) {
-            changeView(fxmlFile);
-            sideBar.setVisible(false);
-        }
+        if (!fxml.isEmpty()) changeView(fxml);
     }
 
-    private void setActiveMenu(Button activeBtn) {
-        for (Node node : sideBar.getChildren()) {
-            if (node instanceof Button)
-                node.getStyleClass().remove("active_menu");
-        }
-        if (activeBtn != null)
-            activeBtn.getStyleClass().add("active_menu");
+    // ── Active highlight ──────────────────────────────────────
+    private void setActiveMenu(Button active) {
+        sideBar.getChildren().stream()
+                .filter(n -> n instanceof Button)
+                .forEach(n -> n.getStyleClass().remove("active_menu"));
+        if (active != null) active.getStyleClass().add("active_menu");
     }
 
+    // ── Load view ─────────────────────────────────────────────
     private void changeView(String fxmlFile) {
         try {
-            Parent fxml = FXMLLoader.load(getClass().getResource("/views/" + fxmlFile));
-            contentArea.getChildren().setAll(fxml);
-        } catch (IOException e) {
+            Parent view = FXMLLoader.load(
+                    getClass().getResource("/views/" + fxmlFile));
+            contentArea.getChildren().setAll(view);
+        } catch (IOException ex) {
             System.err.println("Không tìm thấy file: " + fxmlFile);
-            e.printStackTrace();
+            ex.printStackTrace();
         }
     }
 
+    // ── Logout ───────────────────────────────────────────────
     @FXML
     void handleLogout(ActionEvent e) {
         try {
-            Parent root = FXMLLoader.load(getClass().getResource("/views/LoginView.fxml"));
+            AppSession.clearSession();
+            Parent root = FXMLLoader.load(
+                    getClass().getResource("/views/LoginView.fxml"));
             Stage stage = (Stage) ((Node) e.getSource()).getScene().getWindow();
             stage.setScene(new Scene(root));
+            stage.setResizable(false);
             stage.centerOnScreen();
             stage.show();
         } catch (IOException ex) {
             ex.printStackTrace();
         }
     }
-
 }

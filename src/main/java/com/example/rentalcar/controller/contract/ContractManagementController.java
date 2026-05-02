@@ -7,6 +7,7 @@ import com.example.rentalcar.models.Contracts;
 import com.example.rentalcar.models.Customers;
 import com.example.rentalcar.models.StatusContracts;
 import com.example.rentalcar.models.Vehicles;
+import com.example.rentalcar.utils.AppSession;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -79,10 +80,9 @@ public class ContractManagementController implements Initializable {
         loadData();
     }
 
-
     private void setupTableColumns() {
 
-        //  Mã hợp đồng
+        // Mã hợp đồng
         colCode.setCellValueFactory(new PropertyValueFactory<>("code_contract"));
         colCode.setCellFactory(col -> new TableCell<>() {
             @Override
@@ -119,7 +119,7 @@ public class ContractManagementController implements Initializable {
             }
         });
 
-        //  Xe thuê
+        // Xe thuê
         colVehicle.setCellValueFactory(cell -> {
             if (cell.getValue().getId_vehicle() == null) return new SimpleStringProperty("--");
             Vehicles v = vehicleBLL.getVehicleById(cell.getValue().getId_vehicle().getId_vehicle());
@@ -135,8 +135,8 @@ public class ContractManagementController implements Initializable {
                 Label lblModel = new Label(parts.length > 0 ? parts[0] : "");
                 lblModel.setStyle("-fx-font-weight: bold; -fx-font-size: 13px; -fx-text-fill: #1e293b;");
                 Label lblPlate = new Label(parts.length > 1 ? parts[1] : "");
-                lblPlate.setStyle("-fx-font-size: 11px; -fx-text-fill: #64748b; " +
-                        "-fx-background-color: #f1f5f9; -fx-padding: 2 8; -fx-background-radius: 6;");
+                lblPlate.setStyle("-fx-font-size: 11px; -fx-text-fill: #64748b; "
+                        + "-fx-background-color: #f1f5f9; -fx-padding: 2 8; -fx-background-radius: 6;");
                 VBox vb = new VBox(2, lblModel, lblPlate);
                 vb.setAlignment(Pos.CENTER_LEFT);
                 setGraphic(vb);
@@ -149,8 +149,7 @@ public class ContractManagementController implements Initializable {
             if (c.getStart_datetime() == null || c.getEnd_datetime() == null)
                 return new SimpleStringProperty("--");
             return new SimpleStringProperty(
-                    c.getStart_datetime().format(FMT) + " →\n" + c.getEnd_datetime().format(FMT)
-            );
+                    c.getStart_datetime().format(FMT) + " →\n" + c.getEnd_datetime().format(FMT));
         });
         colPeriod.setCellFactory(col -> new TableCell<>() {
             @Override
@@ -178,7 +177,6 @@ public class ContractManagementController implements Initializable {
                 }
                 Contracts contract = (Contracts) getTableRow().getItem();
                 if (contract.getStatus() == null) { setGraphic(null); return; }
-
                 Label pill = new Label();
                 pill.getStyleClass().add("status-pill");
                 switch (contract.getStatus()) {
@@ -193,7 +191,7 @@ public class ContractManagementController implements Initializable {
             }
         });
 
-        // --- Thanh toán ---
+        // Thanh toán
         colPayment.setCellFactory(col -> new TableCell<>() {
             @Override
             protected void updateItem(String item, boolean empty) {
@@ -203,13 +201,12 @@ public class ContractManagementController implements Initializable {
                 }
                 Contracts contract = (Contracts) getTableRow().getItem();
                 if (contract.getPayment_status() == null) { setGraphic(null); return; }
-
                 Label pill = new Label();
                 pill.getStyleClass().add("pay-pill");
                 switch (contract.getPayment_status()) {
-                    case CHUA_THANH_TOAN  -> { pill.setText("Chưa TT");   pill.getStyleClass().add("pay-none"); }
+                    case CHUA_THANH_TOAN   -> { pill.setText("Chưa TT");  pill.getStyleClass().add("pay-none"); }
                     case THANH_TOAN_1_PHAN -> { pill.setText("Một phần"); pill.getStyleClass().add("pay-part"); }
-                    case DA_THANH_TOAN    -> { pill.setText("Đã TT");     pill.getStyleClass().add("pay-done"); }
+                    case DA_THANH_TOAN     -> { pill.setText("Đã TT");    pill.getStyleClass().add("pay-done"); }
                 }
                 HBox box = new HBox(pill);
                 box.setAlignment(Pos.CENTER_LEFT);
@@ -217,12 +214,10 @@ public class ContractManagementController implements Initializable {
             }
         });
 
-        // --- Tổng tiền ---
+        // Tổng tiền
         colTotal.setCellValueFactory(cell ->
                 new SimpleStringProperty(
-                        String.format("%,.0f đ", cell.getValue().getTotal_price()).replace(",", ".")
-                )
-        );
+                        String.format("%,.0f đ", cell.getValue().getTotal_price()).replace(",", ".")));
         colTotal.setCellFactory(col -> new TableCell<>() {
             @Override
             protected void updateItem(String total, boolean empty) {
@@ -234,6 +229,7 @@ public class ContractManagementController implements Initializable {
             }
         });
 
+        // ── Cột thao tác: Xem | In | Hủy ───────────────────────────
         colAction.setCellFactory(col -> new TableCell<>() {
             private final Button btnView   = new Button();
             private final Button btnPrint  = new Button();
@@ -280,8 +276,22 @@ public class ContractManagementController implements Initializable {
                 if (empty) { setGraphic(null); return; }
 
                 Contracts c = getTableView().getItems().get(getIndex());
-                btnCancel.setVisible(c.getStatus() == StatusContracts.DANG_THUE
-                        || c.getStatus() == StatusContracts.QUA_HAN);
+                boolean canCancel = false;
+
+                if (c.getStatus() == StatusContracts.DANG_THUE
+                        || c.getStatus() == StatusContracts.QUA_HAN) {
+                    if (AppSession.isAdmin()) {
+                        // Admin hủy được tất cả HĐ
+                        canCancel = true;
+                    } else if (AppSession.isStaff() && c.getId_user() != null
+                            && AppSession.getCurrentUser() != null
+                            && c.getId_user().getId_user() == AppSession.getCurrentUser().getId_user()) {
+                        // Staff chỉ hủy HĐ do mình tạo
+                        canCancel = true;
+                    }
+                }
+                btnCancel.setVisible(canCancel);
+                btnCancel.setManaged(canCancel);
                 setGraphic(pane);
             }
         });
@@ -305,8 +315,8 @@ public class ContractManagementController implements Initializable {
     private void updateStats(List<Contracts> list) {
         lblTotalContracts.setText(String.valueOf(list.size()));
 
-        long active   = list.stream().filter(c -> c.getStatus() == StatusContracts.DANG_THUE).count();
-        long overdue  = list.stream().filter(c -> c.getStatus() == StatusContracts.QUA_HAN).count();
+        long active  = list.stream().filter(c -> c.getStatus() == StatusContracts.DANG_THUE).count();
+        long overdue = list.stream().filter(c -> c.getStatus() == StatusContracts.QUA_HAN).count();
         lblActiveContracts.setText(String.valueOf(active));
         lblOverdueContracts.setText(String.valueOf(overdue));
 
@@ -314,29 +324,21 @@ public class ContractManagementController implements Initializable {
         lblMonthlyRevenue.setText(String.format("%,.0f đ", revenue).replace(",", "."));
     }
 
-
     @FXML
     void handleSearch(ActionEvent event) {
         if (masterList == null) return;
-        String keyword = txtSearch.getText().trim().toLowerCase();
+        String keyword       = txtSearch.getText().trim().toLowerCase();
         String selectedStatus = cbStatusFilter.getValue();
 
         ObservableList<Contracts> filtered = masterList.filtered(c -> {
-            // Lọc theo ComboBox
             boolean matchStatus = false;
             if (selectedStatus == null || selectedStatus.equals("Tất cả")) {
                 matchStatus = true;
-            } else if (selectedStatus.equals("Đang thuê") && c.getStatus() == StatusContracts.DANG_THUE) {
-                matchStatus = true;
-            } else if (selectedStatus.equals("Quá hạn") && c.getStatus() == StatusContracts.QUA_HAN) {
-                matchStatus = true;
-            } else if (selectedStatus.equals("Hoàn thành") && c.getStatus() == StatusContracts.HOAN_THANH) {
-                matchStatus = true;
-            } else if (selectedStatus.equals("Đã hủy") && c.getStatus() == StatusContracts.DA_HUY) {
-                matchStatus = true;
-            }
+            } else if (selectedStatus.equals("Đang thuê")  && c.getStatus() == StatusContracts.DANG_THUE)  { matchStatus = true; }
+            else if (selectedStatus.equals("Quá hạn")    && c.getStatus() == StatusContracts.QUA_HAN)    { matchStatus = true; }
+            else if (selectedStatus.equals("Hoàn thành") && c.getStatus() == StatusContracts.HOAN_THANH) { matchStatus = true; }
+            else if (selectedStatus.equals("Đã hủy")     && c.getStatus() == StatusContracts.DA_HUY)     { matchStatus = true; }
 
-            // Lọc theo từ khóa (Mã HĐ hoặc Tên Khách)
             boolean matchKeyword = keyword.isEmpty()
                     || (c.getCode_contract() != null && c.getCode_contract().toLowerCase().contains(keyword))
                     || (c.getId_customer() != null && tryGetCustomerName(c).toLowerCase().contains(keyword));
@@ -359,7 +361,7 @@ public class ContractManagementController implements Initializable {
     void handleReload(ActionEvent event) {
         txtSearch.clear();
         cbStatusFilter.setValue("Tất cả");
-        loadData(); // Lấy lại toàn bộ dữ liệu mới nhất từ DB
+        loadData();
     }
 
     @FXML
@@ -372,7 +374,7 @@ public class ContractManagementController implements Initializable {
             stage.setScene(new Scene(root));
             stage.setTitle("Tạo hợp đồng mới");
             stage.initModality(Modality.APPLICATION_MODAL);
-            stage.setOnHidden(e -> loadData()); // Reload sau khi tạo
+            stage.setOnHidden(e -> loadData());
             stage.show();
         } catch (Exception e) {
             showError("Lỗi mở form tạo hợp đồng: " + e.getMessage());
@@ -387,7 +389,6 @@ public class ContractManagementController implements Initializable {
             Parent root = loader.load();
             ContractDetailController ctrl = loader.getController();
             ctrl.setContractData(contract);
-
             Stage stage = new Stage();
             stage.initModality(Modality.APPLICATION_MODAL);
             stage.setTitle("Chi tiết: " + contract.getCode_contract());
@@ -404,9 +405,7 @@ public class ContractManagementController implements Initializable {
         Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
         confirm.setTitle("Xác nhận hủy hợp đồng");
         confirm.setHeaderText(null);
-        confirm.setContentText(
-                "Hủy hợp đồng: " + contract.getCode_contract() + "?\n" +
-                        "Hành động này không thể khôi phục!");
+        confirm.setContentText("Hủy hợp đồng: " + contract.getCode_contract() + "?\nHành động này không thể khôi phục!");
 
         confirm.showAndWait().filter(r -> r == ButtonType.OK).ifPresent(r -> {
             try {
@@ -420,17 +419,13 @@ public class ContractManagementController implements Initializable {
 
     private void showError(String message) {
         Alert alert = new Alert(Alert.AlertType.ERROR);
-        alert.setTitle("Lỗi");
-        alert.setHeaderText(null);
-        alert.setContentText(message);
+        alert.setTitle("Lỗi"); alert.setHeaderText(null); alert.setContentText(message);
         alert.showAndWait();
     }
 
     private void showInfo(String message) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle("Thông báo");
-        alert.setHeaderText(null);
-        alert.setContentText(message);
+        alert.setTitle("Thông báo"); alert.setHeaderText(null); alert.setContentText(message);
         alert.showAndWait();
     }
 }
