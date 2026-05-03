@@ -8,6 +8,7 @@ import com.example.rentalcar.models.Customers;
 import com.example.rentalcar.models.StatusContracts;
 import com.example.rentalcar.models.Vehicles;
 import com.example.rentalcar.utils.AppSession;
+import com.example.rentalcar.utils.ContractPrinter;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -30,6 +31,8 @@ import javafx.scene.text.Text;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
+import java.awt.Desktop;
+import java.io.File;
 import java.net.URL;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -217,7 +220,7 @@ public class ContractManagementController implements Initializable {
         // Tổng tiền
         colTotal.setCellValueFactory(cell ->
                 new SimpleStringProperty(
-                        String.format("%,.0f đ", cell.getValue().getTotal_price()).replace(",", ".")));
+                        String.format("%,.0f d", cell.getValue().getTotal_price()).replace(",", ".")));
         colTotal.setCellFactory(col -> new TableCell<>() {
             @Override
             protected void updateItem(String total, boolean empty) {
@@ -246,13 +249,19 @@ public class ContractManagementController implements Initializable {
                 loadIcon(btnPrint,  "/image/dashboardform/printer.png");
                 loadIcon(btnCancel, "/image/dashboardform/delete.png");
 
+                // ✅ Nút Xem chi tiết
                 btnView.setOnAction(e -> {
                     Contracts c = getTableView().getItems().get(getIndex());
                     showDetailModal(c);
                 });
+
+                // ✅ Nút In PDF – TÍCH HỢP ContractPrinter
                 btnPrint.setOnAction(e -> {
-                    showInfo("In hợp đồng " + getTableView().getItems().get(getIndex()).getCode_contract());
+                    Contracts c = getTableView().getItems().get(getIndex());
+                    handlePrintContract(c);
                 });
+
+                // ✅ Nút Hủy hợp đồng
                 btnCancel.setOnAction(e -> {
                     Contracts c = getTableView().getItems().get(getIndex());
                     confirmCancelContract(c);
@@ -281,12 +290,10 @@ public class ContractManagementController implements Initializable {
                 if (c.getStatus() == StatusContracts.DANG_THUE
                         || c.getStatus() == StatusContracts.QUA_HAN) {
                     if (AppSession.isAdmin()) {
-                        // Admin hủy được tất cả HĐ
                         canCancel = true;
                     } else if (AppSession.isStaff() && c.getId_user() != null
                             && AppSession.getCurrentUser() != null
                             && c.getId_user().getId_user() == AppSession.getCurrentUser().getId_user()) {
-                        // Staff chỉ hủy HĐ do mình tạo
                         canCancel = true;
                     }
                 }
@@ -297,6 +304,55 @@ public class ContractManagementController implements Initializable {
         });
     }
 
+    // =========================================================
+    //  ✅ IN HỢP ĐỒNG PDF
+    // =========================================================
+    /**
+     * Mở FileChooser để người dùng chọn nơi lưu, sau đó tạo PDF.
+     * Sau khi tạo xong hỏi có muốn mở file không.
+     */
+    private void handlePrintContract(Contracts contract) {
+        try {
+            // Lấy cửa sổ hiện tại để FileChooser hiện đúng vị trí
+            javafx.stage.Window window = tableContracts.getScene().getWindow();
+
+            // Gọi ContractPrinter
+            String savedPath = ContractPrinter.print(contract, window);
+
+            if (savedPath != null) {
+                // Hỏi có muốn mở PDF ngay không
+                Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
+                confirm.setTitle("In hợp đồng thành công");
+                confirm.setHeaderText("✅ Đã lưu hợp đồng " + contract.getCode_contract());
+                confirm.setContentText(
+                        "Đường dẫn: " + savedPath + "\n\n" +
+                                "Bạn có muốn mở file PDF ngay bây giờ không?");
+
+                confirm.showAndWait()
+                        .filter(r -> r == ButtonType.OK)
+                        .ifPresent(r -> {
+                            try {
+                                if (Desktop.isDesktopSupported()) {
+                                    Desktop.getDesktop().open(new File(savedPath));
+                                } else {
+                                    showInfo("File đã lưu tại:\n" + savedPath);
+                                }
+                            } catch (Exception ex) {
+                                showInfo("File đã lưu. Vui lòng mở thủ công tại:\n" + savedPath);
+                            }
+                        });
+            }
+
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            showError("Lỗi tạo PDF: " + ex.getMessage()
+                    + "\n\nHãy đảm bảo đã thêm dependency iText 7 vào pom.xml");
+        }
+    }
+
+    // =========================================================
+    //  LOAD DATA
+    // =========================================================
     private void loadData() {
         try {
             List<Contracts> list = contractBLL.getAllContracts();
@@ -321,7 +377,7 @@ public class ContractManagementController implements Initializable {
         lblOverdueContracts.setText(String.valueOf(overdue));
 
         double revenue = contractBLL.getMonthlyRevenue();
-        lblMonthlyRevenue.setText(String.format("%,.0f đ", revenue).replace(",", "."));
+        lblMonthlyRevenue.setText(String.format("%,.0f d", revenue).replace(",", "."));
     }
 
     @FXML
