@@ -12,54 +12,137 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="1176.0" prefWidth="1100.0" spacing="20.0" styleClass="vehicle-container" stylesheets="@../../css/vehicleview/vehiclestyle.css" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.rentalcar.controller.vehicle.VehicleController">
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
+      prefHeight="1176.0" prefWidth="1100.0" spacing="20.0"
+      styleClass="vehicle-container"
+      stylesheets="@../../css/vehicleview/vehiclestyle.css"
+      xmlns="http://javafx.com/javafx/8.0.171"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.example.rentalcar.controller.vehicle.VehicleController">
+
     <padding>
         <Insets bottom="30.0" left="30.0" right="30.0" top="30.0" />
     </padding>
+
     <children>
+
+        <!-- ===== HEADER ===== -->
         <HBox alignment="CENTER_LEFT" prefHeight="46.0">
             <children>
-                <Label styleClass="header-title" text="Quản lý phương tiện" />
+                <VBox spacing="4.0">
+                    <children>
+                        <Label styleClass="header-title" text="Quản lý phương tiện" />
+                        <Label style="-fx-text-fill: #94a3b8; -fx-font-size: 13px;"
+                               text="Danh sách toàn bộ xe trong hệ thống" />
+                    </children>
+                </VBox>
                 <Region HBox.hgrow="ALWAYS" />
-                <Button onAction="#handleAddNewVehicle" prefHeight="45.0" prefWidth="220.0" styleClass="btn-new" text="+ Thêm xe mới" textFill="WHITE">
-               <font>
-                  <Font name="System Bold" size="18.0" />
-               </font></Button>
+                <!-- Chỉ Admin thấy nút này, ẩn/hiện qua controller -->
+                <Button fx:id="btnAddNewVehicle"
+                        onAction="#handleAddNewVehicle"
+                        prefHeight="45.0" prefWidth="200.0"
+                        styleClass="btn-new"
+                        text="+ Thêm xe mới"
+                        textFill="WHITE">
+                    <font><Font name="System Bold" size="16.0" /></font>
+                </Button>
             </children>
         </HBox>
 
-        <HBox alignment="CENTER_LEFT" prefHeight="70.0" spacing="15.0" style="-fx-background-color: transparent;" styleClass="filter-box" VBox.vgrow="NEVER">
+        <!-- ===== FILTER BAR ===== -->
+        <HBox alignment="CENTER_LEFT" prefHeight="70.0" spacing="15.0"
+              style="-fx-background-color: white; -fx-background-radius: 10;
+                     -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.05), 10, 0, 0, 5);"
+              styleClass="filter-box"
+              VBox.vgrow="NEVER">
             <padding>
                 <Insets left="20.0" right="20.0" />
             </padding>
             <children>
-                <TextField fx:id="txtSearch" prefHeight="45.0" prefWidth="350.0" promptText="🔍 Tìm biển số, tên xe..." styleClass="input-field">
-               <font>
-                  <Font size="14.0" />
-               </font></TextField>
-                <ComboBox fx:id="cbBrand" prefHeight="45.0" prefWidth="160.0" promptText="Hãng xe" styleClass="combo-box" />
-                <ComboBox fx:id="cbStatus" prefHeight="45.0" prefWidth="160.0" promptText="Trạng thái" styleClass="combo-box" />
+
+                <!-- Tìm kiếm -->
+                <TextField fx:id="txtSearch"
+                           prefHeight="45.0" prefWidth="320.0"
+                           promptText="🔍  Tìm biển số, tên xe, hãng..."
+                           styleClass="input-field">
+                    <font><Font size="14.0" /></font>
+                </TextField>
+
+                <!-- Lọc hãng xe -->
+                <ComboBox fx:id="cbBrand"
+                          prefHeight="45.0" prefWidth="160.0"
+                          promptText="Hãng xe"
+                          styleClass="combo-box" />
+
+                <!-- Lọc trạng thái – giá trị tiếng Việt khớp VehicleBLL -->
+                <ComboBox fx:id="cbStatus"
+                          prefHeight="45.0" prefWidth="180.0"
+                          promptText="Trạng thái"
+                          styleClass="combo-box" />
 
                 <Region HBox.hgrow="ALWAYS" />
-                <Button mnemonicParsing="false" onAction="#handleSearch" prefHeight="45.0" prefWidth="120.0" styleClass="btn-search" text="Tìm kiếm" />
 
-                <Button mnemonicParsing="false" prefHeight="45.0" prefWidth="120.0" styleClass="btn-refresh" text="Làm mới" />
+                <!-- Nút tìm kiếm -->
+                <Button mnemonicParsing="false"
+                        onAction="#handleSearch"
+                        prefHeight="45.0" prefWidth="120.0"
+                        styleClass="btn-search"
+                        text="Tìm kiếm">
+                    <font><Font name="System Bold" size="14.0" /></font>
+                </Button>
+
+                <!-- Nút làm mới – FIX: gắn onAction="#handleRefresh" -->
+                <Button mnemonicParsing="false"
+                        onAction="#handleRefresh"
+                        prefHeight="45.0" prefWidth="120.0"
+                        styleClass="btn-refresh"
+                        text="Làm mới">
+                    <font><Font name="System Bold" size="14.0" /></font>
+                </Button>
+
             </children>
         </HBox>
 
+        <!-- ===== DANH SÁCH XE ===== -->
         <VBox spacing="15.0" styleClass="list-container" VBox.vgrow="ALWAYS">
             <children>
-                <Label styleClass="section-title" text="Danh sách xe đang vận hành" />
-                <ScrollPane fitToWidth="true" hbarPolicy="NEVER" style="-fx-background-color: transparent; -fx-background: transparent; -fx-padding: 0; -fx-border-color: transparent;" vbarPolicy="NEVER" VBox.vgrow="ALWAYS">
+
+                <!-- Header + số lượng xe -->
+                <HBox alignment="CENTER_LEFT">
+                    <children>
+                        <Label styleClass="section-title" text="Danh sách xe đang vận hành" />
+                        <Region HBox.hgrow="ALWAYS" />
+                        <Label fx:id="lblVehicleCount"
+                               style="-fx-text-fill: #94a3b8; -fx-font-size: 13px;
+                                      -fx-background-color: #f1f5f9; -fx-padding: 4 12;
+                                      -fx-background-radius: 12;"
+                               text="-- xe" />
+                    </children>
+                </HBox>
+
+                <!-- Grid card xe -->
+                <ScrollPane fitToWidth="true"
+                            hbarPolicy="NEVER"
+                            style="-fx-background-color: transparent; -fx-background: transparent;
+                                   -fx-padding: 0; -fx-border-color: transparent;"
+                            vbarPolicy="AS_NEEDED"
+                            VBox.vgrow="ALWAYS">
                     <content>
-                        <TilePane fx:id="vehicleContainer" hgap="25.0" prefColumns="3" prefTileHeight="350.0" prefTileWidth="305.0" vgap="25.0">
+                        <TilePane fx:id="vehicleContainer"
+                                  hgap="25.0"
+                                  prefColumns="3"
+                                  prefTileHeight="350.0"
+                                  prefTileWidth="305.0"
+                                  vgap="25.0">
                             <padding>
                                 <Insets bottom="20.0" top="10.0" />
                             </padding>
                         </TilePane>
                     </content>
                 </ScrollPane>
+
             </children>
         </VBox>
+
     </children>
 </VBox>

@@ -30,11 +30,11 @@ public class VehicleDAO implements IBaseDAO<Vehicles, Integer> {
     }
 
     public int getTotalActiveCars() { return countVehiclesByCondition("status != 'INACTIVE'"); }
-    public int getRentedCars() { return countVehiclesByCondition("status = 'RENTED'"); }
-    public int getAvailableCars() { return countVehiclesByCondition("status = 'AVAILABLE'"); }
+    public int getRentedCars()      { return countVehiclesByCondition("status = 'RENTED'"); }
+    public int getAvailableCars()   { return countVehiclesByCondition("status = 'AVAILABLE'"); }
 
     // ==========================================================
-    // PHẦN 2: CÁC HÀM IMPLEMENTS TỪ IBaseDAO
+    // PHẦN 2: MAP DỮ LIỆU
     // ==========================================================
 
     private Vehicles mapResultSetToVehicle(ResultSet rs) throws SQLException {
@@ -62,6 +62,10 @@ public class VehicleDAO implements IBaseDAO<Vehicles, Integer> {
         return car;
     }
 
+    // ==========================================================
+    // PHẦN 3: CRUD
+    // ==========================================================
+
     @Override
     public boolean insert(Vehicles entity) {
         String sql = "INSERT INTO vehicles (code_vehicle, brand, model, vehicle_type, color, year_of_manufacture, " +
@@ -82,8 +86,7 @@ public class VehicleDAO implements IBaseDAO<Vehicles, Integer> {
             pstm.setInt(11, entity.getMaintenance_km());
             pstm.setString(12, entity.getImage_url());
             pstm.setString(13, entity.getStatus().name());
-            pstm.setDouble(14, entity.getPurchase_price()); // Lưu purchase_price
-
+            pstm.setDouble(14, entity.getPurchase_price());
             return pstm.executeUpdate() > 0;
         } catch (SQLException e) {
             System.err.println("LỖI Thêm xe mới: " + e.getMessage());
@@ -112,7 +115,6 @@ public class VehicleDAO implements IBaseDAO<Vehicles, Integer> {
             pstm.setString(12, entity.getStatus().name());
             pstm.setDouble(13, entity.getPurchase_price());
             pstm.setInt(14, entity.getId_vehicle());
-
             return pstm.executeUpdate() > 0;
         } catch (SQLException e) {
             System.err.println("LỖI Cập nhật xe: " + e.getMessage());
@@ -120,6 +122,9 @@ public class VehicleDAO implements IBaseDAO<Vehicles, Integer> {
         }
     }
 
+    /**
+     * Soft delete: chuyển status → INACTIVE thay vì xóa thật
+     */
     @Override
     public boolean delete(Integer id) {
         String sql = "UPDATE vehicles SET status = 'INACTIVE' WHERE id_vehicle = ?";
@@ -148,19 +153,39 @@ public class VehicleDAO implements IBaseDAO<Vehicles, Integer> {
         return null;
     }
 
+    /**
+     * findAll() – KHÔNG bao gồm xe INACTIVE.
+     * Dùng cho: tạo hợp đồng (Step 2), dashboard, báo cáo.
+     */
     @Override
     public List<Vehicles> findAll() {
-        List<Vehicles> listCars = new ArrayList<>();
-        String sql = "SELECT * FROM vehicles WHERE status != 'INACTIVE'";
+        List<Vehicles> list = new ArrayList<>();
+        String sql = "SELECT * FROM vehicles WHERE status != 'INACTIVE' ORDER BY id_vehicle DESC";
         try (Connection cnt = DBConnection.getInstance().getConnection();
              PreparedStatement pstm = cnt.prepareStatement(sql);
              ResultSet rs = pstm.executeQuery()) {
-            while (rs.next()) {
-                listCars.add(mapResultSetToVehicle(rs));
-            }
+            while (rs.next()) list.add(mapResultSetToVehicle(rs));
         } catch (SQLException e) {
             System.err.println("LỖI Lấy danh sách xe: " + e.getMessage());
         }
-        return listCars;
+        return list;
+    }
+
+    /**
+     * findAllIncludeInactive() – BAO GỒM cả xe INACTIVE.
+     * Chỉ dùng cho màn hình Quản lý xe (VehicleController)
+     * để Admin có thể thấy và lọc xe đã ngừng hoạt động.
+     */
+    public List<Vehicles> findAllIncludeInactive() {
+        List<Vehicles> list = new ArrayList<>();
+        String sql = "SELECT * FROM vehicles ORDER BY id_vehicle DESC";
+        try (Connection cnt = DBConnection.getInstance().getConnection();
+             PreparedStatement pstm = cnt.prepareStatement(sql);
+             ResultSet rs = pstm.executeQuery()) {
+            while (rs.next()) list.add(mapResultSetToVehicle(rs));
+        } catch (SQLException e) {
+            System.err.println("LỖI Lấy danh sách xe (bao gồm INACTIVE): " + e.getMessage());
+        }
+        return list;
     }
 }

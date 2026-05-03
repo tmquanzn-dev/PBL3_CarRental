@@ -1,100 +1,139 @@
-/* Container & Nền */
+/* ======================================================
+   RULE MANAGEMENT STYLE – VehicleRent Pro
+   Fix: thêm -fx-background-insets: 0 để override default button JavaFX
+====================================================== */
+
 .rule-page-container {
-    -fx-background-color: #f8fafc;
+    -fx-background-color: #f4f7f6;
+    -fx-font-family: "Segoe UI", Arial, sans-serif;
 }
 
-/* Typography */
+/* ======================================================
+   NÚT THÊM MỚI – Quan trọng: phải có -fx-background-insets: 0
+====================================================== */
+.btn-new {
+    -fx-background-color: linear-gradient(to bottom right, #478dff, #146dff);
+    -fx-background-radius: 10;
+    -fx-background-insets: 0;          /* ← fix JavaFX override */
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(three-pass-box, rgba(71,141,255,0.45), 12, 0, 0, 4);
+}
+.btn-new:hover {
+    -fx-background-color: #0052cc;
+    -fx-background-insets: 0;
+}
+
+/* ======================================================
+   SEARCH / FILTER BAR
+====================================================== */
+.search-field {
+    -fx-background-color: white;
+    -fx-background-radius: 8;
+    -fx-background-insets: 0;
+    -fx-border-color: #cbd5e1;
+    -fx-border-radius: 8;
+    -fx-padding: 0 12;
+    -fx-font-size: 14px;
+    -fx-pref-height: 45px;
+}
+.search-field:focused {
+    -fx-border-color: #146dff;
+    -fx-border-width: 1.5;
+}
+
+.btn-search {
+    -fx-background-color: #0ea5e9;
+    -fx-background-insets: 0;
+    -fx-text-fill: white;
+    -fx-background-radius: 8;
+    -fx-font-weight: bold;
+    -fx-cursor: hand;
+}
+.btn-search:hover { -fx-background-color: #0284c7; -fx-background-insets: 0; }
+
+.btn-refresh {
+    -fx-background-color: #64748b;
+    -fx-background-insets: 0;
+    -fx-text-fill: white;
+    -fx-background-radius: 8;
+    -fx-font-weight: bold;
+    -fx-cursor: hand;
+}
+.btn-refresh:hover { -fx-background-color: #475569; -fx-background-insets: 0; }
+
+/* ======================================================
+   SCROLLPANE
+====================================================== */
+.scroll-pane {
+    -fx-background-color: transparent;
+    -fx-background: transparent;
+}
+.scroll-pane > .viewport { -fx-background-color: transparent; }
+.scroll-pane .scroll-bar:vertical .thumb {
+    -fx-background-color: #cbd5e1;
+    -fx-background-radius: 10;
+}
+.scroll-pane .scroll-bar:vertical .track { -fx-background-color: transparent; }
+
+/* ======================================================
+   SECTION TITLE & TYPOGRAPHY
+====================================================== */
 .header-title {
-    -fx-font-family: "System";
     -fx-font-weight: bold;
     -fx-font-size: 32px;
     -fx-text-fill: #1e293b;
 }
-
 .section-title {
-    -fx-font-family: "System";
     -fx-font-weight: bold;
     -fx-font-size: 18px;
     -fx-text-fill: #1e293b;
 }
 
-.btn-new {
-   -fx-background-radius: 10;
-   -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 15, 0, 0, 10);
-   -fx-background-color: linear-gradient(to bottom right, #478dff, #146dff);
-   -fx-cursor: hand;
-}
-
-.btn-new: hover {
-    -fx-background-color: #0052cc
-}
-
-/* Thanh Tìm Kiếm */
-.search-field {
-    -fx-background-radius: 8;
-    -fx-border-radius: 8;
-    -fx-border-color: #cbd5e1;
-    -fx-padding: 0 10;
-    -fx-font-size: 14px;
-}
-.btn-search {
-    -fx-background-color: #0ea5e9;
-    -fx-text-fill: white;
-    -fx-background-radius: 8;
-    -fx-font-weight: bold;
-    -fx-cursor: hand;
-}
-.btn-refresh {
-    -fx-background-color: #64748b;
-    -fx-text-fill: white;
-    -fx-background-radius: 8;
-    -fx-font-weight: bold;
-    -fx-cursor: hand;
-}
-
-/* Loại bỏ viền của ScrollPane */
-.scroll-pane {
-    -fx-background-color: transparent;
-    -fx-background: transparent;
-}
-.scroll-pane > .viewport {
-    -fx-background-color: transparent;
-}
-
-/* Thẻ Card */
+/* ======================================================
+   RULE CARD (style bổ sung – chính vẫn inline FXML)
+====================================================== */
 .rule-card {
     -fx-background-color: white;
-    -fx-background-radius: 15;
-    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.05), 10, 0, 0, 5);
+    -fx-background-radius: 14;
     -fx-border-color: #e2e8f0;
-    -fx-border-radius: 15;
+    -fx-border-radius: 14;
+    -fx-border-width: 1.5;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.08), 14, 0, 0, 4);
 }
 .rule-card:hover {
-    -fx-border-color: #4f46e5;
+    -fx-border-color: #146dff;
+    -fx-effect: dropshadow(three-pass-box, rgba(20,109,255,0.20), 20, 0, 0, 6);
 }
 
-.badge-type {
-    -fx-background-color: #e0e7ff;
-    -fx-text-fill: #4338ca;
-    -fx-padding: 4 10;
-    -fx-background-radius: 8;
-    -fx-font-weight: bold;
-    -fx-font-size: 11px;
-}
-.text-multi {
-    -fx-font-weight: bold;
-    -fx-font-size: 26px;
-    -fx-text-fill: #10b981;
-}
-.btn-edit {
-    -fx-background-color: #f59e0b;
+/* ======================================================
+   MODAL FORM BUTTONS
+====================================================== */
+.btn-primary {
+    -fx-background-color: linear-gradient(to bottom right, #478dff, #146dff);
+    -fx-background-insets: 0;
     -fx-text-fill: white;
-    -fx-background-radius: 6;
+    -fx-font-weight: bold;
+    -fx-background-radius: 10;
     -fx-cursor: hand;
+    -fx-font-size: 14px;
 }
-.btn-delete {
-    -fx-background-color: #ef4444;
-    -fx-text-fill: white;
-    -fx-background-radius: 6;
+.btn-primary:hover {
+    -fx-background-color: #0052cc;
+    -fx-background-insets: 0;
+}
+
+.btn-cancel {
+    -fx-background-color: #fff1f2;
+    -fx-background-insets: 0;
+    -fx-text-fill: #e11d48;
+    -fx-background-radius: 10;
     -fx-cursor: hand;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+}
+.btn-cancel:hover {
+    -fx-background-color: #fecdd3;
+    -fx-background-insets: 0;
 }

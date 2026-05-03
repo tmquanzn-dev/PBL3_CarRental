@@ -5,49 +5,212 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.FlowPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Region?>
-<?import javafx.scene.layout.TilePane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
 
-<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="1176.0" prefWidth="1100.0" spacing="25.0" styleClass="rule-page-container" stylesheets="@../../css/ruleview/rulestyle.css" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.rentalcar.controller.rule.RuleController">
+<!--
+    RuleManagement.fxml – Màn hình quản lý luật tính giá (Admin only)
+    Controller: com.example.rentalcar.controller.rule.RuleController
+-->
+<VBox maxHeight="-Infinity" maxWidth="-Infinity"
+      minHeight="-Infinity" minWidth="-Infinity"
+      prefHeight="1176.0" prefWidth="1100.0"
+      spacing="24.0"
+      styleClass="rule-page-container"
+      stylesheets="@../../css/ruleview/rulestyle.css"
+      xmlns="http://javafx.com/javafx/8.0.171"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.example.rentalcar.controller.rule.RuleController">
+
     <padding>
-        <Insets bottom="30.0" left="30.0" right="30.0" top="30.0" />
+        <Insets bottom="30.0" left="30.0" right="30.0" top="28.0" />
     </padding>
+
     <children>
+
+        <!-- ===== HEADER ===== -->
         <HBox alignment="CENTER_LEFT" prefHeight="46.0">
             <children>
-                <Label styleClass="header-title" text="Cấu hình hệ số giá" />
+                <VBox spacing="4.0">
+                    <children>
+                        <Text strokeType="OUTSIDE" strokeWidth="0.0"
+                              text="Luật tính giá">
+                            <font><Font name="System Bold" size="30.0" /></font>
+                        </Text>
+                        <Label style="-fx-text-fill: #94a3b8; -fx-font-size: 13px;"
+                               text="Cấu hình hệ số nhân giá cho cuối tuần, ngày lễ và các dịp đặc biệt" />
+                    </children>
+                </VBox>
                 <Region HBox.hgrow="ALWAYS" />
-                <Button mnemonicParsing="false" onAction="#handleAddNewRule" prefHeight="45.0" prefWidth="220.0" styleClass="btn-new" text="+ Thêm quy luật" textFill="WHITE">
-                    <font>
-                        <Font name="System Bold" size="18.0" />
-                    </font></Button>
+                <Button mnemonicParsing="false"
+                        onAction="#handleAddNewRule"
+                        prefHeight="46.0" prefWidth="220.0"
+                        styleClass="btn-new"
+                        text="＋  Thêm luật mới"
+                        textFill="WHITE">
+                    <font><Font name="System Bold" size="15.0" /></font>
+                </Button>
             </children>
         </HBox>
 
-        <HBox alignment="CENTER_LEFT" prefHeight="60.0" spacing="15.0">
+        <!-- ===== 3 STAT CARDS ===== -->
+        <HBox prefHeight="115.0" spacing="22.0">
             <children>
-                <TextField fx:id="txtSearch" prefHeight="45.0" prefWidth="350.0" promptText="🔍 Tìm kiếm quy luật..." styleClass="search-field" />
-                <Button mnemonicParsing="false" prefHeight="45.0" prefWidth="120.0" styleClass="btn-search" text="Tìm kiếm" />
-                <Button mnemonicParsing="false" prefHeight="45.0" prefWidth="120.0" styleClass="btn-refresh" text="Làm mới" />
+
+                <!-- Card 1: Tổng luật -->
+                <AnchorPane prefHeight="115.0" HBox.hgrow="ALWAYS"
+                            style="-fx-background-color: linear-gradient(to bottom right, #478dff, #146dff);
+                                   -fx-background-radius: 12;
+                                   -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.10),15,0,0,8);">
+                    <children>
+                        <Label style="-fx-text-fill: white; -fx-font-size: 14px; -fx-opacity: 0.9;"
+                               text="Tổng luật hiện có"
+                               AnchorPane.leftAnchor="18.0" AnchorPane.topAnchor="14.0" />
+                        <Label fx:id="lblTotalRules"
+                               style="-fx-text-fill: white; -fx-font-size: 32px; -fx-font-weight: bold;"
+                               text="--"
+                               AnchorPane.leftAnchor="18.0" AnchorPane.topAnchor="38.0">
+                            <font><Font name="System Bold" size="32.0" /></font>
+                        </Label>
+                        <Label style="-fx-text-fill: white; -fx-font-size: 12px; -fx-opacity: 0.85;"
+                               text="Tất cả luật trong hệ thống"
+                               AnchorPane.leftAnchor="18.0" AnchorPane.bottomAnchor="14.0" />
+                        <Label style="-fx-text-fill: white; -fx-font-size: 38px; -fx-opacity: 0.18;"
+                               text="📋"
+                               AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="14.0" />
+                    </children>
+                </AnchorPane>
+
+                <!-- Card 2: Đang bật -->
+                <AnchorPane prefHeight="115.0" HBox.hgrow="ALWAYS"
+                            style="-fx-background-color: linear-gradient(to bottom right, #34d399, #10b981);
+                                   -fx-background-radius: 12;
+                                   -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.10),15,0,0,8);">
+                    <children>
+                        <Label style="-fx-text-fill: white; -fx-font-size: 14px; -fx-opacity: 0.9;"
+                               text="Đang kích hoạt"
+                               AnchorPane.leftAnchor="18.0" AnchorPane.topAnchor="14.0" />
+                        <Label fx:id="lblActiveRules"
+                               style="-fx-text-fill: white; -fx-font-size: 32px; -fx-font-weight: bold;"
+                               text="--"
+                               AnchorPane.leftAnchor="18.0" AnchorPane.topAnchor="38.0">
+                            <font><Font name="System Bold" size="32.0" /></font>
+                        </Label>
+                        <Label style="-fx-text-fill: white; -fx-font-size: 12px; -fx-opacity: 0.85;"
+                               text="Luật đang được bật"
+                               AnchorPane.leftAnchor="18.0" AnchorPane.bottomAnchor="14.0" />
+                        <Label style="-fx-text-fill: white; -fx-font-size: 38px; -fx-opacity: 0.18;"
+                               text="✅"
+                               AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="14.0" />
+                    </children>
+                </AnchorPane>
+
+                <!-- Card 3: Đang áp dụng hôm nay -->
+                <AnchorPane prefHeight="115.0" HBox.hgrow="ALWAYS"
+                            style="-fx-background-color: linear-gradient(to bottom right, #fbbf24, #f59e0b);
+                                   -fx-background-radius: 12;
+                                   -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.10),15,0,0,8);">
+                    <children>
+                        <Label style="-fx-text-fill: white; -fx-font-size: 14px; -fx-opacity: 0.9;"
+                               text="Áp dụng hôm nay"
+                               AnchorPane.leftAnchor="18.0" AnchorPane.topAnchor="14.0" />
+                        <Label fx:id="lblApplicableToday"
+                               style="-fx-text-fill: white; -fx-font-size: 32px; -fx-font-weight: bold;"
+                               text="--"
+                               AnchorPane.leftAnchor="18.0" AnchorPane.topAnchor="38.0">
+                            <font><Font name="System Bold" size="32.0" /></font>
+                        </Label>
+                        <Label style="-fx-text-fill: white; -fx-font-size: 12px; -fx-opacity: 0.85;"
+                               text="Luật có hiệu lực hôm nay"
+                               AnchorPane.leftAnchor="18.0" AnchorPane.bottomAnchor="14.0" />
+                        <Label style="-fx-text-fill: white; -fx-font-size: 38px; -fx-opacity: 0.18;"
+                               text="📅"
+                               AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="14.0" />
+                    </children>
+                </AnchorPane>
+
             </children>
         </HBox>
 
-        <VBox spacing="15.0" VBox.vgrow="ALWAYS">
+        <!-- ===== HƯỚNG DẪN NHANH ===== -->
+        <HBox alignment="CENTER_LEFT" spacing="12.0"
+              style="-fx-background-color: #eff6ff; -fx-background-radius: 10;
+                     -fx-border-color: #bfdbfe; -fx-border-radius: 10; -fx-padding: 14 18;">
             <children>
-                <Label styleClass="section-title" text="Danh sách quy luật hiện hành" />
-                <ScrollPane fitToWidth="true" hbarPolicy="NEVER" styleClass="scroll-pane" vbarPolicy="AS_NEEDED" VBox.vgrow="ALWAYS">
+                <Label text="💡" style="-fx-font-size: 18px;" />
+                <VBox spacing="3.0">
+                    <children>
+                        <Label style="-fx-font-weight: bold; -fx-text-fill: #1d4ed8; -fx-font-size: 13px;"
+                               text="Cách hoạt động của luật tính giá" />
+                        <Label wrapText="true"
+                               style="-fx-text-fill: #3b82f6; -fx-font-size: 12px;"
+                               text="Hệ số nhân × 1.0 = không đổi  •  × 1.2 = tăng 20%  •  × 1.5 = tăng 50%  •  Khi nhiều luật trùng ngày → hệ thống lấy hệ số cao nhất" />
+                    </children>
+                </VBox>
+            </children>
+        </HBox>
+
+        <!-- ===== SEARCH BAR ===== -->
+        <HBox alignment="CENTER_LEFT" prefHeight="56.0" spacing="14.0">
+            <children>
+                <TextField fx:id="txtSearch"
+                           prefHeight="45.0" prefWidth="380.0"
+                           promptText="🔍  Tìm tên luật, loại..."
+                           styleClass="search-field">
+                    <font><Font size="14.0" /></font>
+                </TextField>
+
+                <Button mnemonicParsing="false"
+                        onAction="#handleSearch"
+                        prefHeight="45.0" prefWidth="120.0"
+                        styleClass="btn-search"
+                        text="Tìm kiếm">
+                    <font><Font name="System Bold" size="14.0" /></font>
+                </Button>
+
+                <Button mnemonicParsing="false"
+                        onAction="#handleReload"
+                        prefHeight="45.0" prefWidth="110.0"
+                        styleClass="btn-refresh"
+                        text="🔄 Làm mới">
+                    <font><Font name="System Bold" size="14.0" /></font>
+                </Button>
+            </children>
+        </HBox>
+
+        <!-- ===== SECTION TITLE ===== -->
+        <Label styleClass="section-title" text="Danh sách luật tính giá" />
+
+        <!-- ===== DANH SÁCH CARD (FlowPane) ===== -->
+        <VBox spacing="0.0" VBox.vgrow="ALWAYS"
+              style="-fx-background-color: white; -fx-background-radius: 14;
+                     -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.05), 10, 0, 0, 5);">
+            <padding>
+                <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+            </padding>
+            <children>
+                <ScrollPane fitToWidth="true"
+                            hbarPolicy="NEVER"
+                            styleClass="scroll-pane"
+                            vbarPolicy="AS_NEEDED"
+                            VBox.vgrow="ALWAYS">
                     <content>
-                        <TilePane fx:id="ruleContainer" hgap="25.0" prefColumns="3" prefTileHeight="220.0" prefTileWidth="330.0" vgap="25.0">
+                        <FlowPane fx:id="ruleContainer"
+                                  hgap="22.0" vgap="22.0"
+                                  prefWrapLength="1040.0">
                             <padding>
-                                <Insets bottom="20.0" left="10.0" right="10.0" top="10.0" />
+                                <Insets bottom="10.0" left="4.0" right="4.0" top="4.0" />
                             </padding>
-                        </TilePane>
+                        </FlowPane>
                     </content>
                 </ScrollPane>
             </children>
         </VBox>
+
     </children>
 </VBox>

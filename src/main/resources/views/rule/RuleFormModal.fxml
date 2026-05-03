@@ -1,0 +1,207 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<!--
+    RuleFormModal.fxml – Modal thêm / sửa luật tính giá
+    Controller: com.example.rentalcar.controller.rule.RuleFormController
+-->
+<VBox prefWidth="560.0" spacing="20.0"
+      style="-fx-background-color: white; -fx-background-radius: 14;"
+      stylesheets="@../../css/ruleview/rulestyle.css"
+      xmlns="http://javafx.com/javafx/8.0.171"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.example.rentalcar.controller.rule.RuleFormController">
+
+    <padding>
+        <Insets bottom="30.0" left="36.0" right="36.0" top="26.0" />
+    </padding>
+
+    <children>
+
+        <!-- HEADER -->
+        <HBox alignment="CENTER_LEFT">
+            <children>
+                <VBox spacing="3.0">
+                    <children>
+                        <Label fx:id="lblTitle"
+                               style="-fx-font-size: 22px; -fx-font-weight: bold; -fx-text-fill: #1e293b;"
+                               text="Thêm luật tính giá mới" />
+                        <Label fx:id="lblSubtitle"
+                               style="-fx-text-fill: #94a3b8; -fx-font-size: 13px;"
+                               text="Cấu hình hệ số giá cho ngày lễ / cuối tuần" />
+                    </children>
+                </VBox>
+                <Region HBox.hgrow="ALWAYS" />
+                <Button mnemonicParsing="false" onAction="#handleClose"
+                        style="-fx-background-color: transparent; -fx-text-fill: #64748b;
+                               -fx-font-size: 20px; -fx-cursor: hand;"
+                        text="✕" />
+            </children>
+        </HBox>
+
+        <Separator />
+
+        <!-- FORM -->
+        <GridPane hgap="20.0" vgap="16.0">
+            <columnConstraints>
+                <ColumnConstraints hgrow="SOMETIMES" percentWidth="55.0" />
+                <ColumnConstraints hgrow="SOMETIMES" percentWidth="45.0" />
+            </columnConstraints>
+            <rowConstraints>
+                <RowConstraints minHeight="60.0" />
+                <RowConstraints minHeight="60.0" />
+                <RowConstraints minHeight="60.0" />
+                <RowConstraints minHeight="60.0" />
+            </rowConstraints>
+            <children>
+
+                <!-- Tên luật -->
+                <VBox spacing="6.0" GridPane.columnIndex="0" GridPane.rowIndex="0">
+                    <children>
+                        <Label style="-fx-font-size: 13px; -fx-font-weight: bold; -fx-text-fill: #475569;"
+                               text="Tên luật *" />
+                        <TextField fx:id="txtRuleName"
+                                   promptText="VD: Giá cuối tuần, Giá Tết Nguyên Đán..."
+                                   style="-fx-background-color: white; -fx-border-color: #cbd5e1;
+                                          -fx-border-radius: 8; -fx-background-radius: 8;
+                                          -fx-padding: 0 14; -fx-pref-height: 44px;
+                                          -fx-font-size: 14px; -fx-text-fill: #334155;" />
+                    </children>
+                </VBox>
+
+                <!-- Loại luật -->
+                <VBox spacing="6.0" GridPane.columnIndex="1" GridPane.rowIndex="0">
+                    <children>
+                        <Label style="-fx-font-size: 13px; -fx-font-weight: bold; -fx-text-fill: #475569;"
+                               text="Loại luật *" />
+                        <ComboBox fx:id="cbRuleType" maxWidth="Infinity"
+                                  style="-fx-background-color: white; -fx-border-color: #cbd5e1;
+                                         -fx-border-radius: 8; -fx-background-radius: 8;
+                                         -fx-pref-height: 44px; -fx-font-size: 14px;" />
+                    </children>
+                </VBox>
+
+                <!-- Hệ số nhân -->
+                <VBox spacing="6.0" GridPane.columnIndex="0" GridPane.rowIndex="1">
+                    <children>
+                        <Label style="-fx-font-size: 13px; -fx-font-weight: bold; -fx-text-fill: #475569;"
+                               text="Hệ số nhân (multi) *" />
+                        <TextField fx:id="txtMulti"
+                                   promptText="VD: 1.2 (tăng 20%)  hoặc  1.5 (tăng 50%)"
+                                   style="-fx-background-color: white; -fx-border-color: #cbd5e1;
+                                          -fx-border-radius: 8; -fx-background-radius: 8;
+                                          -fx-padding: 0 14; -fx-pref-height: 44px;
+                                          -fx-font-size: 14px; -fx-text-fill: #334155;" />
+                    </children>
+                </VBox>
+
+                <!-- Live preview hệ số -->
+                <VBox alignment="CENTER" spacing="6.0"
+                      style="-fx-background-color: #eff6ff; -fx-background-radius: 10;
+                             -fx-border-color: #bfdbfe; -fx-border-radius: 10; -fx-padding: 10 14;"
+                      GridPane.columnIndex="1" GridPane.rowIndex="1">
+                    <children>
+                        <Label style="-fx-font-size: 12px; -fx-text-fill: #64748b;"
+                               text="Xem trước" />
+                        <Label fx:id="lblMultiPreview"
+                               style="-fx-text-fill: #146dff; -fx-font-weight: bold; -fx-font-size: 12px;"
+                               text="" wrapText="true" />
+                    </children>
+                </VBox>
+
+                <!-- Ngày bắt đầu -->
+                <VBox spacing="6.0" GridPane.columnIndex="0" GridPane.rowIndex="2">
+                    <children>
+                        <Label style="-fx-font-size: 13px; -fx-font-weight: bold; -fx-text-fill: #475569;"
+                               text="Ngày bắt đầu *" />
+                        <DatePicker fx:id="dpStart" maxWidth="Infinity"
+                                    style="-fx-pref-height: 44px;" />
+                    </children>
+                </VBox>
+
+                <!-- Ngày kết thúc -->
+                <VBox spacing="6.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                    <children>
+                        <Label style="-fx-font-size: 13px; -fx-font-weight: bold; -fx-text-fill: #475569;"
+                               text="Ngày kết thúc *" />
+                        <DatePicker fx:id="dpEnd" maxWidth="Infinity"
+                                    style="-fx-pref-height: 44px;" />
+                    </children>
+                </VBox>
+
+                <!-- Trạng thái -->
+                <VBox alignment="CENTER_LEFT" spacing="6.0"
+                      GridPane.columnSpan="2" GridPane.rowIndex="3">
+                    <children>
+                        <CheckBox fx:id="chkActive"
+                                  text="Kích hoạt luật này ngay sau khi lưu"
+                                  style="-fx-font-size: 14px; -fx-text-fill: #334155;
+                                         -fx-font-weight: bold;" />
+                    </children>
+                </VBox>
+
+            </children>
+        </GridPane>
+
+        <!-- Hộp lưu ý -->
+        <VBox spacing="5.0"
+              style="-fx-background-color: #fffbeb; -fx-background-radius: 10;
+                     -fx-border-color: #fcd34d; -fx-border-radius: 10; -fx-padding: 14;">
+            <children>
+                <Label style="-fx-font-weight: bold; -fx-text-fill: #92400e; -fx-font-size: 13px;"
+                       text="💡 Lưu ý khi tạo luật tính giá:" />
+                <Label wrapText="true"
+                       style="-fx-text-fill: #b45309; -fx-font-size: 12px;"
+                       text="• Hệ số 1.0 = không thay đổi giá  •  1.2 = tăng 20%  •  1.5 = tăng 50%" />
+                <Label wrapText="true"
+                       style="-fx-text-fill: #b45309; -fx-font-size: 12px;"
+                       text="• Nhiều luật có thể áp dụng cùng lúc, hệ thống lấy hệ số cao nhất" />
+                <Label wrapText="true"
+                       style="-fx-text-fill: #b45309; -fx-font-size: 12px;"
+                       text="• Chỉ Admin mới có thể thêm, sửa, xóa luật tính giá" />
+            </children>
+        </VBox>
+
+        <!-- Toast message -->
+        <Label fx:id="lblMsg" text="" visible="false"
+               style="-fx-font-size: 13px; -fx-font-weight: bold;" />
+
+        <Separator />
+
+        <!-- ACTION BUTTONS -->
+        <HBox alignment="CENTER_RIGHT" spacing="12.0">
+            <children>
+                <Button mnemonicParsing="false" onAction="#handleClose"
+                        prefHeight="42.0" prefWidth="100.0"
+                        style="-fx-background-color: #fff1f2; -fx-text-fill: #e11d48;
+                               -fx-background-radius: 10; -fx-font-weight: bold; -fx-cursor: hand;"
+                        text="Hủy bỏ" />
+                <Button fx:id="btnSave" mnemonicParsing="false" onAction="#handleSave"
+                        prefHeight="42.0" prefWidth="170.0"
+                        style="-fx-background-color: linear-gradient(to right, #478dff, #146dff);
+                               -fx-text-fill: white; -fx-font-weight: bold;
+                               -fx-background-radius: 10; -fx-cursor: hand;
+                               -fx-effect: dropshadow(three-pass-box, rgba(71,141,255,0.4),10,0,0,3);"
+                        text="💾  Lưu luật">
+                    <font><Font name="System Bold" size="13.0" /></font>
+                </Button>
+            </children>
+        </HBox>
+
+    </children>
+</VBox>
