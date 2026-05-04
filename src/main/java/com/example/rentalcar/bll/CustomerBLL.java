@@ -2,6 +2,8 @@ package com.example.rentalcar.bll;
 
 import com.example.rentalcar.dao.CustomerDAO;
 import com.example.rentalcar.models.Customers;
+import com.example.rentalcar.utils.AppSession;
+
 import java.util.List;
 
 public class CustomerBLL {
@@ -42,6 +44,8 @@ public class CustomerBLL {
      * Bắt buộc phải có lý do (reason).
      */
     public boolean addToBlacklist(int customerId, String reason) {
+        if (!AppSession.isAdmin()) throw new IllegalStateException("Cảnh báo bảo mật: Bạn không có quyền thực hiện thao tác Blacklist!"); //
+
         if (reason == null || reason.isBlank())
             throw new IllegalArgumentException("Phải nhập lý do đưa vào danh sách đen!");
 

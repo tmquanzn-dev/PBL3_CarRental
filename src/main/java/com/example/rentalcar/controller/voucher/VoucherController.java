@@ -1,5 +1,6 @@
 package com.example.rentalcar.controller.voucher;
 
+import com.example.rentalcar.bll.VoucherBLL;
 import com.example.rentalcar.dao.VoucherDAO;
 import com.example.rentalcar.models.DiscountType;
 import com.example.rentalcar.models.Vouchers;
@@ -54,7 +55,7 @@ public class VoucherController implements Initializable {
     @FXML private TableColumn<Vouchers, Void>   colAction;
 
     //sau này gọi BLL ở đây
-    private final VoucherDAO voucherDAO = new VoucherDAO();
+    private final VoucherBLL voucherBLL = new VoucherBLL();
     private ObservableList<Vouchers> masterList;
 
     private static final DateTimeFormatter DATE_FMT = DateTimeFormatter.ofPattern("dd/MM/yyyy");
@@ -291,7 +292,7 @@ public class VoucherController implements Initializable {
 
     private void loadData() {
         try {
-            List<Vouchers> list = voucherDAO.findAll();
+            List<Vouchers> list = voucherBLL.getAllVouchers();
             masterList = FXCollections.observableArrayList(list);
 
             tableVouchers.setItems(masterList);
@@ -412,13 +413,12 @@ public class VoucherController implements Initializable {
         confirm.setContentText("Bạn có muốn " + action + " voucher \"" + v.getCode_vouchers() + "\" không?");
 
         confirm.showAndWait().filter(r -> r == ButtonType.OK).ifPresent(r -> {
-            v.setIs_active(!v.isIs_active());
-            boolean ok = voucherDAO.update(v);
-            if (ok) {
+            try {
+                // SỬA Ở ĐÂY: Nhờ BLL xử lý việc cập nhật trạng thái
+                voucherBLL.toggleVoucherStatus(v.getId_voucher(), !v.isIs_active());
                 loadData();
-            } else {
-                showError("Cập nhật trạng thái thất bại!");
-                v.setIs_active(!v.isIs_active()); // revert
+            } catch (IllegalArgumentException ex) {
+                showError(ex.getMessage());
             }
         });
     }

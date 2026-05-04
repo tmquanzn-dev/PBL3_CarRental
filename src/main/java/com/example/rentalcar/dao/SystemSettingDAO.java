@@ -11,6 +11,9 @@ import java.util.List;
 
 public class SystemSettingDAO implements IBaseDAO<SystemSettings, Integer>
 {
+    // ==========================================================
+    // HÀM MAP DỮ LIỆU TỪ MYSQL RA JAVA
+    // ==========================================================
     private SystemSettings mapResultSetToSetting(ResultSet rs) throws SQLException
     {
         Users user = new Users();
@@ -18,7 +21,6 @@ public class SystemSettingDAO implements IBaseDAO<SystemSettings, Integer>
 
         Timestamp ts = rs.getTimestamp("update_at");
 
-        // Sử dụng Constructor đầy đủ tham số như em đã định nghĩa trong Model
         return new SystemSettings(
                 rs.getInt("id_setting"),
                 rs.getString("setting_key"),
@@ -31,6 +33,9 @@ public class SystemSettingDAO implements IBaseDAO<SystemSettings, Integer>
         );
     }
 
+    // ==========================================================
+    // CÁC HÀM CRUD CƠ BẢN
+    // ==========================================================
     @Override
     public boolean insert(SystemSettings entity)
     {
@@ -52,7 +57,6 @@ public class SystemSettingDAO implements IBaseDAO<SystemSettings, Integer>
     @Override
     public boolean update(SystemSettings entity)
     {
-        // Thường chỉ cập nhật giá trị và người sửa cuối cùng cho một Key có sẵn
         String sql = "UPDATE systemsettings SET setting_value = ?, user_id = ? WHERE setting_key = ?";
         try (Connection cnt = DBConnection.getInstance().getConnection();
              PreparedStatement pstm = cnt.prepareStatement(sql))
@@ -63,6 +67,35 @@ public class SystemSettingDAO implements IBaseDAO<SystemSettings, Integer>
             return pstm.executeUpdate() > 0;
         }
         catch (SQLException e) { System.err.println("LỖI Cập nhật Setting: " + e.getMessage()); return false; }
+    }
+
+    @Override
+    public boolean delete(Integer id)
+    {
+        String sql = "DELETE FROM systemsettings WHERE id_setting = ?";
+        try (Connection cnt = DBConnection.getInstance().getConnection();
+             PreparedStatement pstm = cnt.prepareStatement(sql))
+        {
+            pstm.setInt(1, id);
+            return pstm.executeUpdate() > 0;
+        }
+        catch (SQLException e) { System.err.println("LỖI Xóa Setting: " + e.getMessage()); return false; }
+    }
+
+    @Override
+    public SystemSettings findById(Integer id)
+    {
+        String sql = "SELECT * FROM systemsettings WHERE id_setting = ?";
+        try (Connection cnt = DBConnection.getInstance().getConnection();
+             PreparedStatement pstm = cnt.prepareStatement(sql))
+        {
+            pstm.setInt(1, id);
+            try (ResultSet rs = pstm.executeQuery()) {
+                if (rs.next()) return mapResultSetToSetting(rs);
+            }
+        }
+        catch (SQLException e) { System.err.println("LỖI Tìm Setting theo ID: " + e.getMessage()); }
+        return null;
     }
 
     @Override
@@ -80,7 +113,31 @@ public class SystemSettingDAO implements IBaseDAO<SystemSettings, Integer>
         return list;
     }
 
-    // Hàm lấy giá trị nhanh theo Key - Cực kỳ quan trọng cho các phép tính toán ở BLL
+    // ==========================================================
+    // HÀM NGHIỆP VỤ ĐẶC THÙ
+    // ==========================================================
+
+    /**
+     * Trả về toàn bộ Object SystemSettings (Dùng khi cần kiểm tra Data Type hoặc Update)
+     */
+    public SystemSettings findByKey(String key)
+    {
+        String sql = "SELECT * FROM systemsettings WHERE setting_key = ?";
+        try (Connection cnt = DBConnection.getInstance().getConnection();
+             PreparedStatement pstm = cnt.prepareStatement(sql))
+        {
+            pstm.setString(1, key);
+            try (ResultSet rs = pstm.executeQuery()) {
+                if (rs.next()) return mapResultSetToSetting(rs);
+            }
+        }
+        catch (SQLException e) { System.err.println("LỖI Tìm Setting theo Key: " + e.getMessage()); }
+        return null;
+    }
+
+    /**
+     * Trả về Nhanh một chuỗi Value (Dùng cho PriceBLL đọc giá xăng, phí phạt...)
+     */
     public String getValueByKey(String key)
     {
         String sql = "SELECT setting_value FROM systemsettings WHERE setting_key = ?";
@@ -95,7 +152,4 @@ public class SystemSettingDAO implements IBaseDAO<SystemSettings, Integer>
         catch (SQLException e) { System.err.println("LỖI Lấy giá trị Setting: " + e.getMessage()); }
         return null;
     }
-
-    @Override public boolean delete(Integer id) { return false; }
-    @Override public SystemSettings findById(Integer id) { return null; }
 }

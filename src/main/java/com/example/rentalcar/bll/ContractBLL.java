@@ -3,6 +3,9 @@ package com.example.rentalcar.bll;
 import com.example.rentalcar.dao.ContractDAO;
 import com.example.rentalcar.models.Contracts;
 import com.example.rentalcar.models.StatusContracts;
+import com.example.rentalcar.models.StatusVehicle;
+import com.example.rentalcar.utils.AppSession;
+
 import java.util.List;
 
 public class ContractBLL {
@@ -33,14 +36,20 @@ public class ContractBLL {
         return contractDAO.findById(id);
     }
 
-    public boolean createContract(Contracts contract) {
-        // Validate nghiệp vụ
+    public boolean createContract(Contracts contract, String voucherCode) {
+        // 1. Validate thời gian
         if (contract.getStart_datetime() == null || contract.getEnd_datetime() == null)
             throw new IllegalArgumentException("Thời gian thuê không hợp lệ!");
         if (contract.getStart_datetime().isAfter(contract.getEnd_datetime()))
             throw new IllegalArgumentException("Ngày bắt đầu phải trước ngày kết thúc!");
 
-        // Tính tiền tự động qua PriceBLL
+        // 2. Tạm thời bỏ qua việc kiểm tra lịch trùng (sẽ thêm vào sau nếu em muốn làm phức tạp)
+        // Nếu muốn làm đơn giản, chỉ cần kiểm tra xem Status của Vehicle có phải là AVAILABLE không là đủ.
+        if (contract.getId_vehicle().getStatus() != StatusVehicle.AVAILABLE) {
+            throw new IllegalArgumentException("Chiếc xe này hiện không sẵn sàng để thuê!");
+        }
+
+        // 3. Tính tiền cơ bản
         double basePrice = priceBLL.calculateBasePrice(
                 contract.getStart_datetime(),
                 contract.getEnd_datetime(),
@@ -48,9 +57,36 @@ public class ContractBLL {
                 contract.getId_vehicle().getPrice_hour()
         );
         contract.setBase_price(basePrice);
-        contract.setTotal_price(basePrice - contract.getDiscount_amount());
 
-        return contractDAO.insert(contract);
+        // 4. CHECK VOUCHER: Gọi VoucherBLL
+        double discount = 0;
+        if (voucherCode != null && !voucherCode.isBlank()) {
+            VoucherBLL voucherBLL = new VoucherBLL();
+            discount = voucherBLL.calculateDiscountAmount(voucherCode, basePrice);
+        }
+
+        contract.setDiscount_amount(discount);
+        contract.setTotal_price(basePrice - discount);
+        contract.setStatus(StatusContracts.DANG_THUE); // Cập nhật trạng thái hợp đồng
+
+        // 5. Lưu xuống DB
+        boolean isSuccess = contractDAO.insert(contract);
+
+        // 6. Cập nhật lại trạng thái Xe và tăng số lần dùng Voucher nếu thành công
+        if (isSuccess) {
+            // Đổi trạng thái xe
+            contract.getId_vehicle().setStatus(StatusVehicle.RENTED);
+            VehicleBLL vehicleBLL = new VehicleBLL();
+            vehicleBLL.updateVehicle(contract.getId_vehicle());
+
+            // Tăng số lần dùng Voucher
+            if (voucherCode != null && !voucherCode.isBlank()) {
+                VoucherBLL voucherBLL = new VoucherBLL();
+                voucherBLL.markVoucherAsUsed(voucherCode);
+            }
+        }
+
+        return isSuccess;
     }
 
     public boolean returnVehicle(Contracts contract) {
@@ -83,6 +119,7 @@ public class ContractBLL {
     }
 
     public boolean cancelContract(int id) {
+        if (!AppSession.isAdmin()) throw new IllegalStateException("Cảnh báo bảo mật: Chỉ Admin mới được phép hủy hợp đồng!"); //
         Contracts contract = contractDAO.findById(id);
         if (contract == null)
             throw new IllegalArgumentException("Không tìm thấy hợp đồng!");

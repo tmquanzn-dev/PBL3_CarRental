@@ -1,5 +1,6 @@
 package com.example.rentalcar.controller.partprice;
 
+import com.example.rentalcar.bll.PartPriceBLL;
 import com.example.rentalcar.dao.PartPriceDAO;
 import com.example.rentalcar.models.PartPrices;
 import javafx.animation.KeyFrame;
@@ -28,7 +29,7 @@ public class PartFormController implements Initializable {
     @FXML private Label     lblMsg;
     @FXML private Button    btnSave;
 
-    private final PartPriceDAO dao = new PartPriceDAO();
+    private final PartPriceBLL bll = new PartPriceBLL();
     private Mode       currentMode  = Mode.ADD;
     private PartPrices editingPart;
     private Runnable   onSaved;
@@ -102,23 +103,26 @@ public class PartFormController implements Initializable {
         }
 
         // --- Lưu ---
-        boolean ok;
-        if (currentMode == Mode.ADD) {
-            PartPrices newPart = new PartPrices(0, name, vehicleType, price);
-            ok = dao.insert(newPart);
-        } else {
-            editingPart.setPart_name(name);
-            editingPart.setVehicle(vehicleType);
-            editingPart.setPrice(price);
-            ok = dao.update(editingPart);
-        }
+        try {
+            boolean ok;
+            if (currentMode == Mode.ADD) {
+                PartPrices newPart = new PartPrices(0, name, vehicleType, price);
+                ok = bll.addPartPrice(newPart); // Dùng BLL
+            } else {
+                editingPart.setPart_name(name);
+                editingPart.setVehicle(vehicleType);
+                editingPart.setPrice(price);
+                ok = bll.updatePartPrice(editingPart); // Dùng BLL
+            }
 
-        if (ok) {
-            showMsg("✅  " + (currentMode == Mode.ADD ? "Thêm phụ tùng thành công!" : "Cập nhật thành công!"), true);
-            if (onSaved != null) onSaved.run();
-            autoClose();
-        } else {
-            showMsg("❌  Lưu thất bại! Vui lòng thử lại.", false);
+            if (ok) {
+                showMsg("✅ " + (currentMode == Mode.ADD ? "Thêm phụ tùng thành công!" : "Cập nhật thành công!"), true);
+                if (onSaved != null) onSaved.run();
+                autoClose();
+            }
+        } catch (IllegalArgumentException | IllegalStateException ex) {
+            // BẮT LỖI BẢO MẬT TỪ BLL VÀ IN LÊN MÀN HÌNH
+            showMsg("❌ " + ex.getMessage(), false);
         }
     }
 
