@@ -1,0 +1,275 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Font?>
+
+<!--
+    ReturnVehicleModal.fxml – Modal hoàn thành hợp đồng / trả xe
+    Đường dẫn: src/main/resources/views/contract/ReturnVehicleModal.fxml
+    Controller: com.example.rentalcar.controller.contract.ReturnVehicleController
+-->
+<VBox prefWidth="620.0" spacing="18.0"
+      style="-fx-background-color: white; -fx-background-radius: 14;"
+      stylesheets="@../../css/contractview/contractstyle.css"
+      xmlns="http://javafx.com/javafx/8.0.171"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.example.rentalcar.controller.contract.ReturnVehicleController">
+
+    <padding>
+        <Insets bottom="28.0" left="32.0" right="32.0" top="24.0"/>
+    </padding>
+
+    <children>
+
+        <!-- HEADER -->
+        <HBox alignment="CENTER_LEFT" spacing="10.0">
+            <children>
+                <Label text="🏁" style="-fx-font-size: 26px;"/>
+                <VBox spacing="3.0">
+                    <children>
+                        <Label text="Hoàn thành hợp đồng"
+                               style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-text-fill: #1e293b;"/>
+                        <HBox spacing="8.0">
+                            <children>
+                                <Label text="Mã HĐ:" style="-fx-text-fill: #94a3b8; -fx-font-size: 13px;"/>
+                                <Label fx:id="lblContractCode"
+                                       style="-fx-font-weight: bold; -fx-text-fill: #146dff; -fx-font-size: 13px;"
+                                       text="HD-001"/>
+                            </children>
+                        </HBox>
+                    </children>
+                </VBox>
+            </children>
+        </HBox>
+
+        <Separator/>
+
+        <!-- THÔNG TIN HỢP ĐỒNG -->
+        <HBox spacing="20.0"
+              style="-fx-background-color: #f8fafc; -fx-background-radius: 10; -fx-padding: 14 16;">
+            <children>
+                <VBox spacing="5.0" HBox.hgrow="ALWAYS">
+                    <children>
+                        <Label text="Khách hàng" style="-fx-text-fill: #94a3b8; -fx-font-size: 12px;"/>
+                        <Label fx:id="lblCustomerName"
+                               style="-fx-font-weight: bold; -fx-text-fill: #1e293b; -fx-font-size: 14px;"
+                               text="--"/>
+                    </children>
+                </VBox>
+                <VBox spacing="5.0" HBox.hgrow="ALWAYS">
+                    <children>
+                        <Label text="Xe thuê" style="-fx-text-fill: #94a3b8; -fx-font-size: 12px;"/>
+                        <Label fx:id="lblVehicleInfo"
+                               style="-fx-font-weight: bold; -fx-text-fill: #1e293b; -fx-font-size: 14px;"
+                               text="--" wrapText="true"/>
+                    </children>
+                </VBox>
+                <VBox spacing="5.0">
+                    <children>
+                        <Label text="Hạn trả dự kiến" style="-fx-text-fill: #94a3b8; -fx-font-size: 12px;"/>
+                        <Label fx:id="lblPlannedReturn"
+                               style="-fx-font-weight: bold; -fx-text-fill: #1e293b; -fx-font-size: 14px;"
+                               text="--"/>
+                    </children>
+                </VBox>
+            </children>
+        </HBox>
+
+        <!-- CẢNH BÁO TRỄ GIỜ -->
+        <HBox fx:id="boxLateWarning" alignment="CENTER_LEFT" spacing="12.0" managed="false" visible="false"
+              style="-fx-background-color: #fff1f2; -fx-background-radius: 8;
+                     -fx-border-color: #ef4444; -fx-border-radius: 8; -fx-border-width: 0 0 0 4;
+                     -fx-padding: 10 14;">
+            <children>
+                <Label text="⏰" style="-fx-font-size: 18px;"/>
+                <VBox spacing="2.0">
+                    <children>
+                        <Label text="Trả xe trễ hạn!"
+                               style="-fx-font-weight: bold; -fx-text-fill: #b91c1c; -fx-font-size: 13px;"/>
+                        <Label fx:id="lblLateMsg"
+                               style="-fx-text-fill: #ef4444; -fx-font-size: 12px;"
+                               text="Trễ ... giờ"/>
+                    </children>
+                </VBox>
+            </children>
+        </HBox>
+
+        <!-- 2 CỘT: Ngày giờ + Xăng/KM -->
+        <GridPane hgap="20.0" vgap="0.0">
+            <columnConstraints>
+                <ColumnConstraints hgrow="SOMETIMES" percentWidth="55.0"/>
+                <ColumnConstraints hgrow="SOMETIMES" percentWidth="45.0"/>
+            </columnConstraints>
+            <rowConstraints>
+                <RowConstraints vgrow="SOMETIMES"/>
+            </rowConstraints>
+            <children>
+
+                <!-- CỘT TRÁI: Ngày giờ trả xe -->
+                <VBox spacing="12.0" GridPane.columnIndex="0">
+                    <children>
+                        <Label text="⏱  Thời gian trả xe thực tế"
+                               style="-fx-font-weight: bold; -fx-text-fill: #334155; -fx-font-size: 13px;"/>
+
+                        <VBox spacing="5.0">
+                            <children>
+                                <Label text="Ngày trả *" style="-fx-text-fill: #64748b; -fx-font-size: 12px; -fx-font-weight: bold;"/>
+                                <DatePicker fx:id="dpReturnDate" maxWidth="Infinity"
+                                            style="-fx-pref-height: 40px;"/>
+                            </children>
+                        </VBox>
+
+                        <VBox spacing="5.0">
+                            <children>
+                                <Label text="Giờ trả *" style="-fx-text-fill: #64748b; -fx-font-size: 12px; -fx-font-weight: bold;"/>
+                                <HBox spacing="8.0" alignment="CENTER_LEFT">
+                                    <children>
+                                        <Spinner fx:id="spinReturnHour" prefWidth="75.0" prefHeight="40.0"
+                                                 style="-fx-background-radius: 8;"/>
+                                        <Label text=":" style="-fx-font-weight: bold; -fx-font-size: 16px;"/>
+                                        <Spinner fx:id="spinReturnMin" prefWidth="75.0" prefHeight="40.0"
+                                                 style="-fx-background-radius: 8;"/>
+                                    </children>
+                                </HBox>
+                            </children>
+                        </VBox>
+
+                        <VBox spacing="5.0">
+                            <children>
+                                <Label text="Số KM lúc trả *" style="-fx-text-fill: #64748b; -fx-font-size: 12px; -fx-font-weight: bold;"/>
+                                <TextField fx:id="txtKmEnd" prefHeight="40.0"
+                                           promptText="Nhập số KM đồng hồ..."
+                                           style="-fx-background-color: white; -fx-border-color: #cbd5e1;
+                                                  -fx-border-radius: 8; -fx-background-radius: 8;
+                                                  -fx-padding: 0 12; -fx-font-size: 14px;"/>
+                            </children>
+                        </VBox>
+                    </children>
+                </VBox>
+
+                <!-- CỘT PHẢI: Mức xăng -->
+                <VBox spacing="12.0" GridPane.columnIndex="1">
+                    <children>
+                        <Label text="⛽  Mức xăng lúc trả"
+                               style="-fx-font-weight: bold; -fx-text-fill: #334155; -fx-font-size: 13px;"/>
+
+                        <!-- Hiển thị % xăng lớn ở giữa -->
+                        <VBox alignment="CENTER" spacing="6.0"
+                              style="-fx-background-color: #f0fdf4; -fx-background-radius: 10;
+                                     -fx-border-color: #86efac; -fx-border-radius: 10; -fx-padding: 16;">
+                            <children>
+                                <Label fx:id="lblFuelPercent"
+                                       style="-fx-font-size: 32px; -fx-font-weight: bold; -fx-text-fill: #16a34a;"
+                                       text="100%"/>
+                                <Label text="Mức xăng hiện tại"
+                                       style="-fx-text-fill: #64748b; -fx-font-size: 12px;"/>
+                            </children>
+                        </VBox>
+
+                        <!-- Slider -->
+                        <VBox spacing="5.0">
+                            <children>
+                                <HBox alignment="CENTER_LEFT" spacing="8.0">
+                                    <children>
+                                        <Label text="0%" style="-fx-text-fill: #94a3b8; -fx-font-size: 11px;"/>
+                                        <Slider fx:id="sliderFuel" min="0.0" max="100.0" value="100.0"
+                                                blockIncrement="10.0" majorTickUnit="25.0"
+                                                showTickLabels="false" showTickMarks="true"
+                                                HBox.hgrow="ALWAYS"/>
+                                        <Label text="100%" style="-fx-text-fill: #94a3b8; -fx-font-size: 11px;"/>
+                                    </children>
+                                </HBox>
+                                <Label text="Kéo để chọn mức xăng thực tế"
+                                       style="-fx-text-fill: #94a3b8; -fx-font-size: 11px;"/>
+                            </children>
+                        </VBox>
+                    </children>
+                </VBox>
+            </children>
+        </GridPane>
+
+        <!-- TỔNG KẾT TIỀN -->
+        <VBox spacing="8.0"
+              style="-fx-background-color: white; -fx-background-radius: 12;
+                     -fx-border-color: #e2e8f0; -fx-border-radius: 12; -fx-border-width: 1.5;
+                     -fx-padding: 16 18;">
+            <children>
+                <Label text="💰  Tổng kết thanh toán"
+                       style="-fx-font-weight: bold; -fx-text-fill: #1e293b; -fx-font-size: 13px;
+                              -fx-border-color: transparent transparent #e2e8f0 transparent;
+                              -fx-border-width: 0 0 1 0; -fx-padding: 0 0 8 0;"
+                       maxWidth="Infinity"/>
+
+                <HBox alignment="CENTER_LEFT" spacing="8.0">
+                    <children>
+                        <Label text="Tiền thuê (sau giảm giá):" textFill="#64748b" prefWidth="190.0"/>
+                        <Label fx:id="lblBasePrice" text="--"
+                               style="-fx-font-weight: bold; -fx-text-fill: #1e293b;"/>
+                    </children>
+                </HBox>
+
+                <HBox alignment="CENTER_LEFT" spacing="8.0">
+                    <children>
+                        <Label text="Phạt trễ giờ:" textFill="#64748b" prefWidth="190.0"/>
+                        <Label fx:id="lblLatePenalty" text="0 đ"
+                               style="-fx-text-fill: #64748b;"/>
+                    </children>
+                </HBox>
+
+                <HBox alignment="CENTER_LEFT" spacing="8.0">
+                    <children>
+                        <Label text="Phạt thiếu xăng:" textFill="#64748b" prefWidth="190.0"/>
+                        <Label fx:id="lblFuelPenalty" text="0 đ"
+                               style="-fx-text-fill: #64748b;"/>
+                    </children>
+                </HBox>
+
+                <Region prefHeight="1.0" style="-fx-background-color: #e2e8f0;"/>
+
+                <HBox alignment="CENTER_LEFT" spacing="8.0">
+                    <children>
+                        <Label text="TỔNG CỘNG:" style="-fx-font-weight: bold; -fx-font-size: 14px; -fx-text-fill: #334155;" prefWidth="190.0"/>
+                        <Label fx:id="lblFinalTotal" text="--"
+                               style="-fx-font-size: 22px; -fx-font-weight: bold; -fx-text-fill: #ef4444;"/>
+                    </children>
+                </HBox>
+            </children>
+        </VBox>
+
+        <!-- TRẠNG THÁI THANH TOÁN -->
+        <HBox alignment="CENTER_LEFT" spacing="14.0">
+            <children>
+                <Label text="Trạng thái thanh toán:"
+                       style="-fx-font-weight: bold; -fx-text-fill: #475569; -fx-font-size: 13px;"/>
+                <ComboBox fx:id="cbPaymentStatus" prefHeight="38.0" prefWidth="200.0"
+                          style="-fx-background-color: white; -fx-border-color: #cbd5e1;
+                                 -fx-border-radius: 8; -fx-background-radius: 8; -fx-font-size: 13px;"/>
+            </children>
+        </HBox>
+
+        <Separator/>
+
+        <!-- ACTION BUTTONS -->
+        <HBox alignment="CENTER_RIGHT" spacing="12.0">
+            <children>
+                <Button mnemonicParsing="false" onAction="#handleCancel"
+                        prefHeight="42.0" prefWidth="110.0"
+                        style="-fx-background-color: #f1f5f9; -fx-text-fill: #475569;
+                               -fx-background-radius: 8; -fx-cursor: hand; -fx-font-weight: bold;"
+                        text="Hủy"/>
+                <Button mnemonicParsing="false" onAction="#handleConfirm"
+                        prefHeight="42.0" prefWidth="200.0"
+                        style="-fx-background-color: linear-gradient(to right, #10b981, #059669);
+                               -fx-text-fill: white; -fx-font-weight: bold;
+                               -fx-background-radius: 8; -fx-cursor: hand; -fx-font-size: 14px;
+                               -fx-effect: dropshadow(three-pass-box, rgba(16,185,129,0.3),10,0,0,3);"
+                        text="✅  Xác nhận hoàn thành">
+                    <font><Font name="System Bold" size="13.0"/></font>
+                </Button>
+            </children>
+        </HBox>
+
+    </children>
+</VBox>

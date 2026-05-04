@@ -31,11 +31,9 @@ public class VehicleController {
 
     @FXML
     public void initialize() {
-        // ComboBox hãng xe – lấy động từ dữ liệu thực
         cbBrand.getItems().addAll("Tất cả", "Honda", "Yamaha", "SYM", "Suzuki");
         cbBrand.setValue("Tất cả");
 
-        // ComboBox trạng thái – bao gồm cả Ngừng hoạt động
         cbStatus.getItems().addAll(
                 "Tất cả",
                 "Sẵn sàng",
@@ -46,7 +44,7 @@ public class VehicleController {
         );
         cbStatus.setValue("Tất cả");
 
-        // Phân quyền: Staff không được thêm xe mới
+        // Staff không được thêm xe mới
         if (btnAddNewVehicle != null) {
             btnAddNewVehicle.setVisible(AppSession.isAdmin());
             btnAddNewVehicle.setManaged(AppSession.isAdmin());
@@ -55,14 +53,12 @@ public class VehicleController {
         loadVehicles();
     }
 
-    // ── Load toàn bộ xe (kể cả INACTIVE) cho màn quản lý ──────
     public void loadVehicles() {
         // Dùng getAllVehiclesIncludeInactive() để Admin thấy xe đã xóa mềm
         List<Vehicles> list = vehicleBLL.getAllVehiclesIncludeInactive();
         renderCards(list);
     }
 
-    // ── Render danh sách xe thành card ───────────────────────────
     private void renderCards(List<Vehicles> list) {
         vehicleContainer.getChildren().clear();
 
@@ -94,19 +90,17 @@ public class VehicleController {
         updateCount(list.size());
     }
 
-    // ── Tìm kiếm & lọc ───────────────────────────────────────────
+    //Tìm kiếm và lọc
     @FXML
     void handleSearch() {
         String keyword = txtSearch != null ? txtSearch.getText().trim()  : "";
         String brand   = cbBrand  != null ? cbBrand.getValue()           : "Tất cả";
         String status  = cbStatus != null ? cbStatus.getValue()          : "Tất cả";
-
-        // searchVehicles dùng findAllIncludeInactive nên INACTIVE cũng được tìm thấy
         List<Vehicles> filtered = vehicleBLL.searchVehicles(keyword, brand, status);
         renderCards(filtered);
     }
 
-    // ── Làm mới – reset filter và load lại ───────────────────────
+    //Lam mới
     @FXML
     void handleRefresh() {
         if (txtSearch != null) txtSearch.clear();
@@ -115,7 +109,7 @@ public class VehicleController {
         loadVehicles();
     }
 
-    // ── Thêm xe mới (Admin only) ──────────────────────────────────
+    //Thêm xe mới (Admin)
     @FXML
     void handleAddNewVehicle() {
         if (!AppSession.isAdmin()) return;
@@ -138,7 +132,7 @@ public class VehicleController {
         }
     }
 
-    // ── Helpers ───────────────────────────────────────────────────
+    // Helpers
     private void updateCount(int count) {
         if (lblVehicleCount != null)
             lblVehicleCount.setText(count + " xe");

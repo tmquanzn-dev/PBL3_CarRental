@@ -37,7 +37,6 @@ public class CustomerDetailController {
                     " -fx-padding: 5 12; -fx-background-radius: 12;");
         }
 
-        // ✅ Load ảnh CCCD từ đường dẫn lưu trong DB (dạng "front|back")
         loadCccdImages(customer.getCccd_images());
     }
 

@@ -69,9 +69,7 @@ public class DashboardController {
         loadRecentContracts();
     }
 
-    // ============================================================
     // LOAD CARDS
-    // ============================================================
     private void loadCards() {
         try {
             // Doanh thu hôm nay
@@ -103,9 +101,7 @@ public class DashboardController {
         }
     }
 
-    // ============================================================
     // SETUP TABLE COLUMNS
-    // ============================================================
     private void setupTable() {
         // Mã HĐ
         colCode.setCellValueFactory(new PropertyValueFactory<>("code_contract"));
@@ -231,9 +227,7 @@ public class DashboardController {
         });
     }
 
-    // ============================================================
     // LOAD DỮ LIỆU BẢNG
-    // ============================================================
     private void loadRecentContracts() {
         try {
             List<Contracts> list = contractBLL.getRecentContracts(5);
@@ -246,9 +240,7 @@ public class DashboardController {
         }
     }
 
-    // ============================================================
     // POPUP CHI TIẾT HĐ
-    // ============================================================
     private void showDetailPopup(Contracts contract) {
         try {
             FXMLLoader loader = new FXMLLoader(

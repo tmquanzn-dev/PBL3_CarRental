@@ -41,12 +41,11 @@ public class VehicleCardController {
         lblName.setText(vehicle.getBrand() + " " + vehicle.getModel());
         lblPrice.setText(fmtVND.format((long) vehicle.getPrice_day()) + " đ");
 
-        // ── Badge trạng thái ──────────────────────────────────────
+        //Badge trạng thái
         StatusVehicle st = vehicle.getStatus();
         String statusText = VehicleBLL.statusToDisplay(st);
         lblStatus.setText(statusText);
-
-        // Xóa hết style cũ trước khi gán mới
+        //
         lblStatus.getStyleClass().removeAll(
                 "badge-available", "badge-rented",
                 "badge-maintenance", "badge-reserved", "badge-inactive"
@@ -59,14 +58,14 @@ public class VehicleCardController {
             case INACTIVE    -> lblStatus.getStyleClass().add("badge-inactive");
         }
 
-        // ── Làm mờ card xe INACTIVE ───────────────────────────────
+        //Làm mờ card xe INACTIVE
         if (st == StatusVehicle.INACTIVE) {
             lblPlate.setStyle("-fx-text-fill: #94a3b8;");
             lblName.setStyle("-fx-text-fill: #94a3b8;");
             lblPrice.setStyle("-fx-text-fill: #94a3b8;");
         }
 
-        // ── Load ảnh ──────────────────────────────────────────────
+        //Load ảnh
         String imgUrl = vehicle.getImage_url();
         if (imgUrl == null || imgUrl.isBlank()) {
             ImageHelper.loadDefault(imgVehicle, "/image/dashboardform/card-moto.png");
@@ -75,15 +74,13 @@ public class VehicleCardController {
         } else {
             ImageHelper.loadInto(imgVehicle, imgUrl);
         }
-
-        // ── Phân quyền nút ────────────────────────────────────────
         // Nút Xóa: chỉ Admin, và chỉ hiện với xe ĐANG HOẠT ĐỘNG
         if (btnDelete != null) {
             boolean canDelete = AppSession.isAdmin() && st != StatusVehicle.INACTIVE;
             btnDelete.setVisible(canDelete);
             btnDelete.setManaged(canDelete);
 
-            // Nếu xe INACTIVE thì đổi nút Delete thành "Khôi phục" (Admin only)
+            // Nếu xe INACTIVE thì đổi nút Delete thành khôi phục
             if (AppSession.isAdmin() && st == StatusVehicle.INACTIVE) {
                 btnDelete.setText("♻️ Khôi phục");
                 btnDelete.setStyle("-fx-background-color: #10b981; -fx-text-fill: white; " +
@@ -92,8 +89,6 @@ public class VehicleCardController {
                 btnDelete.setManaged(true);
             }
         }
-
-        // Nút Sửa: Admin luôn thấy, Staff chỉ thấy xe đang hoạt động
         if (btnEdit != null) {
             boolean canEdit = AppSession.isAdmin() ||
                     (AppSession.isStaff() && st != StatusVehicle.INACTIVE);
@@ -106,10 +101,11 @@ public class VehicleCardController {
         this.onRefresh = callback;
     }
 
-    // ── Sửa xe ────────────────────────────────────────────────────
+    //Sửa xe
     @FXML
     void handleEdit() {
-        if (currentVehicle == null) return;
+        if (currentVehicle == null)
+            return;
         try {
             FXMLLoader loader = new FXMLLoader(
                     getClass().getResource("/views/vehicle/EditVehicleView.fxml"));
@@ -136,7 +132,7 @@ public class VehicleCardController {
         }
     }
 
-    // ── Xóa xe hoặc Khôi phục xe ─────────────────────────────────
+    //Xóa xe hoặc Khôi phục xe
     @FXML
     void handleDelete() {
         if (!AppSession.isAdmin() || currentVehicle == null) return;
@@ -144,7 +140,7 @@ public class VehicleCardController {
         StatusVehicle st = currentVehicle.getStatus();
 
         if (st == StatusVehicle.INACTIVE) {
-            // ── Khôi phục xe đã ngừng hoạt động ──────────────────
+            //Khôi phục xe đã ngừng hoạt động
             Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
             confirm.setTitle("Khôi phục xe");
             confirm.setHeaderText(null);
@@ -161,7 +157,7 @@ public class VehicleCardController {
             });
 
         } else {
-            // ── Xóa mềm (chuyển sang INACTIVE) ───────────────────
+            //Xóa mềm (chuyển sang INACTIVE)
             if (st == StatusVehicle.RENTED) {
                 showAlert(Alert.AlertType.WARNING,
                         "Không thể xóa xe đang cho thuê!\nVui lòng hoàn thành hợp đồng trước.");
@@ -185,7 +181,7 @@ public class VehicleCardController {
         }
     }
 
-    // ── Helper ───────────────────────────────────────────────────
+    //Helper
     private void showAlert(Alert.AlertType type, String msg) {
         Alert alert = new Alert(type);
         alert.setTitle(type == Alert.AlertType.ERROR ? "Lỗi" : "Cảnh báo");

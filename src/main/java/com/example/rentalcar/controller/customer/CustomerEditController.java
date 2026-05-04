@@ -26,9 +26,7 @@ public class CustomerEditController {
     private String newPathFront = null;
     private String newPathBack  = null;
 
-    // =========================================================
     //  NHẬN DỮ LIỆU KHÁCH HÀNG + LOAD ẢNH CŨ
-    // =========================================================
     public void setCustomerData(Customers customer) {
         if (customer == null) return;
         this.customers = customer;
@@ -64,9 +62,7 @@ public class CustomerEditController {
         }
     }
 
-    // =========================================================
     //  UPLOAD ẢNH MỚI
-    // =========================================================
     @FXML
     void handleUploadFront(ActionEvent event) {
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
@@ -89,9 +85,7 @@ public class CustomerEditController {
         }
     }
 
-    // =========================================================
     //  LƯU THAY ĐỔI
-    // =========================================================
     @FXML
     void handleSave(ActionEvent event) {
         customers.setFull_name(txtName.getText().trim());
@@ -132,9 +126,7 @@ public class CustomerEditController {
         closeStage(event);
     }
 
-    // =========================================================
     //  HELPERS
-    // =========================================================
     private void setStatus(Label lbl, String msg, boolean ok) {
         if (lbl == null) return;
         lbl.setText(msg);

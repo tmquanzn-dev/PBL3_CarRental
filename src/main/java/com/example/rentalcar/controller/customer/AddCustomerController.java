@@ -19,7 +19,7 @@ public class AddCustomerController {
     // ImageViews hiển thị preview
     @FXML private ImageView imgFront, imgBack;
 
-    // Labels trạng thái upload (tuỳ chọn, thêm vào FXML nếu muốn)
+    // Labels trạng thái
     @FXML private Label lblFrontStatus, lblBackStatus;
 
     private final CustomerBLL customerBLL = new CustomerBLL();
@@ -35,16 +35,11 @@ public class AddCustomerController {
         btnSave.setOnAction(event -> saveCustomerToDB());
     }
 
-    // =========================================================
-    //  PRE-FILL CCCD (gọi từ Step1Controller)
-    // =========================================================
     public void setPreFillCccd(String cccd) {
         if (txtCccd != null) txtCccd.setText(cccd);
     }
 
-    // =========================================================
     //  UPLOAD ẢNH CCCD MẶT TRƯỚC
-    // =========================================================
     @FXML
     void handleUploadFront() {
         Stage stage = (Stage) btnSave.getScene().getWindow();
@@ -56,9 +51,7 @@ public class AddCustomerController {
         }
     }
 
-    // =========================================================
     //  UPLOAD ẢNH CCCD MẶT SAU
-    // =========================================================
     @FXML
     void handleUploadBack() {
         Stage stage = (Stage) btnSave.getScene().getWindow();
@@ -70,16 +63,14 @@ public class AddCustomerController {
         }
     }
 
-    // =========================================================
     //  LƯU KHÁCH HÀNG
-    // =========================================================
     private void saveCustomerToDB() {
         try {
-            String name    = txtName.getText().trim();
-            String phone   = txtPhone.getText().trim();
-            String cccd    = txtCccd.getText().trim();
+            String name = txtName.getText().trim();
+            String phone = txtPhone.getText().trim();
+            String cccd = txtCccd.getText().trim();
             String address = txtAddress != null ? txtAddress.getText().trim() : "";
-            String email   = txtEmail   != null ? txtEmail.getText().trim()   : "";
+            String email = txtEmail   != null ? txtEmail.getText().trim()   : "";
 
             if (name.isEmpty() || phone.isEmpty() || cccd.isEmpty()) {
                 showAlert(Alert.AlertType.WARNING, "Cảnh báo",
@@ -96,7 +87,6 @@ public class AddCustomerController {
             c.setIs_blacklist(false);
 
             // Lưu đường dẫn ảnh CCCD (ghép 2 ảnh thành chuỗi phân cách dấu |)
-            // Cột cccd_images trong DB có thể chứa "front|back"
             if (pathFront != null || pathBack != null) {
                 String front = pathFront != null ? pathFront : "";
                 String back  = pathBack  != null ? pathBack  : "";
@@ -115,9 +105,7 @@ public class AddCustomerController {
         }
     }
 
-    // =========================================================
     //  HELPERS
-    // =========================================================
     private void setStatus(Label lbl, String msg, boolean ok) {
         if (lbl == null) return;
         lbl.setText(msg);

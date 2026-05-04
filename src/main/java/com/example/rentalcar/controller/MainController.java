@@ -49,7 +49,7 @@ public class MainController {
         if (btnDashboard != null) setActiveMenu(btnDashboard);
     }
 
-    // ── Hiển thị tên + role lên topbar ───────────────────────
+    // Hiển thị tên + role lên topbar
     private void loadUserInfoToTopbar() {
         if (AppSession.getCurrentUser() == null) return;
         String name = AppSession.getCurrentUser().getFull_name();

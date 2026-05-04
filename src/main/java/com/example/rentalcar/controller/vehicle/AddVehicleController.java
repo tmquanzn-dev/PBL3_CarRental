@@ -36,9 +36,7 @@ public class AddVehicleController {
         ImageHelper.loadDefault(imgVehiclePreview, "/image/dashboardform/card-moto.png");
     }
 
-    // =========================================================
     //  UPLOAD ẢNH XE
-    // =========================================================
     @FXML
     void handleUploadVehicleImage() {
         Stage stage = (Stage) btnUploadImage.getScene().getWindow();
@@ -48,7 +46,6 @@ public class AddVehicleController {
             savedImagePath = path;
             ImageHelper.loadInto(imgVehiclePreview, path);
             if (lblImagePath != null) {
-                // Chỉ hiện tên file, không cần full path dài
                 String[] parts = path.replace("\\", "/").split("/");
                 lblImagePath.setText("✅  " + parts[parts.length - 1]);
                 lblImagePath.setStyle("-fx-text-fill: #16a34a; -fx-font-size: 12px;");
@@ -56,9 +53,7 @@ public class AddVehicleController {
         }
     }
 
-    // =========================================================
     //  LƯU XE
-    // =========================================================
     @FXML
     void handleSave() {
         try {
@@ -81,7 +76,6 @@ public class AddVehicleController {
             v.setMaintenance_km(parseIntegerSafe(txtMaintenanceKm.getText()));
             v.setPurchase_price(parseDoubleSafe(txtPurchasePrice.getText()));
 
-            // Đường dẫn ảnh: nếu đã upload thì dùng, không thì dùng ảnh mặc định
             v.setImage_url(savedImagePath != null
                     ? savedImagePath
                     : "/image/dashboardform/card-moto.png");
@@ -110,9 +104,7 @@ public class AddVehicleController {
         stage.close();
     }
 
-    // =========================================================
     //  HELPERS
-    // =========================================================
     private int parseIntegerSafe(String text) {
         if (text == null || text.trim().isEmpty()) return 0;
         return Integer.parseInt(text.trim());

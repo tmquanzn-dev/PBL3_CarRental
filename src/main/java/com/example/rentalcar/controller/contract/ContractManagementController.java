@@ -30,6 +30,7 @@ import javafx.scene.shape.Circle;
 import javafx.scene.text.Text;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.stage.Window;
 
 import java.awt.Desktop;
 import java.io.File;
@@ -100,7 +101,8 @@ public class ContractManagementController implements Initializable {
 
         // Khách hàng
         colCustomer.setCellValueFactory(cell -> {
-            if (cell.getValue().getId_customer() == null) return new SimpleStringProperty("--");
+            if (cell.getValue().getId_customer() == null)
+                return new SimpleStringProperty("--");
             Customers c = customerBLL.findById(cell.getValue().getId_customer().getId_customer());
             return new SimpleStringProperty(c != null ? c.getFull_name() : "--");
         });
@@ -108,7 +110,10 @@ public class ContractManagementController implements Initializable {
             @Override
             protected void updateItem(String name, boolean empty) {
                 super.updateItem(name, empty);
-                if (empty || name == null || name.equals("--")) { setGraphic(null); return; }
+                if (empty || name == null || name.equals("--")) {
+                    setGraphic(null);
+                    return;
+                }
                 Circle avatar = new Circle(16, Color.web("#4f46e5"));
                 Text initial = new Text(name.substring(0, 1).toUpperCase());
                 initial.setFill(Color.WHITE);
@@ -232,12 +237,14 @@ public class ContractManagementController implements Initializable {
             }
         });
 
-        // ── Cột thao tác: Xem | In | Hủy ───────────────────────────
+
+        // ── Cột thao tác: Xem | In | Trả xe | Hủy
         colAction.setCellFactory(col -> new TableCell<>() {
             private final Button btnView   = new Button();
             private final Button btnPrint  = new Button();
+            private final Button btnReturn = new Button("🏁 Trả xe");
             private final Button btnCancel = new Button();
-            private final HBox   pane      = new HBox(6, btnView, btnPrint, btnCancel);
+            private final HBox   pane      = new HBox(6, btnView, btnPrint, btnReturn, btnCancel);
 
             {
                 pane.setAlignment(Pos.CENTER_LEFT);
@@ -245,23 +252,32 @@ public class ContractManagementController implements Initializable {
                 btnPrint.getStyleClass().add("btn-action");
                 btnCancel.getStyleClass().add("btn-action");
 
+                // Style riêng cho nút Trả xe
+                btnReturn.setStyle(
+                        "-fx-background-color: #dcfce7; -fx-text-fill: #15803d;" +
+                                " -fx-background-radius: 6; -fx-cursor: hand;" +
+                                " -fx-font-size: 11px; -fx-font-weight: bold; -fx-padding: 4 8;"
+                );
+
                 loadIcon(btnView,   "/image/dashboardform/view.png");
                 loadIcon(btnPrint,  "/image/dashboardform/printer.png");
                 loadIcon(btnCancel, "/image/dashboardform/delete.png");
 
-                // ✅ Nút Xem chi tiết
                 btnView.setOnAction(e -> {
                     Contracts c = getTableView().getItems().get(getIndex());
                     showDetailModal(c);
                 });
 
-                // ✅ Nút In PDF – TÍCH HỢP ContractPrinter
                 btnPrint.setOnAction(e -> {
                     Contracts c = getTableView().getItems().get(getIndex());
                     handlePrintContract(c);
                 });
 
-                // ✅ Nút Hủy hợp đồng
+                btnReturn.setOnAction(e -> {
+                    Contracts c = getTableView().getItems().get(getIndex());
+                    showReturnModal(c);
+                });
+
                 btnCancel.setOnAction(e -> {
                     Contracts c = getTableView().getItems().get(getIndex());
                     confirmCancelContract(c);
@@ -285,42 +301,41 @@ public class ContractManagementController implements Initializable {
                 if (empty) { setGraphic(null); return; }
 
                 Contracts c = getTableView().getItems().get(getIndex());
-                boolean canCancel = false;
+                boolean canAct = false;
 
                 if (c.getStatus() == StatusContracts.DANG_THUE
                         || c.getStatus() == StatusContracts.QUA_HAN) {
                     if (AppSession.isAdmin()) {
-                        canCancel = true;
+                        canAct = true;
                     } else if (AppSession.isStaff() && c.getId_user() != null
                             && AppSession.getCurrentUser() != null
                             && c.getId_user().getId_user() == AppSession.getCurrentUser().getId_user()) {
-                        canCancel = true;
+                        canAct = true;
                     }
                 }
-                btnCancel.setVisible(canCancel);
-                btnCancel.setManaged(canCancel);
+
+                // Trả xe và Hủy cùng điều kiện phân quyền
+                btnReturn.setVisible(canAct);
+                btnReturn.setManaged(canAct);
+                btnCancel.setVisible(canAct);
+                btnCancel.setManaged(canAct);
                 setGraphic(pane);
             }
         });
     }
 
-    // =========================================================
-    //  ✅ IN HỢP ĐỒNG PDF
-    // =========================================================
+    //   IN HỢP ĐỒNG PDF
     /**
      * Mở FileChooser để người dùng chọn nơi lưu, sau đó tạo PDF.
      * Sau khi tạo xong hỏi có muốn mở file không.
      */
     private void handlePrintContract(Contracts contract) {
         try {
-            // Lấy cửa sổ hiện tại để FileChooser hiện đúng vị trí
-            javafx.stage.Window window = tableContracts.getScene().getWindow();
-
+            Window window = tableContracts.getScene().getWindow();
             // Gọi ContractPrinter
             String savedPath = ContractPrinter.print(contract, window);
 
             if (savedPath != null) {
-                // Hỏi có muốn mở PDF ngay không
                 Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
                 confirm.setTitle("In hợp đồng thành công");
                 confirm.setHeaderText("✅ Đã lưu hợp đồng " + contract.getCode_contract());
@@ -350,9 +365,8 @@ public class ContractManagementController implements Initializable {
         }
     }
 
-    // =========================================================
+
     //  LOAD DATA
-    // =========================================================
     private void loadData() {
         try {
             List<Contracts> list = contractBLL.getAllContracts();
@@ -453,6 +467,26 @@ public class ContractManagementController implements Initializable {
             stage.show();
         } catch (Exception e) {
             showError("Lỗi mở chi tiết: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    private void showReturnModal(Contracts contract) {
+        try {
+            FXMLLoader loader = new FXMLLoader(
+                    getClass().getResource("/views/contract/ReturnVehicleModal.fxml"));
+            Parent root = loader.load();
+            ReturnVehicleController ctrl = loader.getController();
+            ctrl.setContract(contract, this::loadData);
+            Stage stage = new Stage();
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.setTitle("Hoàn thành hợp đồng: " + contract.getCode_contract());
+            stage.setScene(new Scene(root));
+            stage.setResizable(false);
+            stage.centerOnScreen();
+            stage.show();
+        } catch (Exception e) {
+            showError("Lỗi mở màn hình trả xe: " + e.getMessage());
             e.printStackTrace();
         }
     }

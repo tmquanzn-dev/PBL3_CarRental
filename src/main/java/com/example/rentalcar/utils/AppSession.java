@@ -13,13 +13,22 @@ public class AppSession {
 
     private AppSession() {}
 
-    public static void setCurrentUser(Users user) { currentUser = user; }
-    public static Users getCurrentUser()          { return currentUser; }
-    public static void clearSession()             { currentUser = null;  }
-    public static boolean isLoggedIn()            { return currentUser != null; }
+    public static void setCurrentUser(Users user) {
+        currentUser = user;
+    }
+    public static Users getCurrentUser() {
+        return currentUser;
+    }
+    public static void clearSession() {
+        currentUser = null;
+    }
+    public static boolean isLoggedIn() {
+        return currentUser != null;
+    }
 
     /** Admin = role_id 1 */
     public static boolean isAdmin() {
+
         return currentUser != null && currentUser.getRole_id() == 1;
     }
 

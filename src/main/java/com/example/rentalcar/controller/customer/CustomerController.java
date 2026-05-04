@@ -53,7 +53,7 @@ public class CustomerController implements Initializable {
     private final CustomerBLL customerBLL = new CustomerBLL();
     private ObservableList<Customers> masterList;
 
-    // ─────────────────────────────────────────────────────
+    //
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         setupFilter();
@@ -62,7 +62,7 @@ public class CustomerController implements Initializable {
         tableCustomers.setFixedCellSize(60.0);
     }
 
-    // ── Filter ComboBox ──────────────────────────────────
+    //Filter ComboBox
     private void setupFilter() {
         if (cbFilter != null) {
             cbFilter.getItems().addAll("Tất cả", "Bình thường", "Blacklist");
@@ -71,14 +71,12 @@ public class CustomerController implements Initializable {
         }
     }
 
-    // ── Table Columns ────────────────────────────────────
+    //Table Columns
     private void setupTableColumns() {
         colCccd.setCellValueFactory(cd ->
                 new javafx.beans.property.SimpleStringProperty(cd.getValue().getCccd()));
 
         colPhone.setCellValueFactory(new PropertyValueFactory<>("phone"));
-
-        // Cột tên: avatar + tên
         colName.setCellValueFactory(new PropertyValueFactory<>("full_name"));
         colName.setCellFactory(col -> new TableCell<>() {
             @Override
@@ -132,9 +130,6 @@ public class CustomerController implements Initializable {
             }
         });
 
-        // ── Cột thao tác: Xem | Sửa | Blacklist Toggle ──────────
-        // Tất cả (Admin + Staff) đều xem/sửa/thêm KH được
-        // Chỉ Admin mới blacklist được (theo bảng phân quyền)
         colAction.setCellFactory(col -> new TableCell<>() {
             private final Button btnView      = new Button();
             private final Button btnEdit      = new Button();
@@ -150,7 +145,7 @@ public class CustomerController implements Initializable {
                 loadIcon(btnView, "/image/dashboardform/view.png");
                 loadIcon(btnEdit, "/image/dashboardform/edit.png");
 
-                // ── Phân quyền: chỉ Admin blacklist được ─────────
+                //chỉ Admin blacklist được
                 btnBlacklist.setVisible(AppSession.isAdmin());
                 btnBlacklist.setManaged(AppSession.isAdmin());
 
@@ -186,7 +181,6 @@ public class CustomerController implements Initializable {
                 if (empty || getTableRow().getItem() == null) { setGraphic(null); return; }
 
                 Customers c = getTableRow().getItem();
-                // Đổi icon/text nút blacklist theo trạng thái hiện tại
                 if (AppSession.isAdmin()) {
                     if (c.isIs_blacklist()) {
                         btnBlacklist.setText("✅ Gỡ BL");
@@ -204,7 +198,7 @@ public class CustomerController implements Initializable {
         });
     }
 
-    // ── Load Data ─────────────────────────────────────────
+    //Load Data
     private void loadData() {
         try {
             List<Customers> list = customerBLL.getAllCustomers();
@@ -224,7 +218,7 @@ public class CustomerController implements Initializable {
         lblNewCustomers.setText("0"); // TODO: tính theo tháng
     }
 
-    // ── Search & Filter ───────────────────────────────────
+    //Search & Filter
     @FXML
     void handleSearch(ActionEvent event) {
         applyFilter();
@@ -251,7 +245,7 @@ public class CustomerController implements Initializable {
         tableCustomers.setItems(filtered);
     }
 
-    // ── Blacklist Toggle (Admin only) ─────────────────────
+    // Blacklist Toggle
     private void handleBlacklistToggle(Customers customer) {
         if (customer == null) return;
 

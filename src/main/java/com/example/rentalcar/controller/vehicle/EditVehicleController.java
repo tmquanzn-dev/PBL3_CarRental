@@ -24,8 +24,8 @@ import javafx.stage.Stage;
  */
 public class EditVehicleController {
 
-    // ── FXML fields ──────────────────────────────────────────────
-    @FXML private TextField txtCode;          // Biển số – chỉ đọc (không cho đổi)
+    //FXML fields
+    @FXML private TextField txtCode;          // Biển số – chỉ đọc
     @FXML private TextField txtBrand;
     @FXML private TextField txtModel;
     @FXML private ComboBox<String> cbType;
@@ -40,14 +40,14 @@ public class EditVehicleController {
     @FXML private TextField txtFuelCapacity;
 
     @FXML private ImageView imgVehiclePreview;
-    @FXML private Label     lblImagePath;
-    @FXML private Button    btnUploadImage;
-    @FXML private Label     lblVehicleId;
+    @FXML private Label lblImagePath;
+    @FXML private Button btnUploadImage;
+    @FXML private Label lblVehicleId;
 
-    // ── State ─────────────────────────────────────────────────────
-    private Vehicles    currentVehicle;
-    private Runnable    onSaved;
-    private String      newImagePath = null;
+    // State
+    private Vehicles currentVehicle;
+    private Runnable onSaved;
+    private String newImagePath = null;
 
     private final VehicleBLL vehicleBLL = new VehicleBLL();
 
@@ -65,7 +65,7 @@ public class EditVehicleController {
         );
     }
 
-    // ── Nhận dữ liệu từ VehicleCardController ────────────────────
+    //Nhận dữ liệu từ VehicleCardController
     public void setVehicle(Vehicles vehicle) {
         this.currentVehicle = vehicle;
         fillForm(vehicle);
@@ -75,7 +75,7 @@ public class EditVehicleController {
         this.onSaved = callback;
     }
 
-    // ── Điền dữ liệu vào form ────────────────────────────────────
+    //Điền dữ liệu vào form
     private void fillForm(Vehicles v) {
         if (lblVehicleId != null)
             lblVehicleId.setText("ID: " + v.getId_vehicle());
@@ -94,11 +94,9 @@ public class EditVehicleController {
         txtPurchasePrice.setText(String.valueOf((long) v.getPurchase_price()));
         txtFuelCapacity.setText(String.valueOf(v.getFuel_capacity()));
 
-        // ComboBox loại xe
         if (v.getVehicle_type() != null)
             cbType.setValue(v.getVehicle_type());
 
-        // ComboBox trạng thái
         if (v.getStatus() != null) {
             cbStatus.setValue(statusToDisplay(v.getStatus()));
         }
@@ -123,7 +121,7 @@ public class EditVehicleController {
         }
     }
 
-    // ── Upload ảnh mới ───────────────────────────────────────────
+    //Upload ảnh mới
     @FXML
     void handleUploadVehicleImage() {
         Stage stage = (Stage) btnUploadImage.getScene().getWindow();
@@ -142,7 +140,7 @@ public class EditVehicleController {
         }
     }
 
-    // ── Lưu thay đổi ─────────────────────────────────────────────
+    //Lưu thay đổi
     @FXML
     void handleSave() {
         try {
@@ -176,7 +174,6 @@ public class EditVehicleController {
             if (newImagePath != null) {
                 currentVehicle.setImage_url(newImagePath);
             }
-
             boolean ok = vehicleBLL.updateVehicle(currentVehicle);
 
             if (ok) {
@@ -188,7 +185,6 @@ public class EditVehicleController {
                 showAlert(Alert.AlertType.ERROR, "Lỗi",
                         "Không thể cập nhật. Vui lòng thử lại!");
             }
-
         } catch (IllegalArgumentException e) {
             showAlert(Alert.AlertType.ERROR, "Lỗi dữ liệu", e.getMessage());
         } catch (Exception e) {
@@ -198,13 +194,12 @@ public class EditVehicleController {
         }
     }
 
-    // ── Hủy ──────────────────────────────────────────────────────
+    //Hủy
     @FXML
     void handleCancel() {
         closeStage();
     }
 
-    // ── Helpers ───────────────────────────────────────────────────
     private void closeStage() {
         Stage stage = (Stage) txtCode.getScene().getWindow();
         stage.close();

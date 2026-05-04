@@ -3,6 +3,7 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Tooltip?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.StackPane?>
@@ -10,41 +11,84 @@
 <?import javafx.scene.shape.Circle?>
 <?import javafx.scene.text.Font?>
 
-<VBox prefHeight="240.0" prefWidth="436.0" spacing="15.0" style="-fx-background-color: white; -fx-border-color: #e2e8f0; -fx-border-radius: 15; -fx-background-radius: 15; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.05), 10, 0, 0, 5);" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.rentalcar.controller.employee.EmployeeCardController">
+<!--
+    EmployeeCard.fxml – Card hiển thị 1 nhân viên
+    Admin: thấy đủ nút Sửa | Khóa/Mở | Reset Pass
+    Staff: các nút bị ẩn (xử lý trong EmployeeCardController.setData())
+-->
+<VBox prefHeight="260.0" prefWidth="440.0" spacing="14.0"
+      style="-fx-background-color: white; -fx-border-color: #e2e8f0;
+             -fx-border-radius: 15; -fx-background-radius: 15;
+             -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.06), 10, 0, 0, 4);"
+      stylesheets="@../../css/employeeview/employeestyle.css"
+      xmlns="http://javafx.com/javafx/8.0.171"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.example.rentalcar.controller.employee.EmployeeCardController">
+
+    <padding>
+        <Insets bottom="20.0" left="22.0" right="22.0" top="18.0" />
+    </padding>
+
     <children>
-        <HBox alignment="TOP_RIGHT">
+
+        <!-- ── DÒNG 1: Badge trạng thái ── -->
+        <HBox alignment="CENTER_RIGHT">
             <children>
-                <Label fx:id="lblStatus" style="-fx-background-color: #dcfce7; -fx-text-fill: #16a34a; -fx-padding: 5 12 5 12; -fx-background-radius: 10; -fx-font-weight: bold;" text="Hoạt động" />
+                <Label fx:id="lblStatus"
+                       style="-fx-background-color: #dcfce7; -fx-text-fill: #16a34a;
+                              -fx-padding: 4 12; -fx-background-radius: 10;
+                              -fx-font-size: 12px; -fx-font-weight: bold;"
+                       text="Hoạt động" />
             </children>
         </HBox>
 
-        <HBox alignment="CENTER_LEFT" spacing="20.0">
+        <!-- ── DÒNG 2: Avatar + Thông tin ── -->
+        <HBox alignment="CENTER_LEFT" spacing="18.0">
             <children>
+
+                <!-- Avatar vòng tròn + chữ cái đầu -->
                 <StackPane minWidth="70.0">
                     <children>
-                        <Circle fx:id="circleAvatar" fill="#4f46e5" radius="35.0" />
+                        <Circle fx:id="circleAvatar" fill="#4f46e5" radius="34.0" />
                         <Label fx:id="lblInitial" text="N" textFill="WHITE">
-                            <font><Font name="System Bold" size="28.0" /></font>
+                            <font><Font name="System Bold" size="26.0" /></font>
                         </Label>
                     </children>
                 </StackPane>
 
+                <!-- Thông tin text -->
                 <VBox spacing="5.0" HBox.hgrow="ALWAYS">
                     <children>
-                        <Label fx:id="lblFullName" style="-fx-text-fill: #0f172a;" text="Họ và Tên">
-                            <font><Font name="System Bold" size="20.0" /></font>
-                        </Label>
-                        <HBox spacing="5.0">
-                            <Label style="-fx-text-fill: #64748b;" text="Username:" />
-                            <Label fx:id="lblUsername" style="-fx-text-fill: #0f172a; -fx-font-weight: bold;" text="user01" />
+                        <Label fx:id="lblFullName"
+                               style="-fx-text-fill: #0f172a; -fx-font-size: 17px; -fx-font-weight: bold;"
+                               text="Họ và Tên" />
+                        <HBox spacing="6.0" alignment="CENTER_LEFT">
+                            <children>
+                                <Label style="-fx-text-fill: #94a3b8; -fx-font-size: 13px;"
+                                       text="Vai trò:" />
+                                <Label fx:id="lblRoleName"
+                                       style="-fx-text-fill: #146dff; -fx-font-size: 13px;
+                                              -fx-font-weight: bold;"
+                                       text="Nhân viên" />
+                            </children>
                         </HBox>
-                        <HBox spacing="5.0">
-                            <Label style="-fx-text-fill: #64748b;" text="Vai trò:" />
-                            <Label fx:id="lblRoleName" style="-fx-text-fill: #0f172a;" text="Nhân viên" />
+                        <HBox spacing="6.0" alignment="CENTER_LEFT">
+                            <children>
+                                <Label style="-fx-text-fill: #94a3b8; -fx-font-size: 13px;"
+                                       text="Username:" />
+                                <Label fx:id="lblUsername"
+                                       style="-fx-text-fill: #475569; -fx-font-size: 13px;"
+                                       text="@user01" />
+                            </children>
                         </HBox>
-                        <HBox spacing="5.0">
-                            <Label style="-fx-text-fill: #64748b;" text="Đơn đã tạo:" />
-                            <Label fx:id="lblOrderCount" style="-fx-text-fill: #0f172a;" text="0 đơn" />
+                        <HBox spacing="6.0" alignment="CENTER_LEFT">
+                            <children>
+                                <Label style="-fx-text-fill: #94a3b8; -fx-font-size: 13px;"
+                                       text="Đơn đã tạo:" />
+                                <Label fx:id="lblOrderCount"
+                                       style="-fx-text-fill: #475569; -fx-font-size: 13px;"
+                                       text="0 đơn" />
+                            </children>
                         </HBox>
                     </children>
                 </VBox>
@@ -53,18 +97,48 @@
 
         <Region VBox.vgrow="ALWAYS" />
 
-        <HBox spacing="15.0">
+        <!-- ── DÒNG 3: Nút hành động (Admin thấy, Staff ẩn) ── -->
+        <!--
+            fx:id bắt buộc để EmployeeCardController bind và ẩn/hiện theo role:
+            btnEdit        → Sửa thông tin
+            btnLock        → Khóa / Mở khóa
+            btnResetPass   → Reset mật khẩu
+        -->
+        <HBox fx:id="btnBox" spacing="10.0" alignment="CENTER_RIGHT">
             <children>
-                <Button maxWidth="Infinity" onAction="#handleEdit" prefHeight="40.0" style="-fx-background-color: #f59e0b; -fx-text-fill: white; -fx-background-radius: 8; -fx-cursor: hand;" text="Sửa" HBox.hgrow="ALWAYS">
-                    <font><Font name="System Bold" size="14.0" /></font>
+
+                <!-- Nút Sửa -->
+                <Button fx:id="btnEdit"
+                        mnemonicParsing="false" onAction="#handleEdit"
+                        prefHeight="38.0" prefWidth="90.0"
+                        style="-fx-background-color: #f59e0b; -fx-text-fill: white;
+                               -fx-background-radius: 8; -fx-cursor: hand; -fx-font-weight: bold;"
+                        text="✏  Sửa">
+                    <tooltip><Tooltip text="Sửa thông tin nhân viên" /></tooltip>
                 </Button>
-                <Button maxWidth="Infinity" onAction="#handleLock" prefHeight="40.0" style="-fx-background-color: #ef4444; -fx-text-fill: white; -fx-background-radius: 8; -fx-cursor: hand;" text="Khóa" HBox.hgrow="ALWAYS">
-                    <font><Font name="System Bold" size="14.0" /></font>
+
+                <!-- Nút Khóa / Mở khóa (text thay đổi theo trạng thái) -->
+                <Button fx:id="btnLock"
+                        mnemonicParsing="false" onAction="#handleLock"
+                        prefHeight="38.0" prefWidth="105.0"
+                        style="-fx-background-color: #ef4444; -fx-text-fill: white;
+                               -fx-background-radius: 8; -fx-cursor: hand; -fx-font-weight: bold;"
+                        text="🔒  Khóa">
+                    <tooltip><Tooltip text="Khóa / Mở khóa tài khoản" /></tooltip>
                 </Button>
+
+                <!-- Nút Reset mật khẩu -->
+                <Button fx:id="btnResetPass"
+                        mnemonicParsing="false" onAction="#handleResetPassword"
+                        prefHeight="38.0" prefWidth="38.0"
+                        style="-fx-background-color: #64748b; -fx-text-fill: white;
+                               -fx-background-radius: 8; -fx-cursor: hand; -fx-font-weight: bold;"
+                        text="🔑">
+                    <tooltip><Tooltip text="Reset mật khẩu" /></tooltip>
+                </Button>
+
             </children>
         </HBox>
+
     </children>
-    <padding>
-        <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
-    </padding>
 </VBox>
