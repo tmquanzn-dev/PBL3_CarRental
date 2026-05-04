@@ -75,10 +75,7 @@ public class CustomerBLL {
         return customerDAO.update(customer);
     }
 
-    // ============================================================
     // KIỂM TRA ĐĂNG KÝ THUÊ
-    // ============================================================
-
     /** Kiểm tra khách có đủ điều kiện thuê xe không */
     public boolean isEligibleToRent(String cccd) {
         Customers customer = customerDAO.findByCccd(cccd);
