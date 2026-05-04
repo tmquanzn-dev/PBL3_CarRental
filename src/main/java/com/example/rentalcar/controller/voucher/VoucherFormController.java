@@ -118,9 +118,12 @@ public class VoucherFormController implements Initializable {
         } catch (NumberFormatException e) {
             // Bắt lỗi rỗng hoặc nhập chữ vào ô số
             showMsg("❌  Giá trị giảm giá và Giới hạn phải là số hợp lệ!", false);
-        } catch (IllegalArgumentException e) {
-            // Bắt lỗi nghiệp vụ từ BLL ném ra (VD: Vượt quá 100%, mã trùng...)
+        } catch (IllegalArgumentException | IllegalStateException e) {
+            // SỬA Ở ĐÂY: Bắt luôn cả lỗi Bảo mật (IllegalState) từ BLL ném ra
             showMsg("❌  " + e.getMessage(), false);
+        } catch (Exception e) {
+            // Lưới an toàn cuối cùng cho mọi lỗi chưa lường trước
+            showMsg("❌  Lỗi hệ thống: " + e.getMessage(), false);
         }
     }
 

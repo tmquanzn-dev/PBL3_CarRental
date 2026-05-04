@@ -32,6 +32,10 @@ public class CustomerBLL {
     }
 
     public boolean updateCustomer(Customers customer) {
+        if (customer.isIs_blacklist())
+            throw new IllegalStateException("Khách hàng này đang trong danh sách đen!");
+        if (customer.getFull_name() == null || customer.getFull_name().isBlank())
+            throw new IllegalArgumentException("Tên khách hàng không được để trống!");
         return customerDAO.update(customer);
     }
 
