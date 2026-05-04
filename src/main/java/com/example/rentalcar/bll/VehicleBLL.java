@@ -3,6 +3,7 @@ package com.example.rentalcar.bll;
 import com.example.rentalcar.dao.VehicleDAO;
 import com.example.rentalcar.models.StatusVehicle;
 import com.example.rentalcar.models.Vehicles;
+import com.example.rentalcar.utils.AppSession;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -39,11 +40,13 @@ public class VehicleBLL {
     // ==========================================
 
     public boolean addVehicle(Vehicles vehicle) {
+        if (!AppSession.isAdmin()) throw new IllegalStateException("Cảnh báo bảo mật: Chỉ Admin mới được thêm xe mới!"); //
         validateVehicle(vehicle);
         return vehicleDAO.insert(vehicle);
     }
 
     public boolean updateVehicle(Vehicles vehicle) {
+        if (!AppSession.isAdmin()) throw new IllegalStateException("Cảnh báo bảo mật: Chỉ Admin mới được sửa thông tin xe!"); //
         validateVehicle(vehicle);
         return vehicleDAO.update(vehicle);
     }
@@ -125,6 +128,7 @@ public class VehicleBLL {
     public int getAvailableCars()   { return vehicleDAO.getAvailableCars(); }
 
     public boolean deleteVehicle(int id) {
+        if (!AppSession.isAdmin()) throw new IllegalStateException("Cảnh báo bảo mật: Chỉ Admin mới có quyền xóa xe!"); //
         return vehicleDAO.delete(id);
     }
 }

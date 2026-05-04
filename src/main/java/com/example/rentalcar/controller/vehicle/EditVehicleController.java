@@ -189,12 +189,14 @@ public class EditVehicleController {
                         "Không thể cập nhật. Vui lòng thử lại!");
             }
 
+        } catch (IllegalStateException e) {
+            // Bắt lỗi phân quyền: Staff cố tình sửa xe
+            showAlert(Alert.AlertType.ERROR, "Từ chối truy cập", e.getMessage());
         } catch (IllegalArgumentException e) {
+            // Bắt lỗi dữ liệu: Nhập sai định dạng, biển số trống...
             showAlert(Alert.AlertType.ERROR, "Lỗi dữ liệu", e.getMessage());
         } catch (Exception e) {
-            e.printStackTrace();
-            showAlert(Alert.AlertType.ERROR, "Lỗi hệ thống",
-                    "Lỗi: " + e.getMessage());
+            showAlert(Alert.AlertType.ERROR, "Lỗi hệ thống", "Lỗi không xác định: " + e.getMessage());
         }
     }
 

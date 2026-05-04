@@ -1,5 +1,6 @@
 package com.example.rentalcar.controller.partprice;
 
+import com.example.rentalcar.bll.PartPriceBLL;
 import com.example.rentalcar.dao.PartPriceDAO;
 import com.example.rentalcar.models.PartPrices;
 import javafx.beans.property.SimpleStringProperty;
@@ -42,7 +43,7 @@ public class PartPriceController implements Initializable {
     @FXML private TableColumn<PartPrices, Double>  colPrice;
     @FXML private TableColumn<PartPrices, Void>    colAction;
 
-    private final PartPriceDAO dao = new PartPriceDAO();
+    private final PartPriceBLL bll = new PartPriceBLL();
     private ObservableList<PartPrices> masterList;
 
     @Override
@@ -150,7 +151,7 @@ public class PartPriceController implements Initializable {
     // ============================================================
     private void loadData() {
         try {
-            List<PartPrices> list = dao.findAll();
+            List<PartPrices> list = bll.getAllPartPrices();
             masterList = FXCollections.observableArrayList(list);
             tablePartPrices.setItems(masterList);
             tablePartPrices.setFixedCellSize(60.0);
@@ -263,7 +264,7 @@ public class PartPriceController implements Initializable {
         confirm.setHeaderText(null);
         confirm.setContentText("Bạn có chắc muốn xóa phụ tùng:\n\"" + part.getPart_name() + "\"?");
         confirm.showAndWait().filter(r -> r == ButtonType.OK).ifPresent(r -> {
-            if (dao.delete(part.getId_part_price())) {
+            if (bll.deletePartPrice(part.getId_part_price())) {
                 loadData();
             } else {
                 showAlert("Không thể xóa phụ tùng này!");

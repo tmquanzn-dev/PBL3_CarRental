@@ -2,6 +2,7 @@ package com.example.rentalcar.bll;
 
 import com.example.rentalcar.dao.UserDAO;
 import com.example.rentalcar.models.Users;
+import com.example.rentalcar.utils.AppSession;
 
 import java.util.List;
 
@@ -26,7 +27,13 @@ public class UserBLL {
         return user;
     }
 
+    // ==========================================================
+    // QUẢN LÝ NHÂN SỰ (CHỈ ADMIN)
+    // ==========================================================
+
     public boolean createUser(Users user) {
+        if (!AppSession.isAdmin()) throw new IllegalStateException("Cảnh báo bảo mật: Chỉ Admin mới được tạo tài khoản!");
+
         if (user.getUsername() == null || user.getUsername().isBlank())
             throw new IllegalArgumentException("Username không được để trống");
         if (user.getPassword() == null || user.getPassword().isBlank())
@@ -43,6 +50,8 @@ public class UserBLL {
 
     //Khóa tk
     public boolean lockUser(int id) {
+        if (!AppSession.isAdmin()) throw new IllegalStateException("Cảnh báo bảo mật: Chỉ Admin mới có quyền khóa tài khoản!");
+
         Users user = userDAO.findById(id);
         if (user == null)
             throw new IllegalArgumentException("Khoông tìm thấy nhân viên!");
@@ -56,6 +65,8 @@ public class UserBLL {
     //Mở khóa tk
     public boolean unlockUser(int id)
     {
+        if (!AppSession.isAdmin()) throw new IllegalStateException("Cảnh báo bảo mật: Chỉ Admin mới có quyền mở khóa tài khoản!");
+
         Users user = userDAO.findById(id);
         if (user == null)
             throw new IllegalArgumentException("Không tìm thấy nhân viên!");
@@ -68,6 +79,11 @@ public class UserBLL {
 
     public boolean changePassword(int id, String oldPass, String newPass)
     {
+        // Chỉ cho phép nếu là Admin HOẶC đang đổi pass của chính tài khoản đang đăng nhập
+        if (!AppSession.isAdmin() && AppSession.getCurrentUser().getId_user() != id) {
+            throw new IllegalStateException("Cảnh báo bảo mật: Bạn chỉ được đổi mật khẩu của chính mình!");
+        }
+
         if (oldPass == null || newPass.length() < 8)
             throw new IllegalArgumentException("Mật khẩu mới phải có ít nhất 8 kí tự");
 
@@ -85,6 +101,8 @@ public class UserBLL {
     //Admin(reset mật khẩu, không cần pass cũ)
     public boolean resetPassword(int id, String newPass)
     {
+        if (!AppSession.isAdmin()) throw new IllegalStateException("Cảnh báo bảo mật: Chỉ Admin mới được reset mật khẩu!");
+
         if (newPass == null || newPass.length() < 8)
             throw new IllegalArgumentException("Mật khẩu mới phải có ít nhất 8 kí tự");
         Users user = userDAO.findById(id);
@@ -96,6 +114,8 @@ public class UserBLL {
 
     public boolean updateUser(Users user)
     {
+        if (!AppSession.isAdmin()) throw new IllegalStateException("Cảnh báo bảo mật: Chỉ Admin mới được cập nhật thông tin nhân viên!");
+
         if (user.getFull_name() == null || user.getFull_name().isBlank())
             throw new IllegalArgumentException("Họ tên không được để trống");
         Users check = userDAO.findById(user.getId_user());

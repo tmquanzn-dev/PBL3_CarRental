@@ -3,6 +3,7 @@ package com.example.rentalcar.bll;
 import com.example.rentalcar.dao.ReportDAO;
 import com.example.rentalcar.models.StaffReportRow;
 import com.example.rentalcar.models.VehicleReportRow;
+import com.example.rentalcar.utils.AppSession;
 
 import java.util.List;
 import java.util.Map;
@@ -15,6 +16,7 @@ public class ReportBLL {
     // Doanh thu theo tháng (Map: tháng 1..12 → VNĐ)
     // -------------------------------------------------------
     public Map<Integer, Double> getMonthlyRevenue(int year) {
+        if (!AppSession.isAdmin()) throw new IllegalStateException("Cảnh báo: Dữ liệu báo cáo chỉ dành cho Quản trị viên!"); //
         return reportDAO.getMonthlyRevenue(year);
     }
 
@@ -22,6 +24,7 @@ public class ReportBLL {
     // Tổng doanh thu năm
     // -------------------------------------------------------
     public double getTotalRevenue(int year) {
+        if (!AppSession.isAdmin()) throw new IllegalStateException("Cảnh báo: Dữ liệu báo cáo chỉ dành cho Quản trị viên!"); //
         return reportDAO.getTotalRevenueByYear(year);
     }
 
@@ -40,6 +43,7 @@ public class ReportBLL {
     // Tổng hợp đồng hoàn thành
     // -------------------------------------------------------
     public int getTotalContracts(int year) {
+        if (!AppSession.isAdmin()) throw new IllegalStateException("Cảnh báo: Dữ liệu báo cáo chỉ dành cho Quản trị viên!"); //
         return reportDAO.getTotalContractsByYear(year);
     }
 
@@ -47,6 +51,7 @@ public class ReportBLL {
     // Tổng khách hàng thuê (distinct)
     // -------------------------------------------------------
     public int getTotalCustomers(int year) {
+        if (!AppSession.isAdmin()) throw new IllegalStateException("Cảnh báo: Dữ liệu báo cáo chỉ dành cho Quản trị viên!"); //
         return reportDAO.getTotalCustomersByYear(year);
     }
 
@@ -54,6 +59,7 @@ public class ReportBLL {
     // Doanh thu trung bình / tháng
     // -------------------------------------------------------
     public double getAvgMonthlyRevenue(int year) {
+        if (!AppSession.isAdmin()) throw new IllegalStateException("Cảnh báo: Dữ liệu báo cáo chỉ dành cho Quản trị viên!"); //
         return getTotalRevenue(year) / 12.0;
     }
 
@@ -61,6 +67,7 @@ public class ReportBLL {
     // Phân bố trạng thái hợp đồng
     // -------------------------------------------------------
     public Map<String, Integer> getContractStatusDistribution(int year) {
+        if (!AppSession.isAdmin()) throw new IllegalStateException("Cảnh báo: Dữ liệu báo cáo chỉ dành cho Quản trị viên!"); //
         return reportDAO.getContractStatusDistribution(year);
     }
 
@@ -75,6 +82,7 @@ public class ReportBLL {
     // Top 5 nhân viên theo doanh thu
     // -------------------------------------------------------
     public List<StaffReportRow> getTopStaff(int year) {
+        if (!AppSession.isAdmin()) throw new IllegalStateException("Cảnh báo: Dữ liệu báo cáo chỉ dành cho Quản trị viên!"); //
         return reportDAO.getTopStaff(year, 5);
     }
 

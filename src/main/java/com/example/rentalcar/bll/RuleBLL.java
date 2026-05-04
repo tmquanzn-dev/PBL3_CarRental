@@ -122,4 +122,39 @@ public class RuleBLL {
     public static String formatMultiplier(double multi) {
         return String.format("x%.2f", multi);
     }
+
+    // ================================================================
+    // LOGIC TÍNH TOÁN GIÁ TRỊ (Dùng cho PriceBLL)
+    // ================================================================
+
+    /**
+     * Dò tìm xem khoảng thời gian thuê có dính vào ngày Lễ/Tết nào không.
+     * Trả về hệ số nhân cao nhất (VD: 1.5). Nếu không dính luật nào, trả về 1.0.
+     */
+    public double getHighestMultiplier(java.time.LocalDateTime startDateTime, java.time.LocalDateTime endDateTime) {
+        if (startDateTime == null || endDateTime == null) return 1.0;
+
+        // Chuyển LocalDateTime (có giờ) sang sql.Date (chỉ có ngày) để so sánh với Database
+        Date rentalStart = Date.valueOf(startDateTime.toLocalDate());
+        Date rentalEnd = Date.valueOf(endDateTime.toLocalDate());
+
+        List<Rules> activeRules = ruleDAO.findAllActive();
+        double maxMultiplier = 1.0;
+
+        for (Rules rule : activeRules) {
+            if (rule.getStart_date() == null || rule.getEnd_date() == null) continue;
+
+            // Thuật toán kiểm tra 2 khoảng thời gian có giao nhau (Overlap) hay không:
+            // (Ngày bắt đầu thuê <= Ngày kết thúc luật) VÀ (Ngày kết thúc thuê >= Ngày bắt đầu luật)
+            boolean isOverlapping = !rentalStart.after(rule.getEnd_date()) && !rentalEnd.before(rule.getStart_date());
+
+            if (isOverlapping) {
+                if (rule.getMulti() > maxMultiplier) {
+                    maxMultiplier = rule.getMulti();
+                }
+            }
+        }
+
+        return maxMultiplier;
+    }
 }

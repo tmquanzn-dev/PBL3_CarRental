@@ -149,8 +149,11 @@ public class RuleFormController implements Initializable {
                 if (ok) { showMsg("✅  Cập nhật thành công!", true); autoClose(); }
                 else    { showMsg("❌  Cập nhật thất bại!", false); }
             }
-        } catch (IllegalArgumentException ex) {
-            showMsg("❌  " + ex.getMessage(), false);
+        } catch (IllegalStateException | IllegalArgumentException ex) {
+            // Gom cả 2 lỗi nghiệp vụ và bảo mật để hiện thông báo đỏ
+            showMsg("❌ " + ex.getMessage(), false);
+        } catch (Exception ex) {
+            showMsg("❌ Lỗi hệ thống: " + ex.getMessage(), false);
         }
     }
 
