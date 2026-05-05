@@ -61,7 +61,7 @@ public class PriceBLL
         long delayedHours = (delayedMinutes + 59) / 60;
 
         // Đọc mức phạt từ SystemSettings (Nếu DB không có thì mặc định lấy 100.000đ)
-        double latePenaltyPerHour = settingBLL.getDoubleSetting("PHI_TRE_GIO", 100000.0);
+        double latePenaltyPerHour = settingBLL.getDoubleSetting("Phi_Tre_Gio", 100000.0);
 
         return delayedHours * latePenaltyPerHour;
     }
@@ -80,7 +80,7 @@ public class PriceBLL
         double lostLiters = (lostPercent * fuelCapacity) / 100.0;
 
         // Đọc giá xăng thị trường từ SystemSettings (Nếu DB không có thì mặc định lấy 25.000đ)
-        double fuelMarketPrice = settingBLL.getDoubleSetting("GIA_XANG", 25000.0);
+        double fuelMarketPrice = settingBLL.getDoubleSetting("Gia_Xang_Litre", 25000.0);
 
         return lostLiters * fuelMarketPrice;
     }

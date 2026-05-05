@@ -20,6 +20,7 @@ public class CustomerBLL {
     }
 
     public List<Customers> getAllCustomers() {
+
         return customerDAO.findAll();
     }
 
