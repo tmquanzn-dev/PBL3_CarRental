@@ -114,29 +114,23 @@ public class ReportDAO {
     }
 
     // =========================================================
-    // 6. TOP XE CHO THUÊ NHIỀU NHẤT
-    //    Dùng subquery để tránh lỗi ONLY_FULL_GROUP_BY MySQL 5.7+
+    // 6. TOP XE CHO THUÊ NHIỀU NHẤT - SỬA LẠI QUERY ĐƠN GIẢN HỚN
     // =========================================================
     public List<VehicleReportRow> getTopVehicles(int year, int limit) {
         List<VehicleReportRow> list = new ArrayList<>();
 
-        // Bước 1: Tổng hợp theo id_vehicle từ contracts
-        // Bước 2: JOIN với vehicles để lấy tên/biển số
+        // Dùng JOIN trực tiếp + GROUP BY thay vì subquery để tránh lỗi
         String sql =
                 "SELECT v.brand, v.model, v.code_vehicle, " +
-                        "       agg.rental_count, agg.total_revenue " +
-                        "FROM ( " +
-                        "    SELECT id_vehicle, " +
-                        "           COUNT(*) AS rental_count, " +
-                        "           COALESCE(SUM(total_price), 0) AS total_revenue " +
-                        "    FROM contracts " +
-                        "    WHERE YEAR(start_datetime) = ? " +
-                        "      AND status NOT IN ('DA_HUY', 'DA HUY') " +
-                        "      AND id_vehicle IS NOT NULL " +
-                        "    GROUP BY id_vehicle " +
-                        ") AS agg " +
-                        "JOIN vehicles v ON v.id_vehicle = agg.id_vehicle " +
-                        "ORDER BY agg.rental_count DESC " +
+                        "       COUNT(c.id_contract) AS rental_count, " +
+                        "       COALESCE(SUM(c.total_price), 0) AS total_revenue " +
+                        "FROM contracts c " +
+                        "JOIN vehicles v ON v.id_vehicle = c.id_vehicle " +
+                        "WHERE YEAR(c.start_datetime) = ? " +
+                        "  AND c.status NOT IN ('DA_HUY', 'DA HUY') " +
+                        "  AND c.id_vehicle IS NOT NULL " +
+                        "GROUP BY c.id_vehicle, v.brand, v.model, v.code_vehicle " +
+                        "ORDER BY rental_count DESC " +
                         "LIMIT ?";
 
         try (Connection cnt = DBConnection.getInstance().getConnection();
@@ -146,10 +140,10 @@ public class ReportDAO {
             try (ResultSet rs = pstm.executeQuery()) {
                 int rank = 1;
                 while (rs.next()) {
-                    String name   = rs.getString("brand") + " " + rs.getString("model");
-                    String plate  = rs.getString("code_vehicle");
-                    int    count  = rs.getInt("rental_count");
-                    double rev    = rs.getDouble("total_revenue");
+                    String name  = rs.getString("brand") + " " + rs.getString("model");
+                    String plate = rs.getString("code_vehicle");
+                    int    count = rs.getInt("rental_count");
+                    double rev   = rs.getDouble("total_revenue");
                     list.add(new VehicleReportRow(rank++, name, plate, count, rev));
                 }
             }
@@ -162,26 +156,23 @@ public class ReportDAO {
     }
 
     // =========================================================
-    // 7. TOP NHÂN VIÊN THEO DOANH THU
+    // 7. TOP NHÂN VIÊN THEO DOANH THU - SỬA LẠI QUERY ĐƠN GIẢN HỚN
     // =========================================================
     public List<StaffReportRow> getTopStaff(int year, int limit) {
         List<StaffReportRow> list = new ArrayList<>();
 
+        // Dùng JOIN trực tiếp + GROUP BY thay vì subquery
         String sql =
                 "SELECT u.full_name, " +
-                        "       agg.contract_count, agg.total_revenue " +
-                        "FROM ( " +
-                        "    SELECT id_user, " +
-                        "           COUNT(*) AS contract_count, " +
-                        "           COALESCE(SUM(total_price), 0) AS total_revenue " +
-                        "    FROM contracts " +
-                        "    WHERE YEAR(start_datetime) = ? " +
-                        "      AND status NOT IN ('DA_HUY', 'DA HUY') " +
-                        "      AND id_user IS NOT NULL " +
-                        "    GROUP BY id_user " +
-                        ") AS agg " +
-                        "JOIN users u ON u.id_user = agg.id_user " +
-                        "ORDER BY agg.total_revenue DESC " +
+                        "       COUNT(c.id_contract) AS contract_count, " +
+                        "       COALESCE(SUM(c.total_price), 0) AS total_revenue " +
+                        "FROM contracts c " +
+                        "JOIN users u ON u.id_user = c.id_user " +
+                        "WHERE YEAR(c.start_datetime) = ? " +
+                        "  AND c.status NOT IN ('DA_HUY', 'DA HUY') " +
+                        "  AND c.id_user IS NOT NULL " +
+                        "GROUP BY c.id_user, u.full_name " +
+                        "ORDER BY total_revenue DESC " +
                         "LIMIT ?";
 
         try (Connection cnt = DBConnection.getInstance().getConnection();

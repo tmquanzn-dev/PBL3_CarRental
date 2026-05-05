@@ -1,5 +1,6 @@
 package com.example.rentalcar.controller.settings;
 
+import com.example.rentalcar.bll.SystemSettingBLL;
 import com.example.rentalcar.bll.UserBLL;
 import com.example.rentalcar.models.Users;
 import com.example.rentalcar.utils.AppSession;
@@ -70,7 +71,8 @@ public class SettingsController implements Initializable {
     @FXML private Label lblJavaVersion, lblOS, lblDbStatus;
 
     // ── STATE ────────────────────────────────────────────────────────────
-    private final UserBLL userBLL = new UserBLL();
+    private final UserBLL          userBLL    = new UserBLL();
+    private final SystemSettingBLL settingBLL = new SystemSettingBLL();   // ← THÊM MỚI
     private Users currentUser;
 
     private boolean autoOverdue = true, maintWarn   = true;
@@ -82,11 +84,10 @@ public class SettingsController implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
         currentUser = AppSession.getCurrentUser();
 
-        //Staff chỉ thấy Hồ sơ + Bảo mật
         applyRoleRestrictions();
 
         setupGeneralCombos();
-        setupPricingCombos();
+        setupPricingCombos();       // ← Bây giờ đọc từ DB
         loadUserProfile();
         loadAboutInfo();
         loadSessionInfo();
@@ -96,11 +97,8 @@ public class SettingsController implements Initializable {
         showPanel(panelProfile);
     }
 
-    //Ẩn các tab Admin-only với Staff
     private void applyRoleRestrictions() {
         boolean admin = AppSession.isAdmin();
-
-        // Staff không thấy các tab hệ thống
         setNavVisible(btnNavGeneral,      admin);
         setNavVisible(btnNavPricing,      admin);
         setNavVisible(btnNavNotification, admin);
@@ -115,41 +113,29 @@ public class SettingsController implements Initializable {
     }
 
     //  NAV HANDLERS
-    @FXML void handleNavProfile() {
-        switchNav(btnNavProfile);
-        showPanel(panelProfile);
-    }
-    @FXML void handleNavSecurity() {
-        switchNav(btnNavSecurity);
-        showPanel(panelSecurity);
-    }
+    @FXML void handleNavProfile() { switchNav(btnNavProfile); showPanel(panelProfile); }
+    @FXML void handleNavSecurity() { switchNav(btnNavSecurity); showPanel(panelSecurity); }
 
     @FXML void handleNavGeneral() {
-        if (!AppSession.isAdmin())
-            return;
-        switchNav(btnNavGeneral);
-        showPanel(panelGeneral);
+        if (!AppSession.isAdmin()) return;
+        switchNav(btnNavGeneral); showPanel(panelGeneral);
     }
     @FXML void handleNavPricing() {
-        if (!AppSession.isAdmin())
-            return;
-        switchNav(btnNavPricing);
-        showPanel(panelPricing);
+        if (!AppSession.isAdmin()) return;
+        switchNav(btnNavPricing); showPanel(panelPricing);
+        loadPricingFromDB();        // ← Tải lại từ DB mỗi khi mở tab
     }
     @FXML void handleNavNotification() {
         if (!AppSession.isAdmin()) return;
-        switchNav(btnNavNotification);
-        showPanel(panelNotification);
+        switchNav(btnNavNotification); showPanel(panelNotification);
     }
     @FXML void handleNavDatabase() {
-        if (!AppSession.isAdmin())
-            return;
-        switchNav(btnNavDatabase);
-        showPanel(panelDatabase);
-    }
-    @FXML void handleNavAbout()        {
         if (!AppSession.isAdmin()) return;
-        switchNav(btnNavAbout);        showPanel(panelAbout);
+        switchNav(btnNavDatabase); showPanel(panelDatabase);
+    }
+    @FXML void handleNavAbout() {
+        if (!AppSession.isAdmin()) return;
+        switchNav(btnNavAbout); showPanel(panelAbout);
     }
 
     private void showPanel(ScrollPane target) {
@@ -172,8 +158,7 @@ public class SettingsController implements Initializable {
 
     //  PROFILE – LOAD DỮ LIỆU
     private void loadUserProfile() {
-        if (currentUser == null)
-            return;
+        if (currentUser == null) return;
 
         String name = currentUser.getFull_name() != null ? currentUser.getFull_name() : "?";
 
@@ -182,22 +167,17 @@ public class SettingsController implements Initializable {
 
         loadAvatarImage(currentUser);
 
-        if (lblProfileName != null)
-            lblProfileName.setText(name);
-        if (lblProfileRole != null)
-            lblProfileRole.setText(
-                currentUser.getRole_name() != null ? currentUser.getRole_name() : "Nhân viên");
-        if (lblProfileStatus != null)
-            lblProfileStatus.setText("● Đang hoạt động");
-        if (lblProfileUsername != null)
-            lblProfileUsername.setText("@" + currentUser.getUsername());
+        if (lblProfileName     != null) lblProfileName.setText(name);
+        if (lblProfileRole     != null) lblProfileRole.setText(currentUser.getRole_name() != null ? currentUser.getRole_name() : "Nhân viên");
+        if (lblProfileStatus   != null) lblProfileStatus.setText("● Đang hoạt động");
+        if (lblProfileUsername != null) lblProfileUsername.setText("@" + currentUser.getUsername());
 
-        if (txtFullName != null) txtFullName.setText(currentUser.getFull_name() != null ? currentUser.getFull_name() : "");
-        if (txtUsername != null) txtUsername.setText(currentUser.getUsername() != null ? currentUser.getUsername() : "");
-        if (txtPhone != null) txtPhone.setText(currentUser.getPhone() != null ? currentUser.getPhone()   : "");
-        if (txtEmail != null) txtEmail.setText(currentUser.getEmail() != null ? currentUser.getEmail()   : "");
-        if (txtCccd != null) txtCccd.setText(currentUser.getCccd() != null ? currentUser.getCccd()    : "");
-        if (txtAddress != null) txtAddress.setText(currentUser.getAddress() != null ? currentUser.getAddress() : "");
+        if (txtFullName != null) txtFullName.setText(nvl(currentUser.getFull_name()));
+        if (txtUsername != null) txtUsername.setText(nvl(currentUser.getUsername()));
+        if (txtPhone    != null) txtPhone.setText(nvl(currentUser.getPhone()));
+        if (txtEmail    != null) txtEmail.setText(nvl(currentUser.getEmail()));
+        if (txtCccd     != null) txtCccd.setText(nvl(currentUser.getCccd()));
+        if (txtAddress  != null) txtAddress.setText(nvl(currentUser.getAddress()));
     }
 
     private void loadAvatarImage(Users user) {
@@ -217,24 +197,18 @@ public class SettingsController implements Initializable {
         if (address == null) return null;
         int start = address.lastIndexOf("[avatar=");
         int end   = address.lastIndexOf("]");
-        if (start >= 0 && end > start) {
-            return address.substring(start + 8, end).trim();
-        }
+        if (start >= 0 && end > start) return address.substring(start + 8, end).trim();
         return null;
     }
 
     private String embedAvatarPath(String address, String avatarPath) {
         if (address == null) address = "";
         int start = address.lastIndexOf("[avatar=");
-        if (start >= 0) {
-            address = address.substring(0, start).trim();
-        }
+        if (start >= 0) address = address.substring(0, start).trim();
         return address + " [avatar=" + avatarPath + "]";
     }
 
-    //  ĐỔI ẢNH ĐẠI DIỆN
-    @FXML
-    void handleChangeAvatar() {
+    @FXML void handleChangeAvatar() {
         if (currentUser == null) return;
 
         Stage stage = null;
@@ -265,9 +239,7 @@ public class SettingsController implements Initializable {
         }
     }
 
-    //  LƯU HỒ SƠ
-    @FXML
-    void handleProfileSave() {
+    @FXML void handleProfileSave() {
         try {
             if (currentUser == null) return;
             String newName = txtFullName != null ? txtFullName.getText().trim() : "";
@@ -276,9 +248,9 @@ public class SettingsController implements Initializable {
                 return;
             }
             currentUser.setFull_name(newName);
-            if (txtPhone != null) currentUser.setPhone(txtPhone.getText().trim());
-            if (txtEmail != null) currentUser.setEmail(txtEmail.getText().trim());
-            if (txtCccd != null) currentUser.setCccd(txtCccd.getText().trim());
+            if (txtPhone   != null) currentUser.setPhone(txtPhone.getText().trim());
+            if (txtEmail   != null) currentUser.setEmail(txtEmail.getText().trim());
+            if (txtCccd    != null) currentUser.setCccd(txtCccd.getText().trim());
             if (txtAddress != null) currentUser.setAddress(txtAddress.getText().trim());
 
             boolean ok = userBLL.updateUser(currentUser);
@@ -294,8 +266,7 @@ public class SettingsController implements Initializable {
         }
     }
 
-    @FXML
-    void handleProfileCancel() {
+    @FXML void handleProfileCancel() {
         loadUserProfile();
         if (lblProfileMsg != null) lblProfileMsg.setVisible(false);
     }
@@ -308,63 +279,37 @@ public class SettingsController implements Initializable {
 
     private void updateStrengthBar(String pass) {
         int score = 0;
-        if (pass.length() >= 8)
-            score++;
-        if (pass.matches(".*[A-Z].*"))
-            score++;
-        if (pass.matches(".*[0-9].*"))
-            score++;
-        if (pass.matches(".*[!@#$%^&*].*"))
-            score++;
+        if (pass.length() >= 8)             score++;
+        if (pass.matches(".*[A-Z].*"))      score++;
+        if (pass.matches(".*[0-9].*"))      score++;
+        if (pass.matches(".*[!@#$%^&*].*")) score++;
 
         String[] colors = {"#e2e8f0","#e2e8f0","#e2e8f0","#e2e8f0"};
-        String strengthText  = "Chưa nhập";
-        String strengthColor = "#94a3b8";
+        String strengthText = "Chưa nhập", strengthColor = "#94a3b8";
 
-        if (score >= 1) {
-            colors[0] = "#ef4444";
-            strengthText = "Yếu";
-            strengthColor = "#ef4444";
-        }
-        if (score >= 2) {
-            colors[1] = "#f59e0b";
-            strengthText = "Trung bình";
-            strengthColor = "#f59e0b";
-        }
-        if (score >= 3) {
-            colors[2] = "#22c55e";
-            strengthText = "Mạnh";
-            strengthColor = "#22c55e";
-        }
-        if (score >= 4) {
-            colors[3] = "#146dff";
-            strengthText = "Rất mạnh";
-            strengthColor = "#146dff";
-        }
+        if (score >= 1) { colors[0] = "#ef4444"; strengthText = "Yếu";       strengthColor = "#ef4444"; }
+        if (score >= 2) { colors[1] = "#f59e0b"; strengthText = "Trung bình"; strengthColor = "#f59e0b"; }
+        if (score >= 3) { colors[2] = "#22c55e"; strengthText = "Mạnh";       strengthColor = "#22c55e"; }
+        if (score >= 4) { colors[3] = "#146dff"; strengthText = "Rất mạnh";   strengthColor = "#146dff"; }
         if (pass.isEmpty()) { strengthText = "Chưa nhập"; strengthColor = "#94a3b8"; }
 
         String style = "-fx-background-radius: 3; -fx-background-color: ";
-        if (strengthBar1 != null)
-            strengthBar1.setStyle(style + colors[0] + ";");
-        if (strengthBar2 != null)
-            strengthBar2.setStyle(style + colors[1] + ";");
-        if (strengthBar3 != null)
-            strengthBar3.setStyle(style + colors[2] + ";");
-        if (strengthBar4 != null)
-            strengthBar4.setStyle(style + colors[3] + ";");
+        if (strengthBar1 != null) strengthBar1.setStyle(style + colors[0] + ";");
+        if (strengthBar2 != null) strengthBar2.setStyle(style + colors[1] + ";");
+        if (strengthBar3 != null) strengthBar3.setStyle(style + colors[2] + ";");
+        if (strengthBar4 != null) strengthBar4.setStyle(style + colors[3] + ";");
         if (lblStrength  != null) {
             lblStrength.setText(strengthText);
             lblStrength.setStyle("-fx-text-fill: " + strengthColor + "; -fx-font-size: 12px;");
         }
     }
 
-    @FXML
-    void handleChangePassword() {
+    @FXML void handleChangePassword() {
         try {
             if (currentUser == null) return;
-            String oldPass  = txtOldPassword != null ? txtOldPassword.getText() : "";
-            String newPass  = txtNewPassword != null ? txtNewPassword.getText() : "";
-            String confPass = txtConfirmPassword != null ? txtConfirmPassword.getText() : "";
+            String oldPass  = txtOldPassword      != null ? txtOldPassword.getText()      : "";
+            String newPass  = txtNewPassword       != null ? txtNewPassword.getText()       : "";
+            String confPass = txtConfirmPassword   != null ? txtConfirmPassword.getText()   : "";
 
             if (oldPass.isEmpty() || newPass.isEmpty() || confPass.isEmpty()) {
                 showMsg(lblSecurityMsg, "❌  Vui lòng điền đầy đủ tất cả các ô mật khẩu!", false);
@@ -380,12 +325,9 @@ public class SettingsController implements Initializable {
             }
             boolean ok = userBLL.changePassword(currentUser.getId_user(), oldPass, newPass);
             if (ok) {
-                if (txtOldPassword != null)
-                    txtOldPassword.clear();
-                if (txtNewPassword != null)
-                    txtNewPassword.clear();
-                if (txtConfirmPassword != null)
-                    txtConfirmPassword.clear();
+                if (txtOldPassword    != null) txtOldPassword.clear();
+                if (txtNewPassword    != null) txtNewPassword.clear();
+                if (txtConfirmPassword!= null) txtConfirmPassword.clear();
                 updateStrengthBar("");
                 showMsg(lblSecurityMsg, "✅  Đổi mật khẩu thành công!", true);
             } else {
@@ -396,17 +338,15 @@ public class SettingsController implements Initializable {
         }
     }
 
-    @FXML
-    void handleSecurityCancel() {
-        if (txtOldPassword != null) txtOldPassword.clear();
-        if (txtNewPassword != null) txtNewPassword.clear();
-        if (txtConfirmPassword != null) txtConfirmPassword.clear();
+    @FXML void handleSecurityCancel() {
+        if (txtOldPassword    != null) txtOldPassword.clear();
+        if (txtNewPassword    != null) txtNewPassword.clear();
+        if (txtConfirmPassword!= null) txtConfirmPassword.clear();
         updateStrengthBar("");
         if (lblSecurityMsg != null) lblSecurityMsg.setVisible(false);
     }
 
-    @FXML
-    void handleLogoutAll() {
+    @FXML void handleLogoutAll() {
         Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
         confirm.setTitle("Xác nhận"); confirm.setHeaderText(null);
         confirm.setContentText("Bạn có chắc muốn đăng xuất tất cả phiên hoạt động?");
@@ -422,39 +362,18 @@ public class SettingsController implements Initializable {
     //  GENERAL SETTINGS (Admin only)
     private void setupGeneralCombos() {
         Platform.runLater(() -> {
-            if (cbLanguage  != null) {
-                cbLanguage.getItems().addAll("Tiếng Việt","English");
-                cbLanguage.setValue("Tiếng Việt");
-            }
-            if (cbDateFormat!= null) {
-                cbDateFormat.getItems().addAll("dd/MM/yyyy HH:mm","yyyy-MM-dd HH:mm","MM/dd/yyyy hh:mm a");
-                cbDateFormat.setValue("dd/MM/yyyy HH:mm");
-            }
-            if (cbCurrency  != null) {
-                cbCurrency.getItems().addAll("VNĐ (đ)","USD ($)");
-                cbCurrency.setValue("VNĐ (đ)");
-            }
-            if (cbPageSize  != null) {
-                cbPageSize.getItems().addAll("10 hàng","20 hàng","50 hàng","100 hàng");
-                cbPageSize.setValue("20 hàng");
-            }
+            if (cbLanguage  != null) { cbLanguage.getItems().addAll("Tiếng Việt","English"); cbLanguage.setValue("Tiếng Việt"); }
+            if (cbDateFormat!= null) { cbDateFormat.getItems().addAll("dd/MM/yyyy HH:mm","yyyy-MM-dd HH:mm","MM/dd/yyyy hh:mm a"); cbDateFormat.setValue("dd/MM/yyyy HH:mm"); }
+            if (cbCurrency  != null) { cbCurrency.getItems().addAll("VNĐ (đ)","USD ($)"); cbCurrency.setValue("VNĐ (đ)"); }
+            if (cbPageSize  != null) { cbPageSize.getItems().addAll("10 hàng","20 hàng","50 hàng","100 hàng"); cbPageSize.setValue("20 hàng"); }
         });
     }
 
-    @FXML void handleToggleAutoOverdue() {
-        autoOverdue = !autoOverdue;
-        updateToggle(toggleAutoOverdue, autoOverdue);
-    }
-    @FXML void handleToggleMaintWarn() {
-        maintWarn =! maintWarn;
-        updateToggle(toggleMaintWarn, maintWarn); }
-    @FXML void handleToggleConfirmDelete() {
-        confirmDel  =!confirmDel;
-        updateToggle(toggleConfirmDelete, confirmDel);
-    }
+    @FXML void handleToggleAutoOverdue() { autoOverdue = !autoOverdue; updateToggle(toggleAutoOverdue, autoOverdue); }
+    @FXML void handleToggleMaintWarn()   { maintWarn = !maintWarn;   updateToggle(toggleMaintWarn, maintWarn); }
+    @FXML void handleToggleConfirmDelete(){ confirmDel = !confirmDel; updateToggle(toggleConfirmDelete, confirmDel); }
 
-    @FXML
-    void handleRestoreDefaults() {
+    @FXML void handleRestoreDefaults() {
         if (!AppSession.isAdmin()) return;
         Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
         confirm.setTitle("Xác nhận"); confirm.setHeaderText(null);
@@ -473,27 +392,62 @@ public class SettingsController implements Initializable {
 
     @FXML void handleGeneralSave() { showAlert("✅  Đã lưu cài đặt hệ thống thành công!", Alert.AlertType.INFORMATION); }
 
-    //  PRICING SETTINGS (Admin only)
+    // =========================================================
+    //  PRICING SETTINGS – ĐỌC & GHI DB THẬT SỰ
+    // =========================================================
+
+    /**
+     * Khởi tạo ComboBox và đọc giá trị hiện tại từ DB.
+     */
     private void setupPricingCombos() {
         Platform.runLater(() -> {
             if (cbLateCalcMode != null) {
-                cbLateCalcMode.getItems().addAll("Làm tròn lên theo giờ (mặc định)","Tính chính xác theo phút");
+                cbLateCalcMode.getItems().addAll(
+                        "Làm tròn lên theo giờ (mặc định)",
+                        "Tính chính xác theo phút");
                 cbLateCalcMode.setValue("Làm tròn lên theo giờ (mặc định)");
             }
             if (cbFuelMultiplier != null) {
-                cbFuelMultiplier.getItems().addAll("x1.0 (không phụ phí)","x1.2 (+20% phụ phí)","x1.5 (+50% phụ phí)");
+                cbFuelMultiplier.getItems().addAll(
+                        "x1.0 (không phụ phí)",
+                        "x1.2 (+20% phụ phí)",
+                        "x1.5 (+50% phụ phí)");
                 cbFuelMultiplier.setValue("x1.0 (không phụ phí)");
             }
-            if (txtLatePenalty != null) txtLatePenalty.setText("100000");
-            if (txtFuelPrice   != null) txtFuelPrice.setText("25000");
-            updatePricingPreview();
+
+            // Đọc giá trị thực từ DB
+            loadPricingFromDB();
         });
     }
 
+    /**
+     * Đọc Phi_Tre_Gio và Gia_Xang_Litre từ bảng systemsettings.
+     */
+    private void loadPricingFromDB() {
+        try {
+            double latePenalty = settingBLL.getDoubleSetting("Phi_Tre_Gio", 100000.0);
+            double fuelPrice   = settingBLL.getDoubleSetting("Gia_Xang_Litre", 25000.0);
+
+            if (txtLatePenalty != null)
+                txtLatePenalty.setText(String.valueOf((long) latePenalty));
+            if (txtFuelPrice != null)
+                txtFuelPrice.setText(String.valueOf((long) fuelPrice));
+
+            updatePricingPreview();
+        } catch (Exception e) {
+            System.err.println("[Settings] Lỗi đọc cấu hình giá: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Cập nhật preview tính toán.
+     */
     private void setupPricingPreviewListeners() {
         Platform.runLater(() -> {
-            if (txtLatePenalty != null) txtLatePenalty.textProperty().addListener((o, old, v) -> updatePricingPreview());
-            if (txtFuelPrice   != null) txtFuelPrice.textProperty().addListener((o, old, v)   -> updatePricingPreview());
+            if (txtLatePenalty != null)
+                txtLatePenalty.textProperty().addListener((o, old, v) -> updatePricingPreview());
+            if (txtFuelPrice != null)
+                txtFuelPrice.textProperty().addListener((o, old, v) -> updatePricingPreview());
         });
     }
 
@@ -506,26 +460,69 @@ public class SettingsController implements Initializable {
         } catch (Exception ignored) {}
     }
 
-    @FXML
-    void handlePricingSave() {
+    /**
+     * LƯU THẬT SỰ vào bảng systemsettings.
+     */
+    @FXML void handlePricingSave() {
         if (!AppSession.isAdmin()) return;
+        if (currentUser == null) return;
+
         try {
-            double late = parseDouble(txtLatePenalty != null ? txtLatePenalty.getText() : "-1", -1);
-            double fuel = parseDouble(txtFuelPrice   != null ? txtFuelPrice.getText()   : "-1", -1);
-            if (late <= 0 || fuel <= 0) {
-                showAlert("❌  Vui lòng nhập giá trị hợp lệ (lớn hơn 0)!", Alert.AlertType.WARNING); return;
+            // Validate dữ liệu đầu vào
+            String lateTxt = txtLatePenalty != null ? txtLatePenalty.getText().trim() : "";
+            String fuelTxt = txtFuelPrice   != null ? txtFuelPrice.getText().trim()   : "";
+
+            if (lateTxt.isEmpty() || fuelTxt.isEmpty()) {
+                showAlert("❌  Vui lòng nhập đầy đủ phí phạt trễ giờ và giá xăng!", Alert.AlertType.WARNING);
+                return;
             }
-            showAlert("✅  Đã cập nhật cấu hình giá thành công!\n"
-                    + "Phạt trễ: " + formatMoney(late) + "/giờ\n"
-                    + "Giá xăng: " + formatMoney(fuel) + "/lít", Alert.AlertType.INFORMATION);
+
+            double late, fuel;
+            try {
+                late = Double.parseDouble(lateTxt.replace(",", "").replace(".", ""));
+                fuel = Double.parseDouble(fuelTxt.replace(",", "").replace(".", ""));
+            } catch (NumberFormatException e) {
+                showAlert("❌  Giá trị nhập vào phải là số hợp lệ!", Alert.AlertType.WARNING);
+                return;
+            }
+
+            if (late <= 0 || fuel <= 0) {
+                showAlert("❌  Giá trị phải lớn hơn 0!", Alert.AlertType.WARNING);
+                return;
+            }
+
+            // Lưu vào DB qua SystemSettingBLL
+            int editorId = currentUser.getId_user();
+
+            boolean savedLate = settingBLL.updateSettingValue(
+                    "Phi_Tre_Gio", String.valueOf((long) late), editorId);
+            boolean savedFuel = settingBLL.updateSettingValue(
+                    "Gia_Xang_Litre", String.valueOf((long) fuel), editorId);
+
+            if (savedLate && savedFuel) {
+                showAlert("✅  Đã lưu cấu hình giá thành công!\n"
+                                + "Phạt trễ: " + formatMoney(late) + "/giờ\n"
+                                + "Giá xăng: " + formatMoney(fuel) + "/lít",
+                        Alert.AlertType.INFORMATION);
+            } else if (!savedLate) {
+                showAlert("❌  Không thể lưu phí phạt trễ giờ. Kiểm tra khoá 'Phi_Tre_Gio' trong DB!",
+                        Alert.AlertType.ERROR);
+            } else {
+                showAlert("❌  Không thể lưu giá xăng. Kiểm tra khoá 'Gia_Xang_Litre' trong DB!",
+                        Alert.AlertType.ERROR);
+            }
+
+        } catch (IllegalStateException e) {
+            // Bắt lỗi phân quyền từ BLL
+            showAlert("❌  " + e.getMessage(), Alert.AlertType.ERROR);
         } catch (Exception e) {
             showAlert("❌  Lỗi: " + e.getMessage(), Alert.AlertType.ERROR);
         }
     }
 
     @FXML void handlePricingCancel() {
-        if (txtLatePenalty != null) txtLatePenalty.setText("100000");
-        if (txtFuelPrice   != null) txtFuelPrice.setText("25000");
+        // Tải lại từ DB thay vì hardcode
+        loadPricingFromDB();
     }
 
     // =========================================================
@@ -538,12 +535,9 @@ public class SettingsController implements Initializable {
     @FXML void handleNotiSave() { showAlert("✅  Đã lưu cài đặt thông báo thành công!", Alert.AlertType.INFORMATION); }
 
     //  DATABASE (Admin only)
-    @FXML
-    void handleTestConnection() {
-        if (!AppSession.isAdmin())
-            return;
-        if (lblConnectionStatus == null)
-            return;
+    @FXML void handleTestConnection() {
+        if (!AppSession.isAdmin()) return;
+        if (lblConnectionStatus == null) return;
         lblConnectionStatus.setText("⏳  Đang kiểm tra...");
         lblConnectionStatus.setStyle("-fx-text-fill: #f59e0b; -fx-font-size: 13px; -fx-font-weight: bold;");
 
@@ -571,9 +565,8 @@ public class SettingsController implements Initializable {
         }).start();
     }
 
-    @FXML void handleExportData() {
-        showAlert("📤  Tính năng xuất dữ liệu đang được phát triển!", Alert.AlertType.INFORMATION);
-    }
+    @FXML void handleExportData() { showAlert("📤  Tính năng xuất dữ liệu đang được phát triển!", Alert.AlertType.INFORMATION); }
+
     @FXML void handleImportData() {
         Alert c = new Alert(Alert.AlertType.WARNING);
         c.setTitle("Cảnh báo"); c.setHeaderText("Nhập dữ liệu sẽ ghi đè dữ liệu hiện tại!");
@@ -581,6 +574,7 @@ public class SettingsController implements Initializable {
         c.showAndWait().filter(r -> r == ButtonType.OK)
                 .ifPresent(r -> showAlert("📥  Tính năng đang phát triển!", Alert.AlertType.INFORMATION));
     }
+
     @FXML void handleClearCache() {
         Alert c = new Alert(Alert.AlertType.CONFIRMATION);
         c.setTitle("Xác nhận"); c.setHeaderText(null); c.setContentText("Xóa toàn bộ cache hệ thống?");
@@ -594,8 +588,8 @@ public class SettingsController implements Initializable {
     private void loadAboutInfo() {
         Platform.runLater(() -> {
             if (lblJavaVersion != null) lblJavaVersion.setText(System.getProperty("java.version"));
-            if (lblOS != null) lblOS.setText(System.getProperty("os.name") + " " + System.getProperty("os.arch"));
-            if (lblDbStatus != null) lblDbStatus.setText("Đang kiểm tra...");
+            if (lblOS          != null) lblOS.setText(System.getProperty("os.name") + " " + System.getProperty("os.arch"));
+            if (lblDbStatus    != null) lblDbStatus.setText("Đang kiểm tra...");
             new Thread(() -> {
                 try {
                     Connection conn = DBConnection.getInstance().getConnection();
@@ -643,4 +637,6 @@ public class SettingsController implements Initializable {
     private String formatMoney(double amount) {
         return String.format("%,.0f đ", amount).replace(",", ".");
     }
+
+    private String nvl(String s) { return s != null ? s : ""; }
 }
