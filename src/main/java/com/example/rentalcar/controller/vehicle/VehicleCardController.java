@@ -19,6 +19,7 @@ import javafx.stage.Stage;
 
 import java.text.NumberFormat;
 import java.util.Locale;
+import java.util.Optional;
 
 public class VehicleCardController {
 
@@ -41,11 +42,11 @@ public class VehicleCardController {
         lblName.setText(vehicle.getBrand() + " " + vehicle.getModel());
         lblPrice.setText(fmtVND.format((long) vehicle.getPrice_day()) + " đ");
 
-        //Badge trạng thái
+        // Badge trạng thái
         StatusVehicle st = vehicle.getStatus();
         String statusText = VehicleBLL.statusToDisplay(st);
         lblStatus.setText(statusText);
-        //
+
         lblStatus.getStyleClass().removeAll(
                 "badge-available", "badge-rented",
                 "badge-maintenance", "badge-reserved", "badge-inactive"
@@ -58,14 +59,14 @@ public class VehicleCardController {
             case INACTIVE    -> lblStatus.getStyleClass().add("badge-inactive");
         }
 
-        //Làm mờ card xe INACTIVE
+        // Làm mờ card xe INACTIVE
         if (st == StatusVehicle.INACTIVE) {
             lblPlate.setStyle("-fx-text-fill: #94a3b8;");
             lblName.setStyle("-fx-text-fill: #94a3b8;");
             lblPrice.setStyle("-fx-text-fill: #94a3b8;");
         }
 
-        //Load ảnh
+        // Load ảnh
         String imgUrl = vehicle.getImage_url();
         if (imgUrl == null || imgUrl.isBlank()) {
             ImageHelper.loadDefault(imgVehicle, "/image/dashboardform/card-moto.png");
@@ -74,26 +75,51 @@ public class VehicleCardController {
         } else {
             ImageHelper.loadInto(imgVehicle, imgUrl);
         }
-        // Nút Xóa: chỉ Admin, và chỉ hiện với xe ĐANG HOẠT ĐỘNG
-        if (btnDelete != null) {
-            boolean canDelete = AppSession.isAdmin() && st != StatusVehicle.INACTIVE;
-            btnDelete.setVisible(canDelete);
-            btnDelete.setManaged(canDelete);
 
-            // Nếu xe INACTIVE thì đổi nút Delete thành khôi phục
+        // ── Nút Delete / Khôi phục / Hoàn thành bảo dưỡng ──
+        if (btnDelete != null) {
             if (AppSession.isAdmin() && st == StatusVehicle.INACTIVE) {
+                // Khôi phục xe ngừng hoạt động
                 btnDelete.setText("♻️ Khôi phục");
                 btnDelete.setStyle("-fx-background-color: #10b981; -fx-text-fill: white; " +
                         "-fx-background-radius: 6; -fx-cursor: hand;");
                 btnDelete.setVisible(true);
                 btnDelete.setManaged(true);
+            } else if (AppSession.isAdmin() && st == StatusVehicle.MAINTENANCE) {
+                // Hoàn thành bảo dưỡng
+                btnDelete.setText("✅ Xong BĐ");
+                btnDelete.setStyle("-fx-background-color: #146dff; -fx-text-fill: white; " +
+                        "-fx-background-radius: 6; -fx-cursor: hand; -fx-font-weight: bold;");
+                btnDelete.setVisible(true);
+                btnDelete.setManaged(true);
+            } else {
+                // Xóa xe bình thường (chỉ Admin, xe không phải INACTIVE/MAINTENANCE)
+                btnDelete.setText("Xóa");
+                btnDelete.setStyle("-fx-background-color: #ef4444; -fx-text-fill: white; " +
+                        "-fx-background-radius: 6; -fx-cursor: hand;");
+                boolean canDelete = AppSession.isAdmin() && st != StatusVehicle.INACTIVE;
+                btnDelete.setVisible(canDelete);
+                btnDelete.setManaged(canDelete);
             }
         }
+
         if (btnEdit != null) {
             boolean canEdit = AppSession.isAdmin() ||
                     (AppSession.isStaff() && st != StatusVehicle.INACTIVE);
             btnEdit.setVisible(canEdit);
             btnEdit.setManaged(canEdit);
+        }
+
+        // Cảnh báo nếu xe sắp đến mốc bảo dưỡng (còn < 200 km)
+        if (st == StatusVehicle.AVAILABLE) {
+            int remaining = vehicle.getMaintenance_km() - vehicle.getCurrent_km();
+            if (remaining <= 200 && remaining > 0) {
+                lblStatus.setText("⚠ Sắp BĐ");
+                lblStatus.getStyleClass().removeAll("badge-available");
+                lblStatus.getStyleClass().add("badge-maintenance");
+                lblStatus.setStyle("-fx-background-color: #fef3c7; -fx-text-fill: #b45309; " +
+                        "-fx-padding: 4 10; -fx-background-radius: 6; -fx-font-weight: bold;");
+            }
         }
     }
 
@@ -101,11 +127,10 @@ public class VehicleCardController {
         this.onRefresh = callback;
     }
 
-    //Sửa xe
+    // Sửa xe
     @FXML
     void handleEdit() {
-        if (currentVehicle == null)
-            return;
+        if (currentVehicle == null) return;
         try {
             FXMLLoader loader = new FXMLLoader(
                     getClass().getResource("/views/vehicle/EditVehicleView.fxml"));
@@ -113,9 +138,7 @@ public class VehicleCardController {
 
             EditVehicleController ctrl = loader.getController();
             ctrl.setVehicle(currentVehicle);
-            ctrl.setOnSaved(() -> {
-                if (onRefresh != null) onRefresh.run();
-            });
+            ctrl.setOnSaved(() -> { if (onRefresh != null) onRefresh.run(); });
 
             Stage stage = new Stage();
             stage.setTitle("Chỉnh sửa xe: " + currentVehicle.getCode_vehicle());
@@ -126,21 +149,49 @@ public class VehicleCardController {
             stage.showAndWait();
 
         } catch (Exception e) {
-            System.err.println("Lỗi mở form sửa xe: " + e.getMessage());
-            e.printStackTrace();
             showAlert(Alert.AlertType.ERROR, "Không thể mở form sửa xe: " + e.getMessage());
         }
     }
 
-    //Xóa xe hoặc Khôi phục xe
+    // Xóa / Khôi phục / Hoàn thành bảo dưỡng
     @FXML
     void handleDelete() {
         if (!AppSession.isAdmin() || currentVehicle == null) return;
 
         StatusVehicle st = currentVehicle.getStatus();
 
-        if (st == StatusVehicle.INACTIVE) {
-            //Khôi phục xe đã ngừng hoạt động
+        if (st == StatusVehicle.MAINTENANCE) {
+            // ── HOÀN THÀNH BẢO DƯỠNG ──
+            Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
+            confirm.setTitle("Hoàn thành bảo dưỡng");
+            confirm.setHeaderText("🔧  " + currentVehicle.getCode_vehicle()
+                    + " — " + currentVehicle.getBrand() + " " + currentVehicle.getModel());
+            confirm.setContentText(
+                    "Xác nhận xe đã bảo dưỡng xong?\n\n" +
+                            "✅ Xe sẽ chuyển về trạng thái Sẵn sàng\n" +
+                            "📍 Mốc bảo dưỡng tiếp theo: " +
+                            (currentVehicle.getCurrent_km() + 5000) + " km");
+
+            confirm.showAndWait().filter(r -> r == ButtonType.OK).ifPresent(r -> {
+                try {
+                    boolean ok = vehicleBLL.completeMaintenance(currentVehicle.getId_vehicle());
+                    if (ok) {
+                        showAlert(Alert.AlertType.INFORMATION,
+                                "✅ Xe " + currentVehicle.getCode_vehicle() +
+                                        " đã hoàn thành bảo dưỡng và sẵn sàng cho thuê!\n" +
+                                        "Mốc bảo dưỡng tiếp theo: " +
+                                        (currentVehicle.getCurrent_km() + 5000) + " km");
+                        if (onRefresh != null) onRefresh.run();
+                    } else {
+                        showAlert(Alert.AlertType.ERROR, "Không thể cập nhật trạng thái xe!");
+                    }
+                } catch (Exception ex) {
+                    showAlert(Alert.AlertType.ERROR, ex.getMessage());
+                }
+            });
+
+        } else if (st == StatusVehicle.INACTIVE) {
+            // ── KHÔI PHỤC XE ──
             Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
             confirm.setTitle("Khôi phục xe");
             confirm.setHeaderText(null);
@@ -157,7 +208,7 @@ public class VehicleCardController {
             });
 
         } else {
-            //Xóa mềm (chuyển sang INACTIVE)
+            // ── XÓA MỀM (INACTIVE) ──
             if (st == StatusVehicle.RENTED) {
                 showAlert(Alert.AlertType.WARNING,
                         "Không thể xóa xe đang cho thuê!\nVui lòng hoàn thành hợp đồng trước.");
@@ -181,10 +232,9 @@ public class VehicleCardController {
         }
     }
 
-    //Helper
     private void showAlert(Alert.AlertType type, String msg) {
         Alert alert = new Alert(type);
-        alert.setTitle(type == Alert.AlertType.ERROR ? "Lỗi" : "Cảnh báo");
+        alert.setTitle(type == Alert.AlertType.ERROR ? "Lỗi" : "Thông báo");
         alert.setHeaderText(null);
         alert.setContentText(msg);
         alert.showAndWait();

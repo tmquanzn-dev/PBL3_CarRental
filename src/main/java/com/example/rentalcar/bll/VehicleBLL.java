@@ -15,18 +15,10 @@ public class VehicleBLL {
     // 1. CÁC HÀM TRUY VẤN
     // ==========================================
 
-    /**
-     * Lấy xe KHÔNG bao gồm INACTIVE.
-     * Dùng cho: tạo hợp đồng, dashboard, báo cáo.
-     */
     public List<Vehicles> getAllVehicles() {
         return vehicleDAO.findAll();
     }
 
-    /**
-     * Lấy xe BAO GỒM cả INACTIVE.
-     * Dùng cho: màn hình Quản lý xe.
-     */
     public List<Vehicles> getAllVehiclesIncludeInactive() {
         return vehicleDAO.findAllIncludeInactive();
     }
@@ -40,13 +32,13 @@ public class VehicleBLL {
     // ==========================================
 
     public boolean addVehicle(Vehicles vehicle) {
-        if (!AppSession.isAdmin()) throw new IllegalStateException("Cảnh báo bảo mật: Chỉ Admin mới được thêm xe mới!"); //
+        if (!AppSession.isAdmin()) throw new IllegalStateException("Cảnh báo bảo mật: Chỉ Admin mới được thêm xe mới!");
         validateVehicle(vehicle);
         return vehicleDAO.insert(vehicle);
     }
 
     public boolean updateVehicle(Vehicles vehicle) {
-        if (!AppSession.isAdmin()) throw new IllegalStateException("Cảnh báo bảo mật: Chỉ Admin mới được sửa thông tin xe!"); //
+        if (!AppSession.isAdmin()) throw new IllegalStateException("Cảnh báo bảo mật: Chỉ Admin mới được sửa thông tin xe!");
         validateVehicle(vehicle);
         return vehicleDAO.update(vehicle);
     }
@@ -60,8 +52,57 @@ public class VehicleBLL {
             throw new IllegalArgumentException("Đơn giá thuê phải lớn hơn 0!");
         if (vehicle.getPurchase_price() <= 0)
             throw new IllegalArgumentException("Giá trị mua xe phải lớn hơn 0!");
-        if (vehicle.getMaintenance_km() <= vehicle.getCurrent_km())
-            System.out.println("Cảnh báo: Xe này cần bảo dưỡng ngay!");
+    }
+
+    // ==========================================
+    // 3. BẢO DƯỠNG
+    // ==========================================
+
+    /**
+     * Kiểm tra tất cả xe AVAILABLE xem có xe nào đạt km bảo dưỡng không.
+     * Nếu có → tự động chuyển sang MAINTENANCE.
+     * Trả về danh sách xe vừa được chuyển sang bảo dưỡng.
+     */
+    public List<Vehicles> checkAndMarkMaintenance() {
+        List<Vehicles> needMaintenance = vehicleDAO.findAll().stream()
+                .filter(v -> v.getStatus() == StatusVehicle.AVAILABLE
+                        && v.getCurrent_km() >= v.getMaintenance_km())
+                .collect(Collectors.toList());
+
+        for (Vehicles v : needMaintenance) {
+            v.setStatus(StatusVehicle.MAINTENANCE);
+            vehicleDAO.update(v);
+        }
+
+        return needMaintenance;
+    }
+
+    /**
+     * Hoàn thành bảo dưỡng: chuyển xe từ MAINTENANCE về AVAILABLE
+     * và cập nhật mốc km bảo dưỡng tiếp theo (+5000 km).
+     */
+    public boolean completeMaintenance(int vehicleId) {
+        Vehicles vehicle = vehicleDAO.findById(vehicleId);
+        if (vehicle == null)
+            throw new IllegalArgumentException("Không tìm thấy xe!");
+        if (vehicle.getStatus() != StatusVehicle.MAINTENANCE)
+            throw new IllegalStateException("Xe này không đang trong trạng thái bảo dưỡng!");
+
+        // Cập nhật mốc bảo dưỡng tiếp theo = km hiện tại + 5000
+        int nextMaintenanceKm = vehicle.getCurrent_km() + 5000;
+        vehicle.setMaintenance_km(nextMaintenanceKm);
+        vehicle.setStatus(StatusVehicle.AVAILABLE);
+
+        return vehicleDAO.update(vehicle);
+    }
+
+    /**
+     * Lấy danh sách xe đang ở trạng thái MAINTENANCE.
+     */
+    public List<Vehicles> getMaintenanceVehicles() {
+        return vehicleDAO.findAllIncludeInactive().stream()
+                .filter(v -> v.getStatus() == StatusVehicle.MAINTENANCE)
+                .collect(Collectors.toList());
     }
 
     public List<Vehicles> getVehiclesNeedMaintenance() {
@@ -70,10 +111,6 @@ public class VehicleBLL {
                 .collect(Collectors.toList());
     }
 
-    /**
-     * Tìm kiếm trên màn hình Quản lý xe.
-     * Dùng findAllIncludeInactive để lọc được cả xe INACTIVE.
-     */
     public List<Vehicles> searchVehicles(String keyword, String brand, String statusDisplay) {
         return vehicleDAO.findAllIncludeInactive().stream()
                 .filter(v -> {
@@ -120,7 +157,7 @@ public class VehicleBLL {
     }
 
     // ==========================================
-    // 3. THỐNG KÊ DASHBOARD
+    // 4. THỐNG KÊ DASHBOARD
     // ==========================================
 
     public int getTotalActiveCars() { return vehicleDAO.getTotalActiveCars(); }
@@ -128,7 +165,7 @@ public class VehicleBLL {
     public int getAvailableCars()   { return vehicleDAO.getAvailableCars(); }
 
     public boolean deleteVehicle(int id) {
-        if (!AppSession.isAdmin()) throw new IllegalStateException("Cảnh báo bảo mật: Chỉ Admin mới có quyền xóa xe!"); //
+        if (!AppSession.isAdmin()) throw new IllegalStateException("Cảnh báo bảo mật: Chỉ Admin mới có quyền xóa xe!");
         return vehicleDAO.delete(id);
     }
 }
