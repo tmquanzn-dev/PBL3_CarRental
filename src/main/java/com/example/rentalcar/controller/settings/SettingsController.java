@@ -464,8 +464,8 @@ public class SettingsController implements Initializable {
      * LƯU THẬT SỰ vào bảng systemsettings.
      */
     @FXML void handlePricingSave() {
-        if (!AppSession.isAdmin()) return;
-        if (currentUser == null) return;
+        //if (!AppSession.isAdmin()) return;
+        //if (currentUser == null) return;
 
         try {
             // Validate dữ liệu đầu vào
