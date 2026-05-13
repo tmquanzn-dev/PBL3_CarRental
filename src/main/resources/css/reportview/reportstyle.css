@@ -1,33 +1,14 @@
 /* ======================================================
-   REPORT / ANALYTICS STYLE — JavaFX 21
+   REPORT VIEW STYLE – VehicleRent Pro
+   Palette: Blue #3b82f6 / Slate #1e293b / Gray #f0f4f8
 ====================================================== */
 .root {
-    -fx-background-color: #f4f7f6;
+    -fx-background-color: #f0f4f8;
     -fx-font-family: "Segoe UI", Arial, sans-serif;
 }
 
 /* ======================================================
-   KPI CARDS
-====================================================== */
-.kpi-card   { -fx-background-radius: 14; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.09), 14, 0, 0, 6); }
-.kpi-blue   { -fx-background-color: linear-gradient(to bottom right, #478dff, #146dff); }
-.kpi-green  { -fx-background-color: linear-gradient(to bottom right, #34d399, #10b981); }
-.kpi-purple { -fx-background-color: linear-gradient(to bottom right, #a78bfa, #7c3aed); }
-.kpi-orange { -fx-background-color: linear-gradient(to bottom right, #fb923c, #f97316); }
-.kpi-label  { -fx-text-fill: white; -fx-font-size: 13px; -fx-opacity: 0.9; }
-.kpi-value  { -fx-text-fill: white; -fx-font-size: 28px; -fx-font-weight: bold; }
-.kpi-sub    { -fx-text-fill: white; -fx-font-size: 12px; -fx-opacity: 0.8; }
-.kpi-icon   { -fx-text-fill: white; -fx-font-size: 30px; -fx-opacity: 0.2; }
-
-/* ======================================================
-   PANELS
-====================================================== */
-.panel          { -fx-background-color: white; -fx-background-radius: 14; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.05), 10, 0, 0, 4); }
-.panel-title    { -fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #1e293b; }
-.panel-subtitle { -fx-font-size: 12px; -fx-text-fill: #94a3b8; }
-
-/* ======================================================
-   BAR CHART — SOLID COLOR ONLY, không LinearGradient
+   CHART
 ====================================================== */
 .chart                         { -fx-background-color: transparent; }
 .chart-plot-background         { -fx-background-color: transparent; }
@@ -37,62 +18,65 @@
 .chart-alternative-column-fill { -fx-fill: transparent; }
 .axis                          { -fx-tick-label-fill: #94a3b8; -fx-tick-label-font-size: 11px; }
 .axis-label                    { -fx-text-fill: #94a3b8; -fx-font-size: 11px; }
-.default-color0.chart-bar      { -fx-bar-fill: #146dff; }
-.chart-bar:hover               { -fx-bar-fill: #0052cc; }
+.default-color0.chart-bar      { -fx-bar-fill: #3b82f6; }
+.chart-bar:hover               { -fx-bar-fill: #1d4ed8; }
 .chart-legend                  { -fx-background-color: transparent; }
 
-/* ======================================================
-   PIE CHART
-====================================================== */
+/* PIE */
 .default-color0.chart-pie { -fx-pie-color: #3b82f6; }
 .default-color1.chart-pie { -fx-pie-color: #10b981; }
 .default-color2.chart-pie { -fx-pie-color: #f59e0b; }
 .default-color3.chart-pie { -fx-pie-color: #ef4444; }
-.chart-pie-label           { -fx-fill: #64748b; -fx-font-size: 11px; }
+.chart-pie-label           { -fx-fill: #64748b; -fx-font-size: 10px; }
 .chart-pie-label-line      { -fx-stroke: #cbd5e1; }
 
 /* ======================================================
    RANK TABLE
-   QUAN TRỌNG: KHÔNG set -fx-cell-size ở đây
-   vì sẽ override rowFactory và làm rows collapse
 ====================================================== */
-.rank-table { -fx-background-color: transparent; -fx-border-color: transparent; }
-
+.rank-table {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+}
 .rank-table .column-header-background {
     -fx-background-color: #f8fafc;
     -fx-background-radius: 8 8 0 0;
+    -fx-padding: 4 0;
 }
-.rank-table .column-header            { -fx-background-color: transparent; -fx-border-color: transparent; }
-.rank-table .column-header .label     {
-    -fx-text-fill: #94a3b8;
+.rank-table .column-header { -fx-background-color: transparent; -fx-border-color: transparent; }
+.rank-table .column-header .label {
+    -fx-text-fill: #64748b;
     -fx-font-weight: bold;
     -fx-font-size: 12px;
-    -fx-padding: 0 0 0 12;
+    -fx-padding: 6 0 6 10;
 }
-
-/* Row style — KHÔNG đặt -fx-cell-size */
+/* QUAN TRỌNG: cell size đủ cao để hiện nội dung */
 .rank-table .table-row-cell {
+    -fx-cell-size: 52px;
     -fx-background-color: transparent;
     -fx-border-width: 0 0 1 0;
     -fx-border-color: #f1f5f9;
+    -fx-pref-height: 52px;
+    -fx-min-height: 52px;
 }
 .rank-table .table-row-cell:hover    { -fx-background-color: #f8faff; }
 .rank-table .table-row-cell:selected { -fx-background-color: #eff6ff; }
 .rank-table .table-row-cell:selected .text { -fx-fill: #1e293b; }
-
 .rank-table .table-cell {
     -fx-border-color: transparent;
-    -fx-padding: 0 0 0 12;
+    -fx-padding: 0 4 0 10;
     -fx-font-size: 13px;
     -fx-text-fill: #1e293b;
     -fx-alignment: CENTER_LEFT;
+    -fx-pref-height: 52px;
+    -fx-min-height: 52px;
 }
 
 /* ======================================================
-   MISC
+   MISC BUTTONS
 ====================================================== */
-.btn-year          { -fx-background-color: transparent; -fx-text-fill: #64748b; -fx-font-size: 16px; -fx-cursor: hand; -fx-padding: 2 8; }
-.btn-year:hover    { -fx-text-fill: #146dff; }
-.btn-export        { -fx-background-color: #f1f5f9; -fx-text-fill: #475569; -fx-background-radius: 8; -fx-font-weight: bold; -fx-cursor: hand; -fx-padding: 8 18; -fx-font-size: 13px; }
-.btn-export:hover  { -fx-background-color: #e2e8f0; -fx-text-fill: #1e293b; }
-.separator         { -fx-background-color: #f1f5f9; }
+.btn-year       { -fx-background-color: transparent; -fx-text-fill: #64748b; -fx-font-size: 16px; -fx-cursor: hand; -fx-padding: 2 8; }
+.btn-year:hover { -fx-text-fill: #3b82f6; }
+
+.scroll-pane                      { -fx-background-color: transparent; -fx-background: transparent; }
+.scroll-pane > .viewport          { -fx-background-color: transparent; }
+.scroll-pane .scroll-bar:vertical { -fx-opacity: 0; }
