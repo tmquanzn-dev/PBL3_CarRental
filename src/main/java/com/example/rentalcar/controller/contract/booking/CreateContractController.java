@@ -8,23 +8,13 @@ import javafx.scene.Parent;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 import java.io.IOException;
 
-/**
- * CreateContractController – Controller chính điều phối 4 bước tạo hợp đồng.
- *
- * Chức năng:
- *  - Giữ 1 object ContractDraft duy nhất, truyền sang từng step controller.
- *  - Điều hướng Tiếp theo / Quay lại giữa 4 bước.
- *  - Validate từng bước trước khi cho phép sang bước tiếp theo.
- *  - Bước 4 xác nhận → gọi Step4Controller.confirmAndSave().
- *
- * Đường dẫn: src/main/java/com/example/rentalcar/controller/contract/booking/CreateContractController.java
- */
 public class CreateContractController {
 
     // =========================================================
@@ -43,10 +33,9 @@ public class CreateContractController {
     // =========================================================
     //  STATE
     // =========================================================
-    private int            currentStep = 1;
-    private ContractDraft  draft       = new ContractDraft();
+    private int           currentStep = 1;
+    private ContractDraft draft       = new ContractDraft();
 
-    // Giữ reference controller từng bước để validate & lưu data
     private Step1Controller step1Ctrl;
     private Step2Controller step2Ctrl;
     private Step3Controller step3Ctrl;
@@ -65,14 +54,12 @@ public class CreateContractController {
     // =========================================================
     @FXML
     void handleNext(ActionEvent event) {
-        // Validate & lưu dữ liệu bước hiện tại vào draft trước khi tiếp
         if (!validateAndSaveCurrentStep()) return;
 
         if (currentStep < 4) {
             currentStep++;
             loadStep(currentStep);
         }
-        // Bước 4: nút đổi thành "Xác nhận & Lưu" → xử lý trong updateStepperUI
     }
 
     @FXML
@@ -98,25 +85,14 @@ public class CreateContractController {
             FXMLLoader loader = new FXMLLoader(getClass().getResource(path));
             Parent root = loader.load();
 
-            // Lấy controller và truyền draft vào
             switch (step) {
-                case 1 -> {
-                    step1Ctrl = loader.getController();
-                    step1Ctrl.setDraft(draft);
-                }
-                case 2 -> {
-                    step2Ctrl = loader.getController();
-                    step2Ctrl.setDraft(draft);
-                }
-                case 3 -> {
-                    step3Ctrl = loader.getController();
-                    step3Ctrl.setDraft(draft);
-                }
+                case 1 -> { step1Ctrl = loader.getController(); step1Ctrl.setDraft(draft); }
+                case 2 -> { step2Ctrl = loader.getController(); step2Ctrl.setDraft(draft); }
+                case 3 -> { step3Ctrl = loader.getController(); step3Ctrl.setDraft(draft); }
                 case 4 -> {
                     step4Ctrl = loader.getController();
                     step4Ctrl.setDraft(draft);
-                    // Truyền callback để Step4 đóng cửa sổ sau khi lưu thành công
-                    step4Ctrl.setOnSaved(() -> closeWindow());
+                    step4Ctrl.setOnSaved(this::closeWindow);
                 }
             }
 
@@ -130,51 +106,88 @@ public class CreateContractController {
     }
 
     // =========================================================
-    //  VALIDATE & LƯU DỮ LIỆU TỪNG BƯỚC VÀO DRAFT
+    //  VALIDATE & LƯU
     // =========================================================
     private boolean validateAndSaveCurrentStep() {
         return switch (currentStep) {
-            case 1 -> {
-                if (step1Ctrl == null) yield false;
-                yield step1Ctrl.validateAndSave(); // Lưu customer vào draft
-            }
-            case 2 -> {
-                if (step2Ctrl == null) yield false;
-                yield step2Ctrl.validateAndSave(); // Lưu vehicle vào draft
-            }
-            case 3 -> {
-                if (step3Ctrl == null) yield false;
-                yield step3Ctrl.validateAndSave(); // Lưu thời gian, cọc, giá vào draft
-            }
+            case 1 -> step1Ctrl != null && step1Ctrl.validateAndSave();
+            case 2 -> step2Ctrl != null && step2Ctrl.validateAndSave();
+            case 3 -> step3Ctrl != null && step3Ctrl.validateAndSave();
             case 4 -> {
-                // Bước 4: gọi confirm lưu xuống DB
-                if (step4Ctrl == null) yield false;
-                step4Ctrl.confirmAndSave();
-                yield false; // Trả false để không tăng step nữa (cửa sổ sẽ đóng)
+                if (step4Ctrl != null) step4Ctrl.confirmAndSave();
+                yield false;
             }
             default -> true;
         };
     }
 
     // =========================================================
-    //  CẬP NHẬT UI STEPPER
+    //  CẬP NHẬT STEPPER UI
     // =========================================================
     private void updateStepperUI() {
-        // Nút Back ẩn ở bước 1
-        btnBack.setVisible(currentStep > 1);
+        // Nút Back: ẩn ở bước 1
+        if (btnBack != null) {
+            btnBack.setVisible(currentStep > 1);
+            btnBack.setManaged(currentStep > 1);
+        }
 
         // Bước 4 đổi text nút Next
-        btnNext.setText(currentStep == 4 ? "✅  Xác nhận & Lưu" : "Tiếp theo →");
-
-        VBox[] boxes = { step1Box, step2Box, step3Box, step4Box };
-        for (int i = 0; i < boxes.length; i++) {
-            if (boxes[i] == null) continue;
-            boxes[i].getStyleClass().removeAll("step-active", "step-done");
-            if (i + 1 < currentStep) {
-                boxes[i].getStyleClass().add("step-done");
-            } else if (i + 1 == currentStep) {
-                boxes[i].getStyleClass().add("step-active");
+        if (btnNext != null) {
+            if (currentStep == 4) {
+                btnNext.setText("✅  Xác nhận & Lưu");
+                btnNext.setStyle("-fx-background-color: #16a34a; -fx-text-fill: white;" +
+                        " -fx-background-radius: 8; -fx-font-weight: bold; -fx-cursor: hand;" +
+                        " -fx-font-size: 14px;" +
+                        " -fx-effect: dropshadow(three-pass-box,rgba(22,163,74,0.4),10,0,0,3);");
+            } else {
+                btnNext.setText("Tiếp theo →");
+                btnNext.setStyle("-fx-background-color: #2563eb; -fx-text-fill: white;" +
+                        " -fx-background-radius: 8; -fx-font-weight: bold; -fx-cursor: hand;" +
+                        " -fx-font-size: 14px;" +
+                        " -fx-effect: dropshadow(three-pass-box,rgba(37,99,235,0.4),10,0,0,3);");
             }
+        }
+
+        // Cập nhật màu từng step box
+        updateStepBox(step1Box, 1);
+        updateStepBox(step2Box, 2);
+        updateStepBox(step3Box, 3);
+        updateStepBox(step4Box, 4);
+    }
+
+    private void updateStepBox(VBox box, int stepNum) {
+        if (box == null) return;
+
+        // Lấy Label số step (phần tử đầu trong HBox con đầu tiên)
+        try {
+            HBox innerHBox = (HBox) box.getChildren().get(0);
+            Label circleLabel = (Label) innerHBox.getChildren().get(0);
+            Label textLabel   = (Label) innerHBox.getChildren().get(1);
+
+            if (stepNum < currentStep) {
+                // Đã hoàn thành
+                circleLabel.setStyle("-fx-background-color: #16a34a; -fx-text-fill: white;" +
+                        " -fx-font-weight: bold; -fx-font-size: 13px; -fx-background-radius: 50;" +
+                        " -fx-min-width: 28; -fx-min-height: 28; -fx-alignment: center;");
+                circleLabel.setText("✓");
+                textLabel.setStyle("-fx-font-size: 13px; -fx-text-fill: #16a34a; -fx-font-weight: bold;");
+            } else if (stepNum == currentStep) {
+                // Đang ở bước này
+                circleLabel.setStyle("-fx-background-color: #2563eb; -fx-text-fill: white;" +
+                        " -fx-font-weight: bold; -fx-font-size: 13px; -fx-background-radius: 50;" +
+                        " -fx-min-width: 28; -fx-min-height: 28; -fx-alignment: center;");
+                circleLabel.setText(String.valueOf(stepNum));
+                textLabel.setStyle("-fx-font-size: 13px; -fx-text-fill: #2563eb; -fx-font-weight: bold;");
+            } else {
+                // Chưa tới
+                circleLabel.setStyle("-fx-background-color: #9ca3af; -fx-text-fill: white;" +
+                        " -fx-font-weight: bold; -fx-font-size: 13px; -fx-background-radius: 50;" +
+                        " -fx-min-width: 28; -fx-min-height: 28; -fx-alignment: center;");
+                circleLabel.setText(String.valueOf(stepNum));
+                textLabel.setStyle("-fx-font-size: 13px; -fx-text-fill: #9ca3af;");
+            }
+        } catch (Exception ignored) {
+            // Bỏ qua nếu cấu trúc không khớp
         }
     }
 

@@ -7,8 +7,7 @@ import com.example.rentalcar.models.DiscountType;
 import com.example.rentalcar.models.Vouchers;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.HBox;  // FIX BUG 3: phải là HBox, không phải VBox
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -17,53 +16,37 @@ import java.time.LocalTime;
 /**
  * Step3Controller – Bước 3: Chọn thời gian, đặt cọc và áp dụng voucher.
  *
- * Chức năng:
- *  1. DatePicker chọn ngày bắt đầu / kết thúc + TimePicker (giờ).
- *  2. Tính tiền tự động khi thay đổi ngày giờ (gọi PriceBLL).
- *  3. Ô nhập mã voucher → kiểm tra hợp lệ → áp dụng giảm giá.
- *  4. Chọn hình thức đặt cọc + số tiền cọc.
- *  5. validateAndSave() → lưu tất cả vào ContractDraft.
- *
- * Đường dẫn: src/main/java/com/example/rentalcar/controller/contract/booking/Step3Controller.java
+ * FIX BUG 3: boxVoucherApplied khai báo đúng kiểu HBox (FXML dùng HBox)
  */
 public class Step3Controller {
 
-    // =========================================================
-    //  FXML – Thời gian
-    // =========================================================
-    @FXML private DatePicker dpStart;
-    @FXML private DatePicker dpEnd;
+    // ── Thời gian ──────────────────────────────────────────────
+    @FXML private DatePicker       dpStart;
+    @FXML private DatePicker       dpEnd;
     @FXML private Spinner<Integer> spinStartHour;
     @FXML private Spinner<Integer> spinStartMin;
     @FXML private Spinner<Integer> spinEndHour;
     @FXML private Spinner<Integer> spinEndMin;
-    @FXML private Label lblTotalDays;
-    @FXML private Label lblTotalDuration;
+    @FXML private Label            lblTotalDays;
+    @FXML private Label            lblTotalDuration;
 
-    // =========================================================
-    //  FXML – Giá tiền
-    // =========================================================
+    // ── Giá tiền ───────────────────────────────────────────────
     @FXML private Label lblBasePrice;
     @FXML private Label lblDiscount;
     @FXML private Label lblTotalPrice;
 
-    // =========================================================
-    //  FXML – Voucher
-    // =========================================================
+    // ── Voucher ────────────────────────────────────────────────
     @FXML private TextField txtVoucherCode;
     @FXML private Label     lblVoucherMsg;
-    @FXML private HBox boxVoucherApplied;
+    // FIX BUG 3: FXML khai báo <HBox fx:id="boxVoucherApplied"> → phải là HBox
+    @FXML private HBox      boxVoucherApplied;
     @FXML private Label     lblVoucherDetail;
 
-    // =========================================================
-    //  FXML – Đặt cọc
-    // =========================================================
+    // ── Đặt cọc ────────────────────────────────────────────────
     @FXML private ComboBox<String> cbDepositType;
     @FXML private TextField        txtDepositAmount;
 
-    // =========================================================
-    //  STATE
-    // =========================================================
+    // ── State ──────────────────────────────────────────────────
     private ContractDraft draft;
     private Vouchers      appliedVoucher;
 
@@ -77,16 +60,20 @@ public class Step3Controller {
         this.draft = draft;
         setupUI();
 
-        // Nếu quay lại từ bước 4 → điền lại dữ liệu
+        // Khôi phục dữ liệu nếu quay lại từ bước 4
         if (draft.getStartDatetime() != null) {
             dpStart.setValue(draft.getStartDatetime().toLocalDate());
-            if (spinStartHour != null) spinStartHour.getValueFactory().setValue(draft.getStartDatetime().getHour());
-            if (spinStartMin  != null) spinStartMin .getValueFactory().setValue(draft.getStartDatetime().getMinute());
+            if (spinStartHour != null)
+                spinStartHour.getValueFactory().setValue(draft.getStartDatetime().getHour());
+            if (spinStartMin != null)
+                spinStartMin.getValueFactory().setValue(draft.getStartDatetime().getMinute());
         }
         if (draft.getEndDatetime() != null) {
             dpEnd.setValue(draft.getEndDatetime().toLocalDate());
-            if (spinEndHour != null) spinEndHour.getValueFactory().setValue(draft.getEndDatetime().getHour());
-            if (spinEndMin  != null) spinEndMin .getValueFactory().setValue(draft.getEndDatetime().getMinute());
+            if (spinEndHour != null)
+                spinEndHour.getValueFactory().setValue(draft.getEndDatetime().getHour());
+            if (spinEndMin != null)
+                spinEndMin.getValueFactory().setValue(draft.getEndDatetime().getMinute());
         }
         if (draft.getDepositType() != null) {
             cbDepositType.setValue(depositTypeToDisplay(draft.getDepositType()));
@@ -106,26 +93,28 @@ public class Step3Controller {
     //  SETUP UI
     // =========================================================
     private void setupUI() {
-        // Hình thức đặt cọc
         cbDepositType.getItems().addAll("Tiền mặt", "Giấy tờ", "Khác");
         cbDepositType.setValue("Tiền mặt");
 
-        // Spinners giờ/phút
         setupSpinner(spinStartHour, 0, 23, 8);
         setupSpinner(spinStartMin,  0, 59, 0);
         setupSpinner(spinEndHour,   0, 23, 8);
         setupSpinner(spinEndMin,    0, 59, 0);
 
-        // Ngày mặc định = hôm nay và ngày mai
         dpStart.setValue(LocalDate.now());
         dpEnd.setValue(LocalDate.now().plusDays(1));
 
-        // Lắng nghe thay đổi để tính lại tiền
         dpStart.valueProperty().addListener((obs, o, n) -> recalculate());
         dpEnd.valueProperty().addListener((obs, o, n)   -> recalculate());
 
-        if (spinStartHour != null) spinStartHour.valueProperty().addListener((obs, o, n) -> recalculate());
-        if (spinEndHour   != null) spinEndHour  .valueProperty().addListener((obs, o, n) -> recalculate());
+        if (spinStartHour != null)
+            spinStartHour.valueProperty().addListener((obs, o, n) -> recalculate());
+        if (spinStartMin != null)
+            spinStartMin.valueProperty().addListener((obs, o, n)  -> recalculate());
+        if (spinEndHour != null)
+            spinEndHour.valueProperty().addListener((obs, o, n)   -> recalculate());
+        if (spinEndMin != null)
+            spinEndMin.valueProperty().addListener((obs, o, n)    -> recalculate());
 
         // Ẩn box voucher đã áp dụng
         if (boxVoucherApplied != null) {
@@ -138,9 +127,8 @@ public class Step3Controller {
 
     private void setupSpinner(Spinner<Integer> spinner, int min, int max, int init) {
         if (spinner == null) return;
-        SpinnerValueFactory<Integer> factory =
-                new SpinnerValueFactory.IntegerSpinnerValueFactory(min, max, init);
-        spinner.setValueFactory(factory);
+        spinner.setValueFactory(
+                new SpinnerValueFactory.IntegerSpinnerValueFactory(min, max, init));
         spinner.setEditable(true);
     }
 
@@ -157,16 +145,14 @@ public class Step3Controller {
         if (!start.isBefore(end)) {
             setLabel(lblBasePrice,  "0 đ");
             setLabel(lblTotalPrice, "0 đ");
-            setLabel(lblTotalDays,  "Ngày kết thúc phải sau ngày bắt đầu!");
+            setLabel(lblTotalDays,  "⚠  Ngày kết thúc phải sau ngày bắt đầu!");
             return;
         }
 
         double priceDay  = draft.getSelectedVehicle().getPrice_day();
         double priceHour = draft.getSelectedVehicle().getPrice_hour();
-
         double basePrice = priceBLL.calculateBasePrice(start, end, priceDay, priceHour);
 
-        // Tính giảm giá nếu có voucher
         double discount = 0;
         if (appliedVoucher != null) {
             discount = calculateDiscount(basePrice, appliedVoucher);
@@ -178,22 +164,24 @@ public class Step3Controller {
         setLabel(lblDiscount,   discount > 0 ? "- " + formatMoney(discount) : "0 đ");
         setLabel(lblTotalPrice, formatMoney(total));
 
-        // Hiển thị tổng thời gian
+        // Tổng thời gian
         long hours = java.time.Duration.between(start, end).toHours();
         long days  = hours / 24;
         long remH  = hours % 24;
-        String dur = days > 0 ? days + " ngày" + (remH > 0 ? " " + remH + " giờ" : "")
+        String dur = days > 0
+                ? days + " ngày" + (remH > 0 ? " " + remH + " giờ" : "")
                 : hours + " giờ";
         setLabel(lblTotalDays,     dur);
         setLabel(lblTotalDuration, dur);
     }
 
     // =========================================================
-    //  ÁP DỤNG VOUCHER
+    //  VOUCHER
     // =========================================================
     @FXML
     void handleApplyVoucher() {
-        String code = txtVoucherCode != null ? txtVoucherCode.getText().trim().toUpperCase() : "";
+        String code = txtVoucherCode != null
+                ? txtVoucherCode.getText().trim().toUpperCase() : "";
         if (code.isEmpty()) {
             setVoucherMsg("Vui lòng nhập mã voucher!", false);
             return;
@@ -277,27 +265,24 @@ public class Step3Controller {
             return false;
         }
 
-        // Lưu vào draft
         draft.setStartDatetime(start);
         draft.setEndDatetime(end);
         draft.setDepositType(displayToDepositType(cbDepositType.getValue()));
 
-        // Số tiền cọc (không bắt buộc)
         double deposit = 0;
         if (txtDepositAmount != null && !txtDepositAmount.getText().isBlank()) {
             try {
-                deposit = Double.parseDouble(txtDepositAmount.getText().trim().replace(",", "").replace(".", ""));
+                deposit = Double.parseDouble(
+                        txtDepositAmount.getText().trim()
+                                .replace(",", "").replace(".", ""));
             } catch (NumberFormatException e) {
                 showAlert("Số tiền cọc không hợp lệ!");
                 return false;
             }
         }
         draft.setDepositAmount(deposit);
-
-        // Voucher
         draft.setAppliedVoucher(appliedVoucher);
 
-        // Tính giá cuối
         double priceDay  = draft.getSelectedVehicle().getPrice_day();
         double priceHour = draft.getSelectedVehicle().getPrice_hour();
         double base      = priceBLL.calculateBasePrice(start, end, priceDay, priceHour);
@@ -313,9 +298,10 @@ public class Step3Controller {
     // =========================================================
     //  HELPERS
     // =========================================================
-
-    private LocalDateTime buildDateTime(DatePicker dp, Spinner<Integer> hour, Spinner<Integer> min) {
-        LocalDate date  = dp.getValue();
+    private LocalDateTime buildDateTime(DatePicker dp,
+                                        Spinner<Integer> hour,
+                                        Spinner<Integer> min) {
+        LocalDate date = dp.getValue();
         int h = (hour != null && hour.getValue() != null) ? hour.getValue() : 8;
         int m = (min  != null && min.getValue()  != null) ? min.getValue()  : 0;
         return LocalDateTime.of(date, LocalTime.of(h, m));

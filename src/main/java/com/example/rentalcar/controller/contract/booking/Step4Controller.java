@@ -1,6 +1,7 @@
 package com.example.rentalcar.controller.contract.booking;
 
 import com.example.rentalcar.dao.ContractDAO;
+import com.example.rentalcar.dao.CustomerDAO;
 import com.example.rentalcar.dao.VehicleDAO;
 import com.example.rentalcar.dao.VoucherDAO;
 import com.example.rentalcar.models.*;
@@ -13,18 +14,6 @@ import javafx.scene.control.TextArea;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
-/**
- * Step4Controller – Bước 4: Xác nhận tóm tắt và lưu hợp đồng xuống DB.
- *
- * Chức năng:
- *  1. Hiển thị tóm tắt toàn bộ thông tin từ ContractDraft.
- *  2. confirmAndSave() → INSERT vào bảng contracts.
- *  3. Sau khi INSERT → UPDATE status xe thành RENTED.
- *  4. Nếu có voucher → tăng usage_count lên 1.
- *  5. Gọi callback onSaved để đóng cửa sổ.
- *
- * Đường dẫn: src/main/java/com/example/rentalcar/controller/contract/booking/Step4Controller.java
- */
 public class Step4Controller {
 
     // =========================================================
@@ -57,11 +46,13 @@ public class Step4Controller {
     //  STATE
     // =========================================================
     private ContractDraft draft;
-    private Runnable      onSaved; // Callback đóng cửa sổ
+    private Runnable      onSaved;
 
     private final ContractDAO contractDAO = new ContractDAO();
     private final VehicleDAO  vehicleDAO  = new VehicleDAO();
     private final VoucherDAO  voucherDAO  = new VoucherDAO();
+    // ⭐ Thêm CustomerDAO để tăng rental_count
+    private final CustomerDAO customerDAO = new CustomerDAO();
 
     private static final DateTimeFormatter FMT = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
 
@@ -83,7 +74,6 @@ public class Step4Controller {
     private void fillSummary() {
         if (draft == null) return;
 
-        // Thông tin khách hàng
         Customers c = draft.getSelectedCustomer();
         if (c != null) {
             setLabel(lblCustomerName,  c.getFull_name());
@@ -91,7 +81,6 @@ public class Step4Controller {
             setLabel(lblCustomerCccd,  c.getCccd());
         }
 
-        // Thông tin xe
         Vehicles v = draft.getSelectedVehicle();
         if (v != null) {
             setLabel(lblVehicleName,  v.getBrand() + " " + v.getModel());
@@ -101,13 +90,11 @@ public class Step4Controller {
                     + formatMoney(v.getPrice_hour()) + "/giờ");
         }
 
-        // Thời gian thuê
         if (draft.getStartDatetime() != null && draft.getEndDatetime() != null) {
             setLabel(lblRentalPeriod,
                     draft.getStartDatetime().format(FMT) + "  →  " + draft.getEndDatetime().format(FMT));
         }
 
-        // Giá tiền
         setLabel(lblBasePrice,   formatMoney(draft.getBasePrice()));
         setLabel(lblFinalAmount, formatMoney(draft.getTotalPrice()));
 
@@ -121,18 +108,25 @@ public class Step4Controller {
             setLabel(lblDiscount, "0 đ");
         }
 
-        // Đặt cọc
         if (draft.getDepositAmount() > 0) {
             String depositTypeStr = draft.getDepositType() != null
                     ? switch (draft.getDepositType()) {
                 case TIEN_MAT -> "Tiền mặt";
                 case GIAY_TO  -> "Giấy tờ";
                 default       -> "Khác";
-            }
-                    : "";
+            } : "";
             setLabel(lblDeposit, formatMoney(draft.getDepositAmount()) + " (" + depositTypeStr + ")");
+        } else if (draft.getDepositType() == DepositType.GIAY_TO) {
+            // ⭐ Cọc bằng giấy tờ, hiện ghi chú từ note
+            String noteStr = draft.getNote() != null ? draft.getNote() : "";
+            setLabel(lblDeposit, "Giấy tờ  " + noteStr);
         } else {
             setLabel(lblDeposit, "Không đặt cọc");
+        }
+
+        // Điền note nếu có
+        if (txtNote != null && draft.getNote() != null && !draft.getNote().isBlank()) {
+            txtNote.setText(draft.getNote());
         }
     }
 
@@ -142,9 +136,16 @@ public class Step4Controller {
     public void confirmAndSave() {
         if (draft == null) return;
 
-        // Lưu ghi chú vào draft nếu có
+        // Lưu ghi chú bổ sung từ txtNote (không ghi đè ghi chú giấy tờ cọc)
         if (txtNote != null && !txtNote.getText().isBlank()) {
-            draft.setNote(txtNote.getText().trim());
+            String existingNote = draft.getNote() != null ? draft.getNote() : "";
+            String userNote = txtNote.getText().trim();
+            // Nếu note đã có thông tin giấy tờ thì ghép thêm, không ghi đè
+            if (!existingNote.isEmpty() && !existingNote.equals(userNote)) {
+                draft.setNote(existingNote + "\n" + userNote);
+            } else {
+                draft.setNote(userNote);
+            }
         }
 
         try {
@@ -174,7 +175,12 @@ public class Step4Controller {
                 voucherDAO.update(v);
             }
 
-            // 6. Thông báo thành công
+            // ⭐ 6. Tăng rental_count của khách hàng
+            if (draft.getSelectedCustomer() != null) {
+                customerDAO.incrementRentalCount(draft.getSelectedCustomer().getId_customer());
+            }
+
+            // 7. Thông báo thành công
             Alert success = new Alert(Alert.AlertType.INFORMATION);
             success.setTitle("Tạo hợp đồng thành công");
             success.setHeaderText(null);
@@ -182,7 +188,7 @@ public class Step4Controller {
                     + "Xe " + vehicle.getCode_vehicle() + " đã chuyển sang trạng thái đang thuê.");
             success.showAndWait();
 
-            // 7. Gọi callback đóng cửa sổ
+            // 8. Gọi callback đóng cửa sổ
             if (onSaved != null) onSaved.run();
 
         } catch (Exception e) {
@@ -215,18 +221,12 @@ public class Step4Controller {
         contract.setDiscount_amount(draft.getDiscountAmount());
         contract.setTotal_price(draft.getTotalPrice());
 
-        // Trạng thái mặc định khi mới tạo
         contract.setStatus(StatusContracts.DANG_THUE);
         contract.setPayment_status(PaymentStatus.CHUA_THANH_TOAN);
 
-        // Nhân viên tạo HĐ = người đang đăng nhập
         contract.setId_user(AppSession.getCurrentUser());
-
-        // Xe & Khách hàng
         contract.setId_vehicle(draft.getSelectedVehicle());
         contract.setId_customer(draft.getSelectedCustomer());
-
-        // Voucher (có thể null)
         contract.setId_voucher(draft.getAppliedVoucher());
 
         return contract;

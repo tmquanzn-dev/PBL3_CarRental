@@ -4,10 +4,8 @@ import com.example.rentalcar.bll.VehicleBLL;
 import com.example.rentalcar.models.StatusVehicle;
 import com.example.rentalcar.models.Vehicles;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.Parent;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
@@ -16,11 +14,9 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
 
+import java.io.File;
 import java.text.NumberFormat;
 import java.util.List;
 import java.util.Locale;
@@ -28,65 +24,46 @@ import java.util.stream.Collectors;
 
 /**
  * Step2Controller – Bước 2: Chọn xe thuê.
- *
- * Chức năng:
- *  1. Load tất cả xe có status = AVAILABLE từ VehicleBLL.
- *  2. Hiển thị dưới dạng card trong FlowPane.
- *  3. Lọc theo hãng xe và loại xe.
- *  4. Khi click card → highlight xe được chọn.
- *  5. validateAndSave() → lưu Vehicles vào ContractDraft.
- *
- * Đường dẫn: src/main/java/com/example/rentalcar/controller/contract/booking/Step2Controller.java
+ * FIX: load ảnh xe đúng cách (classpath vs filesystem path)
  */
 public class Step2Controller {
 
-    // =========================================================
-    //  FXML
-    // =========================================================
-    @FXML private FlowPane  flowPaneVehicles;
+    @FXML private FlowPane         flowPaneVehicles;
     @FXML private ComboBox<String> cbBrand;
     @FXML private ComboBox<String> cbType;
-    @FXML private TextField txtSearch;
-    @FXML private Label     lblSelectedVehicle; // Hiển thị xe đang chọn
+    @FXML private TextField        txtSearch;
+    @FXML private Label            lblSelectedVehicle;
 
-    // =========================================================
-    //  STATE
-    // =========================================================
-    private ContractDraft draft;
-    private Vehicles      selectedVehicle;
+    private ContractDraft  draft;
+    private Vehicles       selectedVehicle;
     private List<Vehicles> allAvailable;
-    private VBox          selectedCard; // Card đang được highlight
+    private VBox           selectedCard;
 
-    private final VehicleBLL vehicleBLL = new VehicleBLL();
-    private final NumberFormat fmt = NumberFormat.getInstance(new Locale("vi", "VN"));
+    private final VehicleBLL  vehicleBLL = new VehicleBLL();
+    private final NumberFormat fmt        = NumberFormat.getInstance(new Locale("vi", "VN"));
 
     // =========================================================
     //  NHẬN DRAFT
     // =========================================================
     public void setDraft(ContractDraft draft) {
         this.draft = draft;
-
-        // Nếu đã chọn xe trước đó (quay lại từ bước 3)
         if (draft.getSelectedVehicle() != null) {
             selectedVehicle = draft.getSelectedVehicle();
         }
-
         loadAvailableVehicles();
         setupFilters();
     }
 
     // =========================================================
-    //  LOAD XE
+    //  LOAD XE AVAILABLE
     // =========================================================
     private void loadAvailableVehicles() {
         allAvailable = vehicleBLL.getAllVehicles().stream()
                 .filter(v -> v.getStatus() == StatusVehicle.AVAILABLE)
                 .collect(Collectors.toList());
-
         renderCards(allAvailable);
     }
 
-    /** Render danh sách xe thành card trong FlowPane */
     private void renderCards(List<Vehicles> list) {
         flowPaneVehicles.getChildren().clear();
 
@@ -101,8 +78,9 @@ public class Step2Controller {
             VBox card = buildVehicleCard(v);
             flowPaneVehicles.getChildren().add(card);
 
-            // Highlight lại xe đã chọn trước (khi quay lại bước 2)
-            if (selectedVehicle != null && selectedVehicle.getId_vehicle() == v.getId_vehicle()) {
+            // Giữ highlight nếu quay lại từ bước 3
+            if (selectedVehicle != null
+                    && selectedVehicle.getId_vehicle() == v.getId_vehicle()) {
                 applySelectedStyle(card);
                 selectedCard = card;
                 updateSelectedLabel(v);
@@ -110,11 +88,13 @@ public class Step2Controller {
         }
     }
 
-    /** Tạo 1 card xe */
+    // =========================================================
+    //  BUILD CARD
+    // =========================================================
     private VBox buildVehicleCard(Vehicles v) {
         VBox card = new VBox(8);
         card.setPrefWidth(220);
-        card.setPrefHeight(260);
+        card.setPrefHeight(290);
         card.setPadding(new Insets(14));
         card.setStyle(
                 "-fx-background-color: white;" +
@@ -125,26 +105,22 @@ public class Step2Controller {
                         "-fx-cursor: hand;"
         );
 
-        // Ảnh xe
+        // ── Ảnh xe (FIX Bug 1) ──────────────────────────────
         ImageView img = new ImageView();
         img.setFitWidth(192);
         img.setFitHeight(110);
         img.setPreserveRatio(true);
-        try {
-            String path = (v.getImage_url() != null && !v.getImage_url().isBlank())
-                    ? v.getImage_url()
-                    : "/image/dashboardform/card-moto.png";
-            img.setImage(new Image(getClass().getResourceAsStream(path)));
-        } catch (Exception ignored) {}
+        loadVehicleImage(img, v);
 
-        // Biển số + badge trạng thái
+        // Biển số + badge
         Label lblPlate = new Label(v.getCode_vehicle());
-        lblPlate.setStyle("-fx-font-weight: bold; -fx-font-size: 14px; -fx-text-fill: #475569;");
+        lblPlate.setStyle("-fx-font-weight: bold; -fx-font-size: 13px; -fx-text-fill: #475569;");
 
         Label lblBadge = new Label("Sẵn sàng");
         lblBadge.setStyle(
                 "-fx-background-color: #dcfce7; -fx-text-fill: #16a34a;" +
-                        "-fx-padding: 3 8; -fx-background-radius: 6; -fx-font-size: 11px; -fx-font-weight: bold;"
+                        "-fx-padding: 3 8; -fx-background-radius: 6;" +
+                        "-fx-font-size: 11px; -fx-font-weight: bold;"
         );
 
         HBox headerRow = new HBox(8, lblPlate, lblBadge);
@@ -160,27 +136,43 @@ public class Step2Controller {
         lblPrice.setStyle("-fx-font-size: 13px; -fx-text-fill: #10b981; -fx-font-weight: bold;");
 
         // Loại xe
-        Label lblType = new Label(v.getVehicle_type() != null ? v.getVehicle_type() : "");
-        lblType.setStyle(
-                "-fx-background-color: #f1f5f9; -fx-text-fill: #64748b;" +
-                        "-fx-padding: 2 8; -fx-background-radius: 6; -fx-font-size: 11px;"
-        );
+        HBox infoRow = new HBox(8);
+        infoRow.setAlignment(Pos.CENTER_LEFT);
 
-        card.getChildren().addAll(img, headerRow, lblName, lblPrice, lblType);
+        if (v.getVehicle_type() != null && !v.getVehicle_type().isBlank()) {
+            Label lblType = new Label(v.getVehicle_type());
+            lblType.setStyle(
+                    "-fx-background-color: #f1f5f9; -fx-text-fill: #64748b;" +
+                            "-fx-padding: 2 8; -fx-background-radius: 6; -fx-font-size: 11px;"
+            );
+            infoRow.getChildren().add(lblType);
+        }
 
-        // Sự kiện click chọn xe
+        if (v.getYear_of_manufacture() > 0) {
+            Label lblYear = new Label("Năm " + v.getYear_of_manufacture());
+            lblYear.setStyle(
+                    "-fx-background-color: #eff6ff; -fx-text-fill: #2563eb;" +
+                            "-fx-padding: 2 8; -fx-background-radius: 6; -fx-font-size: 11px;"
+            );
+            infoRow.getChildren().add(lblYear);
+        }
+
+        // KM hiện tại
+        Label lblKm = new Label("📍 " + v.getCurrent_km() + " km");
+        lblKm.setStyle("-fx-font-size: 11px; -fx-text-fill: #94a3b8;");
+
+        card.getChildren().addAll(img, headerRow, lblName, lblPrice, infoRow, lblKm);
+
+        // Click
         card.setOnMouseClicked(e -> {
-            // Bỏ highlight card cũ
             if (selectedCard != null) removeSelectedStyle(selectedCard);
-
-            // Highlight card mới
             applySelectedStyle(card);
-            selectedCard  = card;
+            selectedCard    = card;
             selectedVehicle = v;
             updateSelectedLabel(v);
         });
 
-        // Hover effect
+        // Hover
         card.setOnMouseEntered(e -> {
             if (card != selectedCard)
                 card.setStyle(card.getStyle().replace("#e2e8f0", "#146dff"));
@@ -193,25 +185,80 @@ public class Step2Controller {
         return card;
     }
 
+    /**
+     * FIX BUG 1: Load ảnh xe đúng cách.
+     * DB lưu 2 kiểu:
+     *   /image/dashboardform/card-moto.png  → classpath (trong jar/resources)
+     *   uploads/vehicles/xxx.jpg            → file hệ thống (user.home/VehicleRent/)
+     */
+    private void loadVehicleImage(ImageView img, Vehicles v) {
+        String imgUrl = (v.getImage_url() != null && !v.getImage_url().isBlank())
+                ? v.getImage_url().trim()
+                : "/image/dashboardform/card-moto.png";
+
+        try {
+            if (imgUrl.startsWith("/")) {
+                // Classpath resource
+                var url = getClass().getResource(imgUrl);
+                if (url != null) {
+                    img.setImage(new Image(url.toExternalForm(), true));
+                } else {
+                    loadDefaultImage(img);
+                }
+            } else {
+                // File hệ thống (ảnh upload)
+                File f = new File(imgUrl);
+                if (!f.isAbsolute()) {
+                    f = new File(System.getProperty("user.home")
+                            + File.separator + "VehicleRent"
+                            + File.separator + imgUrl);
+                }
+                if (f.exists()) {
+                    img.setImage(new Image(f.toURI().toString(), true));
+                } else {
+                    loadDefaultImage(img);
+                }
+            }
+        } catch (Exception e) {
+            loadDefaultImage(img);
+        }
+    }
+
+    private void loadDefaultImage(ImageView img) {
+        try {
+            var url = getClass().getResource("/image/dashboardform/card-moto.png");
+            if (url != null) img.setImage(new Image(url.toExternalForm()));
+        } catch (Exception ignored) {}
+    }
+
+    // =========================================================
+    //  STYLE HELPERS
+    // =========================================================
     private void applySelectedStyle(VBox card) {
         card.setStyle(card.getStyle()
-                .replace("-fx-border-color: #e2e8f0;", "-fx-border-color: #146dff; -fx-border-width: 2;")
-                .replace("-fx-background-color: white;", "-fx-background-color: #eff6ff;")
+                .replace("-fx-border-color: #e2e8f0;",
+                        "-fx-border-color: #146dff; -fx-border-width: 2;")
+                .replace("-fx-background-color: white;",
+                        "-fx-background-color: #eff6ff;")
         );
     }
 
     private void removeSelectedStyle(VBox card) {
         card.setStyle(card.getStyle()
-                .replace("-fx-border-color: #146dff; -fx-border-width: 2;", "-fx-border-color: #e2e8f0;")
-                .replace("-fx-background-color: #eff6ff;", "-fx-background-color: white;")
+                .replace("-fx-border-color: #146dff; -fx-border-width: 2;",
+                        "-fx-border-color: #e2e8f0;")
+                .replace("-fx-background-color: #eff6ff;",
+                        "-fx-background-color: white;")
         );
     }
 
     private void updateSelectedLabel(Vehicles v) {
         if (lblSelectedVehicle != null) {
-            lblSelectedVehicle.setText("✅  Đang chọn: " + v.getBrand() + " " + v.getModel()
+            lblSelectedVehicle.setText("✅  Đang chọn: "
+                    + v.getBrand() + " " + v.getModel()
                     + " – " + v.getCode_vehicle());
-            lblSelectedVehicle.setStyle("-fx-text-fill: #146dff; -fx-font-weight: bold; -fx-font-size: 13px;");
+            lblSelectedVehicle.setStyle(
+                    "-fx-text-fill: #146dff; -fx-font-weight: bold; -fx-font-size: 13px;");
         }
     }
 
@@ -223,19 +270,15 @@ public class Step2Controller {
 
         cbBrand.getItems().clear();
         cbBrand.getItems().add("Tất cả");
-        allAvailable.stream()
-                .map(Vehicles::getBrand)
-                .distinct().sorted()
-                .forEach(cbBrand.getItems()::add);
+        allAvailable.stream().map(Vehicles::getBrand)
+                .distinct().sorted().forEach(cbBrand.getItems()::add);
         cbBrand.setValue("Tất cả");
 
         cbType.getItems().clear();
         cbType.getItems().add("Tất cả");
-        allAvailable.stream()
-                .map(Vehicles::getVehicle_type)
+        allAvailable.stream().map(Vehicles::getVehicle_type)
                 .filter(t -> t != null && !t.isBlank())
-                .distinct().sorted()
-                .forEach(cbType.getItems()::add);
+                .distinct().sorted().forEach(cbType.getItems()::add);
         cbType.setValue("Tất cả");
     }
 
@@ -243,24 +286,26 @@ public class Step2Controller {
     void handleFilter() {
         if (allAvailable == null) return;
 
-        String brand   = cbBrand  != null ? cbBrand.getValue()  : "Tất cả";
-        String type    = cbType   != null ? cbType.getValue()   : "Tất cả";
+        String brand   = cbBrand   != null ? cbBrand.getValue()              : "Tất cả";
+        String type    = cbType    != null ? cbType.getValue()               : "Tất cả";
         String keyword = txtSearch != null ? txtSearch.getText().trim().toLowerCase() : "";
 
         List<Vehicles> filtered = allAvailable.stream()
                 .filter(v -> brand.equals("Tất cả") || v.getBrand().equalsIgnoreCase(brand))
-                .filter(v -> type.equals("Tất cả")  ||
-                        (v.getVehicle_type() != null && v.getVehicle_type().equalsIgnoreCase(type)))
+                .filter(v -> type.equals("Tất cả") ||
+                        (v.getVehicle_type() != null
+                                && v.getVehicle_type().equalsIgnoreCase(type)))
                 .filter(v -> keyword.isEmpty()
                         || v.getCode_vehicle().toLowerCase().contains(keyword)
-                        || (v.getModel() != null && v.getModel().toLowerCase().contains(keyword)))
+                        || (v.getModel() != null
+                        && v.getModel().toLowerCase().contains(keyword)))
                 .collect(Collectors.toList());
 
         renderCards(filtered);
     }
 
     // =========================================================
-    //  VALIDATE & LƯU VÀO DRAFT
+    //  VALIDATE & LƯU
     // =========================================================
     public boolean validateAndSave() {
         if (selectedVehicle == null) {
@@ -271,9 +316,7 @@ public class Step2Controller {
             alert.showAndWait();
             return false;
         }
-
         draft.setSelectedVehicle(selectedVehicle);
-        // Lưu KM hiện tại của xe vào draft
         draft.setKmStart(selectedVehicle.getCurrent_km());
         return true;
     }

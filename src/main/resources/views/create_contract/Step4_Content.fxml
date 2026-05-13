@@ -11,160 +11,167 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<!--
-    Step4_Content.fxml – Bước 4: Xác nhận & Lưu hợp đồng
-    Đường dẫn: src/main/resources/views/create_contract/Step4_Content.fxml
-    Controller: com.example.rentalcar.controller.contract.booking.Step4Controller
--->
 <VBox spacing="16.0"
-      stylesheets="@../../css/contractview/create_contract/style.css"
+      style="-fx-background-color: white;"
       xmlns="http://javafx.com/javafx/8.0.171"
       xmlns:fx="http://javafx.com/fxml/1"
       fx:controller="com.example.rentalcar.controller.contract.booking.Step4Controller">
 
-    <padding><Insets top="10.0" /></padding>
+    <padding><Insets top="4.0" bottom="4.0"/></padding>
+
     <children>
 
-        <!-- Tiêu đề -->
-        <Label text="Bước 4: Xác nhận &amp; Hoàn tất" textFill="#334155">
-            <font><Font name="System Bold" size="20.0" /></font>
-        </Label>
+        <!-- Step header -->
+        <VBox spacing="4.0"
+              style="-fx-background-color: linear-gradient(to right, #f0fdf4, #f8faff);
+                     -fx-background-radius: 12; -fx-padding: 18 20; -fx-border-color: #86efac;
+                     -fx-border-radius: 12; -fx-border-width: 1;">
+            <children>
+                <HBox alignment="CENTER_LEFT" spacing="10.0">
+                    <children>
+                        <Label text="✅" style="-fx-font-size: 22px;"/>
+                        <VBox spacing="2.0">
+                            <children>
+                                <Label text="Xác nhận &amp; Lưu hợp đồng"
+                                       style="-fx-font-size: 17px; -fx-font-weight: bold; -fx-text-fill: #14532d;"/>
+                                <Label text="Kiểm tra lại toàn bộ thông tin trước khi xác nhận"
+                                       style="-fx-font-size: 12px; -fx-text-fill: #6b7280;"/>
+                            </children>
+                        </VBox>
+                    </children>
+                </HBox>
+            </children>
+        </VBox>
 
-        <!-- 2 cột tóm tắt -->
-        <GridPane hgap="20.0">
+        <!-- 2 col summary -->
+        <GridPane hgap="14.0">
             <columnConstraints>
-                <ColumnConstraints hgrow="SOMETIMES" percentWidth="50.0" />
-                <ColumnConstraints hgrow="SOMETIMES" percentWidth="50.0" />
+                <ColumnConstraints hgrow="SOMETIMES" percentWidth="50.0"/>
+                <ColumnConstraints hgrow="SOMETIMES" percentWidth="50.0"/>
             </columnConstraints>
             <rowConstraints>
-                <RowConstraints vgrow="SOMETIMES" />
+                <RowConstraints vgrow="SOMETIMES"/>
             </rowConstraints>
 
             <children>
-
-                <!-- ── CỘT TRÁI: Khách hàng & Xe ── -->
-                <VBox spacing="12.0" GridPane.columnIndex="0"
+                <!-- Khách hàng & Xe -->
+                <VBox spacing="10.0" GridPane.columnIndex="0"
                       style="-fx-background-color: white; -fx-background-radius: 12;
-                             -fx-border-color: #e2e8f0; -fx-border-radius: 12; -fx-border-width: 1.5;
-                             -fx-padding: 18;">
+                             -fx-border-color: #e5e7eb; -fx-border-radius: 12;
+                             -fx-border-width: 1.5; -fx-padding: 16;">
                     <children>
-
                         <Label text="👤  KHÁCH HÀNG &amp; XE"
-                               style="-fx-font-weight: bold; -fx-text-fill: #146dff; -fx-font-size: 13px;
-                                      -fx-border-color: transparent transparent #e2e8f0 transparent;
-                                      -fx-border-width: 0 0 1 0; -fx-padding: 0 0 8 0;"
-                               maxWidth="Infinity" />
+                               style="-fx-font-weight: bold; -fx-text-fill: #2563eb; -fx-font-size: 12px;
+                                      -fx-padding: 0 0 6 0; -fx-border-color: transparent transparent #e5e7eb transparent;
+                                      -fx-border-width: 0 0 1 0;"
+                               maxWidth="Infinity"/>
 
-                        <GridPane vgap="10.0" hgap="10.0">
+                        <GridPane vgap="8.0" hgap="8.0">
                             <columnConstraints>
-                                <ColumnConstraints minWidth="110.0" prefWidth="120.0" />
-                                <ColumnConstraints hgrow="ALWAYS" />
+                                <ColumnConstraints minWidth="90.0" prefWidth="100.0"/>
+                                <ColumnConstraints hgrow="ALWAYS"/>
                             </columnConstraints>
                             <children>
-
-                                <Label text="Họ tên:" textFill="#64748b" GridPane.rowIndex="0" GridPane.columnIndex="0" />
+                                <Label text="Họ tên:" style="-fx-text-fill: #9ca3af; -fx-font-size: 12px;" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
                                 <Label fx:id="lblCustomerName" text="--"
-                                       style="-fx-font-weight: bold; -fx-text-fill: #0f172a;"
-                                       wrapText="true" GridPane.rowIndex="0" GridPane.columnIndex="1" />
+                                       style="-fx-font-weight: bold; -fx-text-fill: #111827; -fx-font-size: 13px;"
+                                       wrapText="true" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
 
-                                <Label text="Điện thoại:" textFill="#64748b" GridPane.rowIndex="1" GridPane.columnIndex="0" />
+                                <Label text="Điện thoại:" style="-fx-text-fill: #9ca3af; -fx-font-size: 12px;" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
                                 <Label fx:id="lblCustomerPhone" text="--"
-                                       style="-fx-text-fill: #0f172a;"
-                                       GridPane.rowIndex="1" GridPane.columnIndex="1" />
+                                       style="-fx-text-fill: #111827; -fx-font-size: 12px;"
+                                       GridPane.rowIndex="1" GridPane.columnIndex="1"/>
 
-                                <Label text="CCCD:" textFill="#64748b" GridPane.rowIndex="2" GridPane.columnIndex="0" />
+                                <Label text="CCCD:" style="-fx-text-fill: #9ca3af; -fx-font-size: 12px;" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
                                 <Label fx:id="lblCustomerCccd" text="--"
-                                       style="-fx-text-fill: #0f172a;"
-                                       GridPane.rowIndex="2" GridPane.columnIndex="1" />
+                                       style="-fx-text-fill: #111827; -fx-font-size: 12px;"
+                                       GridPane.rowIndex="2" GridPane.columnIndex="1"/>
 
-                                <Label text="Xe thuê:" textFill="#64748b" GridPane.rowIndex="3" GridPane.columnIndex="0" />
+                                <Label text="Xe thuê:" style="-fx-text-fill: #9ca3af; -fx-font-size: 12px;" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
                                 <Label fx:id="lblVehicleName" text="--"
-                                       style="-fx-font-weight: bold; -fx-text-fill: #0f172a;"
-                                       wrapText="true" GridPane.rowIndex="3" GridPane.columnIndex="1" />
+                                       style="-fx-font-weight: bold; -fx-text-fill: #111827; -fx-font-size: 13px;"
+                                       wrapText="true" GridPane.rowIndex="3" GridPane.columnIndex="1"/>
 
-                                <Label text="Biển số:" textFill="#64748b" GridPane.rowIndex="4" GridPane.columnIndex="0" />
+                                <Label text="Biển số:" style="-fx-text-fill: #9ca3af; -fx-font-size: 12px;" GridPane.rowIndex="4" GridPane.columnIndex="0"/>
                                 <Label fx:id="lblVehiclePlate" text="--"
-                                       style="-fx-font-weight: bold; -fx-text-fill: #146dff;"
-                                       GridPane.rowIndex="4" GridPane.columnIndex="1" />
+                                       style="-fx-font-weight: bold; -fx-text-fill: #2563eb;
+                                              -fx-background-color: #eff6ff; -fx-background-radius: 6;
+                                              -fx-padding: 2 8; -fx-font-size: 12px;"
+                                       GridPane.rowIndex="4" GridPane.columnIndex="1"/>
 
-                                <Label text="Loại xe:" textFill="#64748b" GridPane.rowIndex="5" GridPane.columnIndex="0" />
+                                <Label text="Loại xe:" style="-fx-text-fill: #9ca3af; -fx-font-size: 12px;" GridPane.rowIndex="5" GridPane.columnIndex="0"/>
                                 <Label fx:id="lblVehicleType" text="--"
-                                       style="-fx-text-fill: #0f172a;"
-                                       GridPane.rowIndex="5" GridPane.columnIndex="1" />
+                                       style="-fx-text-fill: #111827; -fx-font-size: 12px;"
+                                       GridPane.rowIndex="5" GridPane.columnIndex="1"/>
 
+                                <Label text="Đơn giá:" style="-fx-text-fill: #9ca3af; -fx-font-size: 12px;" GridPane.rowIndex="6" GridPane.columnIndex="0"/>
+                                <Label fx:id="lblPricePerDay" text="--"
+                                       style="-fx-text-fill: #111827; -fx-font-size: 12px;"
+                                       wrapText="true" GridPane.rowIndex="6" GridPane.columnIndex="1"/>
                             </children>
                         </GridPane>
-
                     </children>
                 </VBox>
 
-                <!-- ── CỘT PHẢI: Chi tiết thanh toán ── -->
-                <VBox spacing="12.0" GridPane.columnIndex="1"
+                <!-- Chi tiết thanh toán -->
+                <VBox spacing="10.0" GridPane.columnIndex="1"
                       style="-fx-background-color: white; -fx-background-radius: 12;
-                             -fx-border-color: #e2e8f0; -fx-border-radius: 12; -fx-border-width: 1.5;
-                             -fx-padding: 18;">
+                             -fx-border-color: #e5e7eb; -fx-border-radius: 12;
+                             -fx-border-width: 1.5; -fx-padding: 16;">
                     <children>
-
                         <Label text="💰  CHI TIẾT THANH TOÁN"
-                               style="-fx-font-weight: bold; -fx-text-fill: #146dff; -fx-font-size: 13px;
-                                      -fx-border-color: transparent transparent #e2e8f0 transparent;
-                                      -fx-border-width: 0 0 1 0; -fx-padding: 0 0 8 0;"
-                               maxWidth="Infinity" />
+                               style="-fx-font-weight: bold; -fx-text-fill: #2563eb; -fx-font-size: 12px;
+                                      -fx-padding: 0 0 6 0; -fx-border-color: transparent transparent #e5e7eb transparent;
+                                      -fx-border-width: 0 0 1 0;"
+                               maxWidth="Infinity"/>
 
-                        <GridPane vgap="10.0" hgap="10.0">
+                        <GridPane vgap="8.0" hgap="8.0">
                             <columnConstraints>
-                                <ColumnConstraints minWidth="120.0" prefWidth="130.0" />
-                                <ColumnConstraints hgrow="ALWAYS" />
+                                <ColumnConstraints minWidth="100.0" prefWidth="110.0"/>
+                                <ColumnConstraints hgrow="ALWAYS"/>
                             </columnConstraints>
                             <children>
-
-                                <Label text="Thời gian:" textFill="#64748b" GridPane.rowIndex="0" GridPane.columnIndex="0" />
+                                <Label text="Thời gian:" style="-fx-text-fill: #9ca3af; -fx-font-size: 12px;" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
                                 <Label fx:id="lblRentalPeriod" text="--"
-                                       style="-fx-text-fill: #0f172a;"
-                                       wrapText="true" GridPane.rowIndex="0" GridPane.columnIndex="1" />
+                                       style="-fx-text-fill: #111827; -fx-font-size: 12px;"
+                                       wrapText="true" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
 
-                                <Label text="Đơn giá:" textFill="#64748b" GridPane.rowIndex="1" GridPane.columnIndex="0" />
-                                <Label fx:id="lblPricePerDay" text="--"
-                                       style="-fx-text-fill: #0f172a;"
-                                       GridPane.rowIndex="1" GridPane.columnIndex="1" />
-
-                                <Label text="Tiền thuê:" textFill="#64748b" GridPane.rowIndex="2" GridPane.columnIndex="0" />
+                                <Label text="Tiền thuê:" style="-fx-text-fill: #9ca3af; -fx-font-size: 12px;" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
                                 <Label fx:id="lblBasePrice" text="--"
-                                       style="-fx-font-weight: bold; -fx-text-fill: #0f172a;"
-                                       GridPane.rowIndex="2" GridPane.columnIndex="1" />
+                                       style="-fx-font-weight: bold; -fx-text-fill: #111827; -fx-font-size: 13px;"
+                                       GridPane.rowIndex="1" GridPane.columnIndex="1"/>
 
-                                <Label text="Giảm giá:" textFill="#64748b" GridPane.rowIndex="3" GridPane.columnIndex="0" />
-                                <HBox spacing="6.0" GridPane.rowIndex="3" GridPane.columnIndex="1">
+                                <Label text="Giảm giá:" style="-fx-text-fill: #9ca3af; -fx-font-size: 12px;" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+                                <HBox spacing="5.0" GridPane.rowIndex="2" GridPane.columnIndex="1">
                                     <children>
                                         <Label fx:id="lblDiscount" text="0 đ"
-                                               style="-fx-text-fill: #10b981; -fx-font-weight: bold;" />
+                                               style="-fx-text-fill: #10b981; -fx-font-weight: bold; -fx-font-size: 13px;"/>
                                         <Label fx:id="lblVoucherCode" text=""
-                                               style="-fx-text-fill: #64748b; -fx-font-size: 12px;"
-                                               visible="false" />
+                                               style="-fx-text-fill: #9ca3af; -fx-font-size: 11px;"
+                                               visible="false"/>
                                     </children>
                                 </HBox>
 
-                                <Label text="Đặt cọc:" textFill="#64748b" GridPane.rowIndex="4" GridPane.columnIndex="0" />
+                                <Label text="Đặt cọc:" style="-fx-text-fill: #9ca3af; -fx-font-size: 12px;" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
                                 <Label fx:id="lblDeposit" text="--"
-                                       style="-fx-text-fill: #0f172a;"
-                                       GridPane.rowIndex="4" GridPane.columnIndex="1" />
-
+                                       style="-fx-text-fill: #111827; -fx-font-size: 12px;"
+                                       GridPane.rowIndex="3" GridPane.columnIndex="1"/>
                             </children>
                         </GridPane>
 
-                        <!-- Separator -->
-                        <Region prefHeight="1.0" style="-fx-background-color: #e2e8f0;" />
+                        <Region VBox.vgrow="ALWAYS"/>
 
-                        <!-- Tổng tiền lớn -->
-                        <HBox alignment="CENTER_LEFT" spacing="8.0">
+                        <!-- Total amount highlight -->
+                        <VBox alignment="CENTER"
+                              style="-fx-background-color: linear-gradient(to bottom right, #1d4ed8, #2563eb);
+                                     -fx-background-radius: 10; -fx-padding: 16;">
                             <children>
-                                <Label text="CẦN THANH TOÁN:"
-                                       style="-fx-font-weight: bold; -fx-text-fill: #334155; -fx-font-size: 13px;"
-                                       prefWidth="130.0" />
+                                <Label text="CẦN THANH TOÁN"
+                                       style="-fx-text-fill: rgba(255,255,255,0.8); -fx-font-size: 12px;"/>
                                 <Label fx:id="lblFinalAmount" text="--"
-                                       style="-fx-font-size: 22px; -fx-font-weight: bold; -fx-text-fill: #ef4444;" />
+                                       style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: white;"/>
                             </children>
-                        </HBox>
+                        </VBox>
 
                     </children>
                 </VBox>
@@ -173,29 +180,29 @@
         </GridPane>
 
         <!-- Ghi chú -->
-        <VBox spacing="6.0" VBox.vgrow="ALWAYS">
+        <VBox spacing="6.0">
             <children>
-                <Label text="Ghi chú hợp đồng (Tùy chọn):"
-                       style="-fx-font-weight: bold; -fx-text-fill: #475569;" />
+                <Label text="📝  Ghi chú hợp đồng (Tùy chọn)"
+                       style="-fx-font-weight: bold; -fx-text-fill: #374151; -fx-font-size: 13px;"/>
                 <TextArea fx:id="txtNote"
-                          prefHeight="70.0"
+                          prefHeight="65.0"
                           promptText="Nhập ghi chú, điều kiện bổ sung, tình trạng xe lúc giao..."
                           wrapText="true"
-                          style="-fx-background-color: white; -fx-border-color: #cbd5e1;
-                                 -fx-border-radius: 8; -fx-background-radius: 8; -fx-padding: 8 12;"
-                          VBox.vgrow="ALWAYS" />
+                          style="-fx-background-color: white; -fx-border-color: #d1d5db;
+                                 -fx-border-radius: 8; -fx-background-radius: 8;
+                                 -fx-padding: 8 12; -fx-font-size: 13px;"
+                          VBox.vgrow="ALWAYS"/>
             </children>
         </VBox>
 
-        <!-- Nhắc nhở trước khi xác nhận -->
+        <!-- Warning -->
         <HBox alignment="CENTER_LEFT" spacing="10.0"
               style="-fx-background-color: #fffbeb; -fx-background-radius: 8;
                      -fx-border-color: #fcd34d; -fx-border-radius: 8; -fx-padding: 10 14;">
             <children>
-                <Label text="⚠️" style="-fx-font-size: 16px;" />
-                <Label text="Vui lòng kiểm tra kỹ thông tin trước khi xác nhận. Sau khi lưu, xe sẽ chuyển sang trạng thái đang thuê."
-                       textFill="#92400e" wrapText="true" HBox.hgrow="ALWAYS"
-                       style="-fx-font-size: 13px;" />
+                <Label text="⚠️" style="-fx-font-size: 16px;"/>
+                <Label text="Sau khi xác nhận, xe sẽ chuyển sang trạng thái đang thuê và không thể tạo hợp đồng mới cho xe này."
+                       style="-fx-text-fill: #92400e; -fx-font-size: 12px;" wrapText="true" HBox.hgrow="ALWAYS"/>
             </children>
         </HBox>
 
