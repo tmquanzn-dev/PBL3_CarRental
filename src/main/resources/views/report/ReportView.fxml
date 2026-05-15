@@ -273,15 +273,12 @@
             </children>
         </HBox>
 
-        <!-- ═══════════════════════════════════════════
-             ROW 3: TOP 5 XE + TOP 5 NHÂN VIÊN (THÁNG NÀY)
-        ═══════════════════════════════════════════ -->
-        <HBox prefHeight="400.0" spacing="16.0">
+        <!-- ROW 3: TOP 5 XE + TOP 5 NHÂN VIÊN - dùng VBox, không dùng TableView -->
+        <HBox spacing="16.0">
             <children>
 
-                <!-- TOP 5 XE - THÁNG NÀY -->
-                <VBox prefHeight="400.0"
-                      style="-fx-background-color:white;-fx-background-radius:14;
+                <!-- TOP 5 XE -->
+                <VBox style="-fx-background-color:white;-fx-background-radius:14;
                              -fx-effect:dropshadow(three-pass-box,rgba(0,0,0,0.05),12,0,0,4);"
                       HBox.hgrow="ALWAYS">
                     <padding><Insets bottom="16.0" left="18.0" right="18.0" top="16.0"/></padding>
@@ -298,34 +295,35 @@
                                        text="Tháng này"/>
                             </children>
                         </HBox>
-                        <Label style="-fx-font-size:11px;-fx-text-fill:#94a3b8;-fx-padding:0 0 6 0;"
+                        <Label style="-fx-font-size:11px;-fx-text-fill:#94a3b8;-fx-padding:2 0 8 0;"
                                text="Xếp hạng theo số lượt thuê"/>
-                        <Separator/>
-                        <TableView fx:id="tableTopVehicles"
-                                   prefHeight="310.0" fixedCellSize="52.0"
-                                   styleClass="rank-table"
-                                   VBox.vgrow="ALWAYS">
-                            <columnResizePolicy>
-                                <TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/>
-                            </columnResizePolicy>
-                            <columns>
-                                <TableColumn fx:id="colVRank"    maxWidth="52.0" minWidth="52.0" text="#"/>
-                                <TableColumn fx:id="colVName"    prefWidth="160.0" text="Xe"/>
-                                <TableColumn fx:id="colVPlate"   prefWidth="105.0" text="Biển số"/>
-                                <TableColumn fx:id="colVCount"   prefWidth="80.0" text="Lượt"/>
-                                <TableColumn fx:id="colVRevenue" prefWidth="130.0" text="Doanh thu"/>
-                            </columns>
-                            <placeholder>
-                                <Label style="-fx-text-fill:#94a3b8;-fx-font-size:13px;"
-                                       text="Chưa có dữ liệu"/>
-                            </placeholder>
-                        </TableView>
+                        <!-- Header -->
+                        <HBox style="-fx-background-color:#f8fafc;-fx-background-radius:8;
+                                     -fx-padding:8 10;-fx-border-color:#e2e8f0;
+                                     -fx-border-radius:8;-fx-border-width:1;">
+                            <children>
+                                <Label prefWidth="40.0" text="#"
+                                       style="-fx-font-size:11px;-fx-font-weight:bold;-fx-text-fill:#64748b;"/>
+                                <Label text="Xe" HBox.hgrow="ALWAYS"
+                                       style="-fx-font-size:11px;-fx-font-weight:bold;-fx-text-fill:#64748b;"/>
+                                <Label prefWidth="95.0" text="Biển số"
+                                       style="-fx-font-size:11px;-fx-font-weight:bold;-fx-text-fill:#64748b;"/>
+                                <Label prefWidth="55.0" text="Lượt"
+                                       style="-fx-font-size:11px;-fx-font-weight:bold;-fx-text-fill:#64748b;"/>
+                                <Label prefWidth="115.0" text="Doanh thu"
+                                       style="-fx-font-size:11px;-fx-font-weight:bold;-fx-text-fill:#64748b;-fx-alignment:CENTER_RIGHT;"/>
+                            </children>
+                        </HBox>
+                        <!-- Rows được render bằng code -->
+                        <VBox fx:id="vboxTopVehicles" spacing="0.0"/>
+                        <Label fx:id="lblNoVehicles" text="Chưa có dữ liệu"
+                               visible="false" managed="false"
+                               style="-fx-text-fill:#94a3b8;-fx-font-size:13px;-fx-padding:16 0;"/>
                     </children>
                 </VBox>
 
-                <!-- TOP 5 NHÂN VIÊN - THÁNG NÀY -->
-                <VBox prefHeight="400.0"
-                      style="-fx-background-color:white;-fx-background-radius:14;
+                <!-- TOP 5 NHÂN VIÊN -->
+                <VBox style="-fx-background-color:white;-fx-background-radius:14;
                              -fx-effect:dropshadow(three-pass-box,rgba(0,0,0,0.05),12,0,0,4);"
                       HBox.hgrow="ALWAYS">
                     <padding><Insets bottom="16.0" left="18.0" right="18.0" top="16.0"/></padding>
@@ -342,27 +340,28 @@
                                        text="Tháng này"/>
                             </children>
                         </HBox>
-                        <Label style="-fx-font-size:11px;-fx-text-fill:#94a3b8;-fx-padding:0 0 6 0;"
+                        <Label style="-fx-font-size:11px;-fx-text-fill:#94a3b8;-fx-padding:2 0 8 0;"
                                text="Xếp hạng theo doanh thu tạo ra"/>
-                        <Separator/>
-                        <TableView fx:id="tableTopStaff"
-                                   prefHeight="310.0" fixedCellSize="52.0"
-                                   styleClass="rank-table"
-                                   VBox.vgrow="ALWAYS">
-                            <columnResizePolicy>
-                                <TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/>
-                            </columnResizePolicy>
-                            <columns>
-                                <TableColumn fx:id="colSRank"      maxWidth="50.0" minWidth="50.0" text="#"/>
-                                <TableColumn fx:id="colSName"      prefWidth="150.0" text="Nhân viên"/>
-                                <TableColumn fx:id="colSContracts" prefWidth="70.0" text="Số HĐ"/>
-                                <TableColumn fx:id="colSRevenue"   prefWidth="130.0" text="Doanh thu"/>
-                            </columns>
-                            <placeholder>
-                                <Label style="-fx-text-fill:#94a3b8;-fx-font-size:13px;"
-                                       text="Chưa có dữ liệu"/>
-                            </placeholder>
-                        </TableView>
+                        <!-- Header -->
+                        <HBox style="-fx-background-color:#f8fafc;-fx-background-radius:8;
+                                     -fx-padding:8 10;-fx-border-color:#e2e8f0;
+                                     -fx-border-radius:8;-fx-border-width:1;">
+                            <children>
+                                <Label prefWidth="40.0" text="#"
+                                       style="-fx-font-size:11px;-fx-font-weight:bold;-fx-text-fill:#64748b;"/>
+                                <Label text="Nhân viên" HBox.hgrow="ALWAYS"
+                                       style="-fx-font-size:11px;-fx-font-weight:bold;-fx-text-fill:#64748b;"/>
+                                <Label prefWidth="65.0" text="Số HĐ"
+                                       style="-fx-font-size:11px;-fx-font-weight:bold;-fx-text-fill:#64748b;"/>
+                                <Label prefWidth="115.0" text="Doanh thu"
+                                       style="-fx-font-size:11px;-fx-font-weight:bold;-fx-text-fill:#64748b;-fx-alignment:CENTER_RIGHT;"/>
+                            </children>
+                        </HBox>
+                        <!-- Rows -->
+                        <VBox fx:id="vboxTopStaff" spacing="0.0"/>
+                        <Label fx:id="lblNoStaff" text="Chưa có dữ liệu"
+                               visible="false" managed="false"
+                               style="-fx-text-fill:#94a3b8;-fx-font-size:13px;-fx-padding:16 0;"/>
                     </children>
                 </VBox>
 

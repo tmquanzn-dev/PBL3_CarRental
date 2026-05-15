@@ -6,15 +6,15 @@ import com.example.rentalcar.models.StaffReportRow;
 import com.example.rentalcar.models.VehicleReportRow;
 import com.example.rentalcar.utils.ReportPrinter;
 import javafx.application.Platform;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
 import javafx.scene.chart.*;
 import javafx.scene.control.*;
-import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.layout.VBox;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
@@ -50,21 +50,14 @@ public class ReportController implements Initializable {
     @FXML private PieChart pieChartStatus;
 
     // ── Top 5 xe ──────────────────────────────────────────
-    @FXML private TableView<VehicleReportRow>            tableTopVehicles;
-    @FXML private TableColumn<VehicleReportRow, Integer> colVRank;
-    @FXML private TableColumn<VehicleReportRow, String>  colVName;
-    @FXML private TableColumn<VehicleReportRow, String>  colVPlate;
-    @FXML private TableColumn<VehicleReportRow, String>  colVCount;
-    @FXML private TableColumn<VehicleReportRow, Double>  colVRevenue;
+    @FXML private VBox  vboxTopVehicles;
     @FXML private Label lblTopVehiclesPeriod;
+    @FXML private Label lblNoVehicles;
 
     // ── Top 5 nhân viên ───────────────────────────────────
-    @FXML private TableView<StaffReportRow>              tableTopStaff;
-    @FXML private TableColumn<StaffReportRow, Integer>   colSRank;
-    @FXML private TableColumn<StaffReportRow, String>    colSName;
-    @FXML private TableColumn<StaffReportRow, String>    colSContracts;
-    @FXML private TableColumn<StaffReportRow, Double>    colSRevenue;
+    @FXML private VBox  vboxTopStaff;
     @FXML private Label lblTopStaffPeriod;
+    @FXML private Label lblNoStaff;
 
     // ── Trạng thái xe ─────────────────────────────────────
     @FXML private Label lblVehAvailable, lblVehRented, lblVehMaintenance, lblVehTotal;
@@ -96,7 +89,7 @@ public class ReportController implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
         setupMonthCombo();
         setupBarChart();
-        setupTableColumns();
+        // setupTableColumns() removed - using VBox rows instead
         loadAllData();
     }
 
@@ -274,7 +267,7 @@ public class ReportController implements Initializable {
     }
 
     // ─────────────────────────────────────────────────────
-    //  TOP 5 (theo tháng hoặc năm)
+    //  TOP 5 (theo tháng hoặc năm) — dùng VBox rows, không TableView
     // ─────────────────────────────────────────────────────
     private void refreshTopTables() {
         try {
@@ -283,29 +276,140 @@ public class ReportController implements Initializable {
                     ? MONTH_NAMES[selectedMonth - 1] + "/" + selectedYear
                     : "Năm " + selectedYear;
 
-            // Cập nhật badge
             setLabel(lblTopVehiclesPeriod, periodLabel);
             setLabel(lblTopStaffPeriod,    periodLabel);
 
-            // Load xe
+            // Top xe
             List<VehicleReportRow> vList = isMonthMode
                     ? reportBLL.getTopVehiclesByMonth(selectedYear, selectedMonth)
                     : reportBLL.getTopVehiclesByYear(selectedYear);
-            tableTopVehicles.setItems(FXCollections.observableArrayList(vList));
-            tableTopVehicles.setFixedCellSize(52.0);
-            tableTopVehicles.refresh();
+            renderVehicleRows(vList);
 
-            // Load nhân viên
+            // Top nhân viên
             List<StaffReportRow> sList = isMonthMode
                     ? reportBLL.getTopStaffByMonth(selectedYear, selectedMonth)
                     : reportBLL.getTopStaffByYear(selectedYear);
-            tableTopStaff.setItems(FXCollections.observableArrayList(sList));
-            tableTopStaff.setFixedCellSize(52.0);
-            tableTopStaff.refresh();
+            renderStaffRows(sList);
 
         } catch (Exception ex) {
             System.err.println("[Report] TopTables: " + ex.getMessage());
         }
+    }
+
+    private void renderVehicleRows(List<VehicleReportRow> list) {
+        if (vboxTopVehicles == null) return;
+        vboxTopVehicles.getChildren().clear();
+        if (list == null || list.isEmpty()) {
+            if (lblNoVehicles != null) { lblNoVehicles.setVisible(true); lblNoVehicles.setManaged(true); }
+            return;
+        }
+        if (lblNoVehicles != null) { lblNoVehicles.setVisible(false); lblNoVehicles.setManaged(false); }
+        for (VehicleReportRow row : list) {
+            HBox hbox = new HBox();
+            hbox.setAlignment(javafx.geometry.Pos.CENTER_LEFT);
+            hbox.setMinHeight(48); hbox.setPrefHeight(48);
+            hbox.setStyle(row.getRank() % 2 == 0
+                    ? "-fx-background-color:#f8fafc;-fx-padding:0 10;-fx-border-color:transparent transparent #f1f5f9 transparent;-fx-border-width:1;"
+                    : "-fx-background-color:white;-fx-padding:0 10;-fx-border-color:transparent transparent #f1f5f9 transparent;-fx-border-width:1;");
+
+            // Rank badge
+            Label rank = new Label(String.valueOf(row.getRank()));
+            rank.setPrefWidth(40); rank.setMinHeight(48);
+            rank.setAlignment(javafx.geometry.Pos.CENTER);
+            rank.setStyle(rankBadgeStyle(row.getRank()));
+
+            // Tên xe
+            Label name = new Label(row.getVehicleName());
+            name.setStyle("-fx-font-size:13px;-fx-font-weight:bold;-fx-text-fill:#1e293b;");
+            HBox.setHgrow(name, javafx.scene.layout.Priority.ALWAYS);
+            name.setMaxWidth(Double.MAX_VALUE);
+
+            // Biển số
+            Label plate = new Label(row.getPlateNumber());
+            plate.setPrefWidth(95);
+            plate.setStyle("-fx-background-color:#f1f5f9;-fx-text-fill:#475569;" +
+                    "-fx-padding:3 7;-fx-background-radius:6;-fx-font-size:11px;-fx-font-weight:bold;");
+
+            // Lượt
+            Label count = new Label(row.getRentalCount() + " lượt");
+            count.setPrefWidth(55);
+            count.setAlignment(javafx.geometry.Pos.CENTER);
+            count.setStyle("-fx-font-size:12px;-fx-font-weight:bold;-fx-text-fill:#2563eb;");
+
+            // Doanh thu
+            Label rev = new Label(ReportBLL.formatMoneyFull(row.getRevenue()));
+            rev.setPrefWidth(115);
+            rev.setAlignment(javafx.geometry.Pos.CENTER_RIGHT);
+            rev.setStyle("-fx-font-size:12px;-fx-font-weight:bold;-fx-text-fill:#dc2626;");
+
+            hbox.getChildren().addAll(rank, name, plate, count, rev);
+            vboxTopVehicles.getChildren().add(hbox);
+        }
+    }
+
+    private void renderStaffRows(List<StaffReportRow> list) {
+        if (vboxTopStaff == null) return;
+        vboxTopStaff.getChildren().clear();
+        if (list == null || list.isEmpty()) {
+            if (lblNoStaff != null) { lblNoStaff.setVisible(true); lblNoStaff.setManaged(true); }
+            return;
+        }
+        if (lblNoStaff != null) { lblNoStaff.setVisible(false); lblNoStaff.setManaged(false); }
+        for (StaffReportRow row : list) {
+            HBox hbox = new HBox();
+            hbox.setAlignment(javafx.geometry.Pos.CENTER_LEFT);
+            hbox.setMinHeight(48); hbox.setPrefHeight(48);
+            hbox.setStyle(row.getRank() % 2 == 0
+                    ? "-fx-background-color:#f8fafc;-fx-padding:0 10;-fx-border-color:transparent transparent #f1f5f9 transparent;-fx-border-width:1;"
+                    : "-fx-background-color:white;-fx-padding:0 10;-fx-border-color:transparent transparent #f1f5f9 transparent;-fx-border-width:1;");
+
+            // Rank badge
+            Label rank = new Label(String.valueOf(row.getRank()));
+            rank.setPrefWidth(40); rank.setMinHeight(48);
+            rank.setAlignment(javafx.geometry.Pos.CENTER);
+            rank.setStyle(rankBadgeStyle(row.getRank()));
+
+            // Avatar + Tên
+            String name = row.getFullName() != null ? row.getFullName() : "?";
+            String initial = name.isEmpty() ? "?" : name.substring(0, 1).toUpperCase();
+            Label avatar = new Label(initial);
+            avatar.setPrefSize(28, 28); avatar.setMinSize(28, 28);
+            avatar.setAlignment(javafx.geometry.Pos.CENTER);
+            avatar.setStyle("-fx-background-color:#4f46e5;-fx-text-fill:white;" +
+                    "-fx-background-radius:50%;-fx-font-weight:bold;-fx-font-size:12px;");
+
+            Label nameLabel = new Label(name);
+            nameLabel.setStyle("-fx-font-size:13px;-fx-font-weight:bold;-fx-text-fill:#1e293b;-fx-padding:0 0 0 8;");
+            HBox nameBox = new HBox(avatar, nameLabel);
+            nameBox.setAlignment(javafx.geometry.Pos.CENTER_LEFT);
+            HBox.setHgrow(nameBox, javafx.scene.layout.Priority.ALWAYS);
+            nameBox.setMaxWidth(Double.MAX_VALUE);
+
+            // Số HĐ
+            Label contracts = new Label(row.getContractCount() + " HĐ");
+            contracts.setPrefWidth(65);
+            contracts.setAlignment(javafx.geometry.Pos.CENTER);
+            contracts.setStyle("-fx-font-size:12px;-fx-font-weight:bold;-fx-text-fill:#2563eb;");
+
+            // Doanh thu
+            Label rev = new Label(ReportBLL.formatMoneyFull(row.getRevenue()));
+            rev.setPrefWidth(115);
+            rev.setAlignment(javafx.geometry.Pos.CENTER_RIGHT);
+            rev.setStyle("-fx-font-size:12px;-fx-font-weight:bold;-fx-text-fill:#dc2626;");
+
+            hbox.getChildren().addAll(rank, nameBox, contracts, rev);
+            vboxTopStaff.getChildren().add(hbox);
+        }
+    }
+
+    private String rankBadgeStyle(int rank) {
+        String base = "-fx-font-weight:bold;-fx-font-size:13px;-fx-alignment:CENTER;";
+        return base + switch (rank) {
+            case 1 -> "-fx-text-fill:#b45309;";
+            case 2 -> "-fx-text-fill:#475569;";
+            case 3 -> "-fx-text-fill:#be185d;";
+            default -> "-fx-text-fill:#94a3b8;";
+        };
     }
 
     // ─────────────────────────────────────────────────────
@@ -401,123 +505,6 @@ public class ReportController implements Initializable {
         }
     }
 
-    // ─────────────────────────────────────────────────────
-    //  SETUP TABLE COLUMNS
-    // ─────────────────────────────────────────────────────
-    private void setupTableColumns() {
-
-        // ── TOP XE ──────────────────────────────────────
-        colVRank.setCellFactory(col -> new TableCell<>() {
-            @Override protected void updateItem(Integer item, boolean empty) {
-                super.updateItem(item, empty);
-                setGraphic(null); setText(null);
-                if (!empty && getTableRow() != null && getTableRow().getItem() != null) {
-                    VehicleReportRow row = (VehicleReportRow) getTableRow().getItem();
-                    Label b = new Label(String.valueOf(row.getRank()));
-                    b.setPrefSize(28, 28);
-                    b.setAlignment(Pos.CENTER);
-                    b.setStyle("-fx-background-radius:50%;-fx-font-weight:bold;" + rankStyle(row.getRank()));
-                    setGraphic(b);
-                }
-            }
-        });
-
-        colVName.setCellValueFactory(cd -> new SimpleStringProperty(cd.getValue().getVehicleName()));
-        colVName.setCellFactory(col -> new TableCell<>() {
-            @Override protected void updateItem(String name, boolean empty) {
-                super.updateItem(name, empty);
-                if (empty || name == null) { setText(null); setGraphic(null); return; }
-                setText(name);
-                setStyle("-fx-font-weight:bold;-fx-text-fill:#1e293b;-fx-font-size:13px;");
-            }
-        });
-
-        colVPlate.setCellValueFactory(cd -> new SimpleStringProperty(cd.getValue().getPlateNumber()));
-        colVPlate.setCellFactory(col -> new TableCell<>() {
-            @Override protected void updateItem(String plate, boolean empty) {
-                super.updateItem(plate, empty);
-                if (empty || plate == null) { setGraphic(null); setText(null); return; }
-                Label lbl = new Label(plate);
-                lbl.setStyle("-fx-background-color:#f1f5f9;-fx-text-fill:#475569;" +
-                        "-fx-padding:2 8;-fx-background-radius:6;-fx-font-size:12px;-fx-font-weight:bold;");
-                setGraphic(lbl); setText(null);
-            }
-        });
-
-        colVCount.setCellValueFactory(cd -> new SimpleStringProperty(cd.getValue().getRentalCount() + " lượt"));
-        colVCount.setCellFactory(col -> new TableCell<>() {
-            @Override protected void updateItem(String count, boolean empty) {
-                super.updateItem(count, empty);
-                if (empty || count == null) { setText(null); return; }
-                setText(count);
-                setStyle("-fx-text-fill:#2563eb;-fx-font-weight:bold;-fx-font-size:13px;");
-            }
-        });
-
-        colVRevenue.setCellValueFactory(new PropertyValueFactory<>("revenue"));
-        colVRevenue.setCellFactory(col -> new TableCell<>() {
-            @Override protected void updateItem(Double item, boolean empty) {
-                super.updateItem(item, empty);
-                if (empty || item == null) { setText(null); return; }
-                setText(ReportBLL.formatMoneyFull(item));
-                setStyle("-fx-font-weight:bold;-fx-text-fill:#dc2626;-fx-font-size:12px;");
-            }
-        });
-
-        // ── TOP NHÂN VIÊN ────────────────────────────────
-        colSRank.setCellFactory(col -> new TableCell<>() {
-            @Override protected void updateItem(Integer item, boolean empty) {
-                super.updateItem(item, empty);
-                setGraphic(null); setText(null);
-                if (!empty && getTableRow() != null && getTableRow().getItem() != null) {
-                    StaffReportRow row = (StaffReportRow) getTableRow().getItem();
-                    Label b = new Label(String.valueOf(row.getRank()));
-                    b.setPrefSize(28, 28);
-                    b.setAlignment(Pos.CENTER);
-                    b.setStyle("-fx-background-radius:50%;-fx-font-weight:bold;" + rankStyle(row.getRank()));
-                    setGraphic(b);
-                }
-            }
-        });
-
-        colSName.setCellValueFactory(cd -> new SimpleStringProperty(cd.getValue().getFullName()));
-        colSName.setCellFactory(col -> new TableCell<>() {
-            @Override protected void updateItem(String item, boolean empty) {
-                super.updateItem(item, empty);
-                if (empty || item == null) { setGraphic(null); setText(null); return; }
-                Circle av = new Circle(13, Color.web("#4f46e5"));
-                Text t = new Text(item.isEmpty() ? "?" : item.substring(0, 1).toUpperCase());
-                t.setFill(Color.WHITE);
-                t.setStyle("-fx-font-size:11px;-fx-font-weight:bold;");
-                StackPane sp = new StackPane(av, t);
-                Label l = new Label(item);
-                l.setStyle("-fx-font-weight:bold;-fx-text-fill:#1e293b;-fx-font-size:13px;");
-                HBox box = new HBox(8, sp, l);
-                box.setAlignment(Pos.CENTER_LEFT);
-                setGraphic(box); setText(null);
-            }
-        });
-
-        colSContracts.setCellValueFactory(cd -> new SimpleStringProperty(cd.getValue().getContractCount() + " HĐ"));
-        colSContracts.setCellFactory(col -> new TableCell<>() {
-            @Override protected void updateItem(String count, boolean empty) {
-                super.updateItem(count, empty);
-                if (empty || count == null) { setText(null); return; }
-                setText(count);
-                setStyle("-fx-text-fill:#2563eb;-fx-font-weight:bold;-fx-font-size:13px;");
-            }
-        });
-
-        colSRevenue.setCellValueFactory(new PropertyValueFactory<>("revenue"));
-        colSRevenue.setCellFactory(col -> new TableCell<>() {
-            @Override protected void updateItem(Double item, boolean empty) {
-                super.updateItem(item, empty);
-                if (empty || item == null) { setText(null); return; }
-                setText(ReportBLL.formatMoneyFull(item));
-                setStyle("-fx-font-weight:bold;-fx-text-fill:#dc2626;-fx-font-size:12px;");
-            }
-        });
-    }
 
     // ─────────────────────────────────────────────────────
     //  HELPERS

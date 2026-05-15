@@ -1,5 +1,6 @@
 package com.example.rentalcar.controller.contract.booking;
 
+import com.example.rentalcar.bll.InspectionBLL;
 import com.example.rentalcar.dao.ContractDAO;
 import com.example.rentalcar.dao.CustomerDAO;
 import com.example.rentalcar.dao.VehicleDAO;
@@ -17,7 +18,7 @@ import java.util.List;
 public class Step4Controller {
 
     // =========================================================
-    //  FXML – Thông tin khách hàng & xe
+    //  FXML
     // =========================================================
     @FXML private Label lblCustomerName;
     @FXML private Label lblCustomerPhone;
@@ -25,10 +26,6 @@ public class Step4Controller {
     @FXML private Label lblVehicleName;
     @FXML private Label lblVehiclePlate;
     @FXML private Label lblVehicleType;
-
-    // =========================================================
-    //  FXML – Chi tiết thanh toán
-    // =========================================================
     @FXML private Label lblRentalPeriod;
     @FXML private Label lblPricePerDay;
     @FXML private Label lblBasePrice;
@@ -36,10 +33,6 @@ public class Step4Controller {
     @FXML private Label lblVoucherCode;
     @FXML private Label lblDeposit;
     @FXML private Label lblFinalAmount;
-
-    // =========================================================
-    //  FXML – Ghi chú
-    // =========================================================
     @FXML private TextArea txtNote;
 
     // =========================================================
@@ -48,11 +41,12 @@ public class Step4Controller {
     private ContractDraft draft;
     private Runnable      onSaved;
 
-    private final ContractDAO contractDAO = new ContractDAO();
-    private final VehicleDAO  vehicleDAO  = new VehicleDAO();
-    private final VoucherDAO  voucherDAO  = new VoucherDAO();
-    // ⭐ Thêm CustomerDAO để tăng rental_count
-    private final CustomerDAO customerDAO = new CustomerDAO();
+    private final ContractDAO    contractDAO    = new ContractDAO();
+    private final VehicleDAO     vehicleDAO     = new VehicleDAO();
+    private final VoucherDAO     voucherDAO     = new VoucherDAO();
+    private final CustomerDAO    customerDAO    = new CustomerDAO();
+    // FIX: thêm InspectionBLL để tạo biên bản GIAO_XE
+    private final InspectionBLL  inspectionBLL  = new InspectionBLL();
 
     private static final DateTimeFormatter FMT = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
 
@@ -117,14 +111,12 @@ public class Step4Controller {
             } : "";
             setLabel(lblDeposit, formatMoney(draft.getDepositAmount()) + " (" + depositTypeStr + ")");
         } else if (draft.getDepositType() == DepositType.GIAY_TO) {
-            // ⭐ Cọc bằng giấy tờ, hiện ghi chú từ note
             String noteStr = draft.getNote() != null ? draft.getNote() : "";
             setLabel(lblDeposit, "Giấy tờ  " + noteStr);
         } else {
             setLabel(lblDeposit, "Không đặt cọc");
         }
 
-        // Điền note nếu có
         if (txtNote != null && draft.getNote() != null && !draft.getNote().isBlank()) {
             txtNote.setText(draft.getNote());
         }
@@ -136,11 +128,9 @@ public class Step4Controller {
     public void confirmAndSave() {
         if (draft == null) return;
 
-        // Lưu ghi chú bổ sung từ txtNote (không ghi đè ghi chú giấy tờ cọc)
         if (txtNote != null && !txtNote.getText().isBlank()) {
             String existingNote = draft.getNote() != null ? draft.getNote() : "";
             String userNote = txtNote.getText().trim();
-            // Nếu note đã có thông tin giấy tờ thì ghép thêm, không ghi đè
             if (!existingNote.isEmpty() && !existingNote.equals(userNote)) {
                 draft.setNote(existingNote + "\n" + userNote);
             } else {
@@ -149,52 +139,90 @@ public class Step4Controller {
         }
 
         try {
-            // 1. Sinh mã hợp đồng
-            List<Contracts> all = contractDAO.findAll();
-            String code = ContractDraft.generateContractCode(all.size());
+            // ── 1. Sinh mã HĐ KHÔNG TRÙNG ────────────────────────
+            // FIX: dùng timestamp thay vì đếm số lượng HĐ
+            // Format: HD-YYYYMMDD-XXXX (XXXX = 4 số cuối timestamp ms)
+            String code = generateUniqueContractCode();
 
-            // 2. Tạo object Contracts
+            // ── 2. Tạo object Contracts ───────────────────────────
             Contracts contract = buildContractFromDraft(code);
 
-            // 3. INSERT xuống DB
+            // ── 3. INSERT xuống DB ────────────────────────────────
             boolean saved = contractDAO.insert(contract);
             if (!saved) {
                 showError("Không thể lưu hợp đồng. Vui lòng thử lại!");
                 return;
             }
 
-            // 4. Cập nhật trạng thái xe → RENTED
+            // ── 4. Cập nhật trạng thái xe → RENTED ───────────────
             Vehicles vehicle = draft.getSelectedVehicle();
             vehicle.setStatus(StatusVehicle.RENTED);
             vehicleDAO.update(vehicle);
 
-            // 5. Tăng usage_count của voucher nếu có dùng
+            // ── 5. Tăng usage_count voucher nếu có ───────────────
             if (draft.getAppliedVoucher() != null) {
                 Vouchers v = draft.getAppliedVoucher();
                 v.setUsage_count(v.getUsage_count() + 1);
                 voucherDAO.update(v);
             }
 
-            // ⭐ 6. Tăng rental_count của khách hàng
+            // ── 6. Tăng rental_count khách hàng ──────────────────
             if (draft.getSelectedCustomer() != null) {
                 customerDAO.incrementRentalCount(draft.getSelectedCustomer().getId_customer());
             }
 
-            // 7. Thông báo thành công
+            // ── 7. FIX: Tạo biên bản GIAO_XE ─────────────────────
+            // Cần lấy lại contract vừa insert (có id_contract từ DB)
+            Contracts savedContract = contractDAO.findByCode(code);
+            if (savedContract != null) {
+                Inspections inspection = new Inspections();
+                inspection.setId_contract(savedContract);
+                inspection.setId_user(AppSession.getCurrentUser());
+                inspection.setInspection_type(InspectionType.GIAO_XE);
+                inspectionBLL.createInspection(inspection);
+            }
+
+            // ── 8. Thông báo thành công ───────────────────────────
             Alert success = new Alert(Alert.AlertType.INFORMATION);
             success.setTitle("Tạo hợp đồng thành công");
             success.setHeaderText(null);
             success.setContentText("✅ Hợp đồng " + code + " đã được tạo thành công!\n"
-                    + "Xe " + vehicle.getCode_vehicle() + " đã chuyển sang trạng thái đang thuê.");
+                    + "Xe " + vehicle.getCode_vehicle() + " đã chuyển sang trạng thái đang thuê.\n"
+                    + "📋 Biên bản giao xe đã được lập tự động.");
             success.showAndWait();
 
-            // 8. Gọi callback đóng cửa sổ
             if (onSaved != null) onSaved.run();
 
         } catch (Exception e) {
             showError("Lỗi hệ thống: " + e.getMessage());
             e.printStackTrace();
         }
+    }
+
+    // =========================================================
+    //  FIX: Sinh mã HĐ không trùng
+    // =========================================================
+    /**
+     * Tạo mã HĐ dạng HD-YYYYMMDD-XXXX.
+     * Nếu trùng (hiếm gặp) thì thêm hậu tố -1, -2...
+     *
+     * Ví dụ: HD-20260513-4521
+     */
+    private String generateUniqueContractCode() {
+        String datePart = java.time.LocalDate.now()
+                .format(java.time.format.DateTimeFormatter.ofPattern("yyyyMMdd"));
+        // 4 chữ số cuối của System.currentTimeMillis() để tránh trùng
+        String randPart = String.format("%04d", System.currentTimeMillis() % 10000);
+        String baseCode = "HD-" + datePart + "-" + randPart;
+
+        // Kiểm tra trùng, nếu trùng thêm suffix
+        String finalCode = baseCode;
+        int suffix = 1;
+        while (contractDAO.isCodeExists(finalCode)) {
+            finalCode = baseCode + "-" + suffix;
+            suffix++;
+        }
+        return finalCode;
     }
 
     // =========================================================

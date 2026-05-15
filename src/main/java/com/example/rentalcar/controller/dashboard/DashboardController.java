@@ -64,23 +64,39 @@ public class DashboardController {
 
     @FXML
     public void initialize() {
+        // ── FIX: Chạy 2 tác vụ tự động khi mở Dashboard ─────────────
+        // 1. Cập nhật QUA_HAN trước (phải chạy trước loadCards)
+        checkAndMarkOverdue();
+        // 2. Kiểm tra xe cần bảo dưỡng
+        checkMaintenanceOnStartup();
+
         loadCards();
         setupTable();
         loadRecentContracts();
-
-        // Tự động kiểm tra xe đạt km bảo dưỡng khi mở dashboard
-        checkMaintenanceOnStartup();
     }
 
-    // ==========================================
+    // =========================================================
+    // FIX: Tự động cập nhật trạng thái QUA_HAN
+    // =========================================================
+    private void checkAndMarkOverdue() {
+        try {
+            int count = contractBLL.markOverdueContracts();
+            if (count > 0) {
+                System.out.println("[Dashboard] Đã cập nhật " + count + " hợp đồng → QUA HAN");
+            }
+        } catch (Exception e) {
+            System.err.println("Lỗi cập nhật QUA_HAN: " + e.getMessage());
+        }
+    }
+
+    // =========================================================
     // KIỂM TRA BẢO DƯỠNG KHI MỞ APP
-    // ==========================================
+    // =========================================================
     private void checkMaintenanceOnStartup() {
         try {
             List<Vehicles> justMarked = vehicleBLL.checkAndMarkMaintenance();
 
             if (!justMarked.isEmpty()) {
-                // Tạo nội dung thông báo
                 StringBuilder sb = new StringBuilder();
                 sb.append("Các xe sau đã đạt mốc km bảo dưỡng và được chuyển sang\n");
                 sb.append("trạng thái BẢO DƯỠNG:\n\n");
@@ -98,18 +114,15 @@ public class DashboardController {
                 alert.setHeaderText("Phát hiện " + justMarked.size() + " xe đạt mốc bảo dưỡng!");
                 alert.setContentText(sb.toString());
                 alert.showAndWait();
-
-                // Reload cards để cập nhật số liệu
-                loadCards();
             }
         } catch (Exception e) {
             System.err.println("Lỗi kiểm tra bảo dưỡng: " + e.getMessage());
         }
     }
 
-    // ==========================================
+    // =========================================================
     // LOAD CARDS
-    // ==========================================
+    // =========================================================
     private void loadCards() {
         try {
             double todayRev = contractBLL.getTodayRevenue();
@@ -132,7 +145,20 @@ public class DashboardController {
             if (label_status_available != null)
                 label_status_available.setText("✅  " + available + " xe sẵn sàng");
 
-            // Cập nhật số xe đang bảo dưỡng lên alert banner
+            // Đếm HĐ quá hạn để hiện lên alert banner
+            long overdueCount = contractBLL.getAllContracts().stream()
+                    .filter(c -> c.getStatus() == StatusContracts.QUA_HAN)
+                    .count();
+            if (label_overdue_count != null) {
+                if (overdueCount > 0) {
+                    label_overdue_count.setText(overdueCount + " đơn chưa trả xe đúng hạn");
+                    label_overdue_count.setStyle("-fx-text-fill: #ef4444; -fx-font-size: 13px;");
+                } else {
+                    label_overdue_count.setText("Không có đơn quá hạn");
+                    label_overdue_count.setStyle("-fx-text-fill: #64748b; -fx-font-size: 13px;");
+                }
+            }
+
             int maintenanceCount = vehicleBLL.getMaintenanceVehicles().size();
             if (label_maintenance_count != null) {
                 if (maintenanceCount > 0) {
@@ -150,9 +176,9 @@ public class DashboardController {
         }
     }
 
-    // ==========================================
+    // =========================================================
     // SETUP TABLE COLUMNS
-    // ==========================================
+    // =========================================================
     private void setupTable() {
         colCode.setCellValueFactory(new PropertyValueFactory<>("code_contract"));
         colCode.setCellFactory(col -> new TableCell<>() {
@@ -227,9 +253,7 @@ public class DashboardController {
 
         colTotal.setCellValueFactory(cell ->
                 new SimpleStringProperty(
-                        String.format("%,.0f đ", cell.getValue().getTotal_price()).replace(",", ".")
-                )
-        );
+                        String.format("%,.0f đ", cell.getValue().getTotal_price()).replace(",", ".")));
         colTotal.setCellFactory(col -> new TableCell<>() {
             @Override protected void updateItem(String total, boolean empty) {
                 super.updateItem(total, empty);
@@ -272,9 +296,9 @@ public class DashboardController {
         });
     }
 
-    // ==========================================
+    // =========================================================
     // LOAD DỮ LIỆU BẢNG
-    // ==========================================
+    // =========================================================
     private void loadRecentContracts() {
         try {
             List<Contracts> list = contractBLL.getRecentContracts(5);
@@ -287,9 +311,9 @@ public class DashboardController {
         }
     }
 
-    // ==========================================
+    // =========================================================
     // POPUP CHI TIẾT HĐ
-    // ==========================================
+    // =========================================================
     private void showDetailPopup(Contracts contract) {
         try {
             FXMLLoader loader = new FXMLLoader(
@@ -307,9 +331,9 @@ public class DashboardController {
         }
     }
 
-    // ==========================================
+    // =========================================================
     // MỞ TẠO HĐ
-    // ==========================================
+    // =========================================================
     @FXML
     void showCreateContractModal(ActionEvent event) {
         try {
@@ -320,16 +344,21 @@ public class DashboardController {
             stage.setScene(new Scene(root));
             stage.setTitle("Tạo hợp đồng mới");
             stage.initModality(Modality.APPLICATION_MODAL);
-            stage.setOnHidden(e -> loadRecentContracts());
+            stage.setOnHidden(e -> {
+                // Reload sau khi tạo HĐ xong
+                checkAndMarkOverdue();
+                loadCards();
+                loadRecentContracts();
+            });
             stage.show();
         } catch (Exception e) {
             System.err.println("Lỗi mở form: " + e.getMessage());
         }
     }
 
-    // ==========================================
+    // =========================================================
     // HELPER
-    // ==========================================
+    // =========================================================
     private String formatMoney(double amount) {
         return String.format("%,.0f đ", amount).replace(",", ".");
     }

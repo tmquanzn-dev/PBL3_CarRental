@@ -53,7 +53,7 @@ public class ReturnVehicleController {
 
     // ── Phần hư hỏng ──
     @FXML private CheckBox chkDamage;
-    @FXML private VBox     boxDamageDetails;   // container chứa các checkbox phụ tùng
+    @FXML private VBox     boxDamageDetails;
     @FXML private Label    lblDamageTotal;
 
     // ── BLL & DAO ──
@@ -71,9 +71,8 @@ public class ReturnVehicleController {
     private Vehicles   fullVehicle;
     private Runnable   onCompleted;
 
-    // Danh sách phụ tùng bị hư (checkbox)
-    private final List<PartPrices>  allParts             = new ArrayList<>();
-    private final List<CheckBox>    damageCheckBoxes     = new ArrayList<>();
+    private final List<PartPrices>  allParts         = new ArrayList<>();
+    private final List<CheckBox>    damageCheckBoxes = new ArrayList<>();
 
     private static final DateTimeFormatter FMT = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
 
@@ -150,38 +149,30 @@ public class ReturnVehicleController {
     }
 
     // =========================================================
-    // SETUP SECTION HƯ HỎNG – dùng CheckBox thay ListView
+    // SETUP SECTION HƯ HỎNG
     // =========================================================
     private void setupDamageSection() {
         if (chkDamage == null) return;
 
-        // Ẩn chi tiết ban đầu
         if (boxDamageDetails != null) {
             boxDamageDetails.setVisible(false);
             boxDamageDetails.setManaged(false);
         }
 
-        // Khi tick checkbox chính
         chkDamage.selectedProperty().addListener((obs, old, selected) -> {
             if (boxDamageDetails != null) {
                 boxDamageDetails.setVisible(selected);
                 boxDamageDetails.setManaged(selected);
             }
             if (!selected) {
-                // Bỏ tick tất cả checkbox phụ tùng
                 damageCheckBoxes.forEach(cb -> cb.setSelected(false));
                 recalculate();
             }
         });
 
-        // Load danh sách phụ tùng dưới dạng CheckBox
         loadPartsAsCheckBoxes();
     }
 
-    /**
-     * Tạo CheckBox cho từng phụ tùng trong bảng partprices.
-     * Người dùng tick vào phụ tùng nào bị hỏng.
-     */
     private void loadPartsAsCheckBoxes() {
         if (boxDamageDetails == null) return;
 
@@ -190,7 +181,6 @@ public class ReturnVehicleController {
             damageCheckBoxes.clear();
             boxDamageDetails.getChildren().clear();
 
-            // Tiêu đề
             Label lblTitle = new Label("Chọn phụ tùng bị hư hỏng (tick để chọn):");
             lblTitle.setStyle("-fx-font-size: 13px; -fx-font-weight: bold; -fx-text-fill: #475569;");
             boxDamageDetails.getChildren().add(lblTitle);
@@ -207,14 +197,12 @@ public class ReturnVehicleController {
             for (PartPrices part : parts) {
                 allParts.add(part);
 
-                // Tạo CheckBox
                 CheckBox cb = new CheckBox(
                         part.getPart_name()
                                 + "  [" + part.getVehicle() + "]"
                                 + "  →  " + String.format("%,.0f đ", part.getPrice()).replace(",", "."));
                 cb.setStyle("-fx-font-size: 13px; -fx-text-fill: #1e293b;");
 
-                // Khi tick → tính lại tiền
                 cb.selectedProperty().addListener((obs, o, selected) -> {
                     recalculate();
                     updateDamageTotal();
@@ -222,7 +210,6 @@ public class ReturnVehicleController {
 
                 damageCheckBoxes.add(cb);
 
-                // Bọc trong HBox cho đẹp
                 HBox row = new HBox(cb);
                 row.setPadding(new Insets(4, 8, 4, 8));
                 row.setStyle("-fx-background-color: white; -fx-background-radius: 8;"
@@ -230,12 +217,10 @@ public class ReturnVehicleController {
                 boxDamageDetails.getChildren().add(row);
             }
 
-            // Label tổng tiền hư hỏng
             if (lblDamageTotal != null) {
                 boxDamageDetails.getChildren().add(lblDamageTotal);
             }
 
-            // Lưu ý
             Label note = new Label("⚠ Xe sẽ chuyển sang trạng thái Bảo dưỡng sau khi trả.");
             note.setStyle("-fx-text-fill: #b45309; -fx-font-size: 12px;");
             note.setWrapText(true);
@@ -246,7 +231,6 @@ public class ReturnVehicleController {
         }
     }
 
-    /** Lấy danh sách phụ tùng đang được tick */
     private List<PartPrices> getSelectedDamageParts() {
         List<PartPrices> selected = new ArrayList<>();
         for (int i = 0; i < damageCheckBoxes.size(); i++) {
@@ -266,29 +250,26 @@ public class ReturnVehicleController {
     }
 
     // =========================================================
-    // TÍNH TIỀN
+    // TÍNH TIỀN (chỉ dùng để hiển thị UI)
     // =========================================================
     private void recalculate() {
         if (contract == null) return;
         LocalDateTime returnDt = buildReturnDatetime();
         if (returnDt == null) return;
 
-        // Phạt trễ
         double latePenalty = 0;
         boolean isLate = returnDt.isAfter(contract.getEnd_datetime());
         if (isLate) {
-            latePenalty = calculateLatePenalty(contract.getEnd_datetime(), returnDt);
+            latePenalty = calculateLatePenaltyAmount(contract.getEnd_datetime(), returnDt);
             showLateWarning(contract.getEnd_datetime(), returnDt);
         } else {
             hideLateWarning();
         }
 
-        // Phạt xăng
         int fuelEnd  = (int) sliderFuel.getValue();
         int capacity = (fullVehicle != null) ? fullVehicle.getFuel_capacity() : 0;
-        double fuelPenalty = calculateFuelPenalty(contract.getFuel_start(), fuelEnd, capacity);
+        double fuelPenalty = calculateFuelPenaltyAmount(contract.getFuel_start(), fuelEnd, capacity);
 
-        // Phạt hư hỏng
         double damagePenalty = 0;
         if (chkDamage != null && chkDamage.isSelected()) {
             damagePenalty = getSelectedDamageParts().stream()
@@ -316,7 +297,7 @@ public class ReturnVehicleController {
     }
 
     // =========================================================
-    // XÁC NHẬN TRẢ XE
+    // XÁC NHẬN TRẢ XE — ĐÃ FIX: lưu phạt trễ và xăng vào DB
     // =========================================================
     @FXML
     void handleConfirm() {
@@ -342,16 +323,30 @@ public class ReturnVehicleController {
                 ? getSelectedDamageParts() : new ArrayList<>();
 
         try {
-            // 1. Cập nhật hợp đồng
+            // ── Tính các khoản phạt ──────────────────────────────
+            int fuelEnd  = (int) sliderFuel.getValue();
+            int capacity = (fullVehicle != null) ? fullVehicle.getFuel_capacity() : 0;
+
+            double latePenaltyAmount = calculateLatePenaltyAmount(
+                    contract.getEnd_datetime(), returnDt);
+            double fuelPenaltyAmount = calculateFuelPenaltyAmount(
+                    contract.getFuel_start(), fuelEnd, capacity);
+            double damagePenaltyAmount = damagedParts.stream()
+                    .mapToDouble(PartPrices::getPrice).sum();
+
+            // ── 1. Cập nhật hợp đồng ─────────────────────────────
             contract.setReturn_datetime(returnDt);
-            contract.setFuel_end((int) sliderFuel.getValue());
+            contract.setFuel_end(fuelEnd);
             contract.setKm_end(kmEnd);
             contract.setPayment_status(displayToPaymentStatus(cbPaymentStatus.getValue()));
 
             boolean ok = contractBLL.returnVehicle(contract);
-            if (!ok) { showAlert(Alert.AlertType.ERROR, "Không thể cập nhật hợp đồng!"); return; }
+            if (!ok) {
+                showAlert(Alert.AlertType.ERROR, "Không thể cập nhật hợp đồng!");
+                return;
+            }
 
-            // 2. Cập nhật xe
+            // ── 2. Cập nhật xe ───────────────────────────────────
             if (fullVehicle != null) {
                 fullVehicle.setStatus(!damagedParts.isEmpty()
                         ? StatusVehicle.MAINTENANCE : StatusVehicle.AVAILABLE);
@@ -359,29 +354,53 @@ public class ReturnVehicleController {
                 vehicleDAO.update(fullVehicle);
             }
 
-            // 3. Lập biên bản kiểm tra TRẢ XE
+            // ── 3. Biên bản kiểm tra TRẢ XE ─────────────────────
             Inspections inspection = new Inspections();
             inspection.setId_contract(contract);
             inspection.setId_user(AppSession.getCurrentUser());
             inspection.setInspection_type(InspectionType.TRA_XE);
             inspectionBLL.createInspection(inspection);
 
-            // 4. Tạo khoản phạt hư hỏng (nếu có)
-            for (PartPrices part : damagedParts) {
-                Penalties penalty = new Penalties();
-                penalty.setId_contract(contract);
-                penalty.setPenalty_type(PenaltyType.HU_HONG);
-                penalty.setAmount(part.getPrice());
-                penaltyBLL.createPenalty(penalty);
+            // ── 4. LƯU PHẠT TRỄ GIỜ vào bảng penalties ──────────
+            if (latePenaltyAmount > 0) {
+                Penalties latePenalty = new Penalties();
+                latePenalty.setId_contract(contract);
+                latePenalty.setPenalty_type(PenaltyType.QUA_GIO);
+                latePenalty.setAmount(latePenaltyAmount);
+                penaltyBLL.createPenalty(latePenalty);
             }
 
-            // 5. Thông báo kết quả
+            // ── 5. LƯU PHẠT THIẾU XĂNG vào bảng penalties ───────
+            if (fuelPenaltyAmount > 0) {
+                Penalties fuelPenalty = new Penalties();
+                fuelPenalty.setId_contract(contract);
+                fuelPenalty.setPenalty_type(PenaltyType.XANG);
+                fuelPenalty.setAmount(fuelPenaltyAmount);
+                penaltyBLL.createPenalty(fuelPenalty);
+            }
+
+            // ── 6. LƯU PHẠT HƯ HỎNG vào bảng penalties ──────────
+            for (PartPrices part : damagedParts) {
+                Penalties damagePenalty = new Penalties();
+                damagePenalty.setId_contract(contract);
+                damagePenalty.setPenalty_type(PenaltyType.HU_HONG);
+                damagePenalty.setAmount(part.getPrice());
+                penaltyBLL.createPenalty(damagePenalty);
+            }
+
+            // ── 7. Thông báo kết quả ─────────────────────────────
             StringBuilder msg = new StringBuilder();
             msg.append("✅ Hợp đồng ").append(contract.getCode_contract())
                     .append(" đã hoàn thành!\n");
 
+            if (latePenaltyAmount > 0)
+                msg.append("⏰ Phạt trễ giờ: ").append(fmt(latePenaltyAmount)).append("\n");
+
+            if (fuelPenaltyAmount > 0)
+                msg.append("⛽ Phạt thiếu xăng: ").append(fmt(fuelPenaltyAmount)).append("\n");
+
             if (!damagedParts.isEmpty()) {
-                msg.append("🔧 Xe chuyển sang Bảo dưỡng.\nKhoản phạt hư hỏng:\n");
+                msg.append("🔧 Xe chuyển sang Bảo dưỡng. Phạt hư hỏng:\n");
                 for (PartPrices p : damagedParts)
                     msg.append("  • ").append(p.getPart_name()).append(": ")
                             .append(fmt(p.getPrice())).append("\n");
@@ -407,24 +426,39 @@ public class ReturnVehicleController {
     @FXML void handleCancel() { closeStage(); }
 
     // =========================================================
-    // HELPERS
+    // HELPERS TÍNH TIỀN — dùng cùng 1 default value (100.000đ)
+    // =========================================================
+
+    /**
+     * Tính tiền phạt trễ giờ.
+     * Default 100.000đ/giờ — đồng nhất với PriceBLL.
+     */
+    private double calculateLatePenaltyAmount(LocalDateTime expected, LocalDateTime actual) {
+        if (actual == null || !actual.isAfter(expected)) return 0;
+        long hours = (java.time.Duration.between(expected, actual).toMinutes() + 59) / 60;
+        // FIX: default 100.000 thay vì 20.000
+        return hours * systemSettingBLL.getDoubleSetting("Phi_Tre_Gio", 100000.0);
+    }
+
+    /**
+     * Tính tiền phạt thiếu xăng.
+     * Default 25.000đ/lít — đồng nhất với PriceBLL.
+     */
+    private double calculateFuelPenaltyAmount(int fuelStart, int fuelEnd, int capacity) {
+        if (fuelEnd >= fuelStart || capacity <= 0) return 0;
+        double lostLiters = ((fuelStart - fuelEnd) * capacity) / 100.0;
+        // FIX: default 25.000 thay vì 20.000
+        return lostLiters * systemSettingBLL.getDoubleSetting("Gia_Xang_Litre", 25000.0);
+    }
+
+    // =========================================================
+    // HELPERS KHÁC
     // =========================================================
     private LocalDateTime buildReturnDatetime() {
         if (dpReturnDate.getValue() == null) return null;
         int h = spinReturnHour.getValue() != null ? spinReturnHour.getValue() : 8;
         int m = spinReturnMin.getValue()  != null ? spinReturnMin.getValue()  : 0;
         return LocalDateTime.of(dpReturnDate.getValue(), LocalTime.of(h, m));
-    }
-
-    private double calculateLatePenalty(LocalDateTime expected, LocalDateTime actual) {
-        if (!actual.isAfter(expected)) return 0;
-        long hours = (java.time.Duration.between(expected, actual).toMinutes() + 59) / 60;
-        return hours * systemSettingBLL.getDoubleSetting("Phi_Tre_Gio", 20000);
-    }
-
-    private double calculateFuelPenalty(int fuelStart, int fuelEnd, int capacity) {
-        if (fuelEnd >= fuelStart || capacity <= 0) return 0;
-        return ((fuelStart - fuelEnd) * capacity / 100.0) * systemSettingBLL.getDoubleSetting("Gia_Xang_Litre", 20000);
     }
 
     private void showLateWarning(LocalDateTime expected, LocalDateTime actual) {

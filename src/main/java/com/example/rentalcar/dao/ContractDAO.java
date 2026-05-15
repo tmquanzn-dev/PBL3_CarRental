@@ -33,7 +33,6 @@ public class ContractDAO implements IBaseDAO<Contracts, Integer> {
         contract.setDiscount_amount(rs.getDouble("discount_amount"));
         contract.setTotal_price(rs.getDouble("total_price"));
 
-        // Đồng bộ Enum: Đổi khoảng trắng từ DB thành dấu gạch dưới để Java hiểu
         if (rs.getString("deposit_type") != null)
             contract.setDeposit_type(DepositType.valueOf(rs.getString("deposit_type").replace(" ", "_")));
         if (rs.getString("payment_status") != null)
@@ -41,7 +40,6 @@ public class ContractDAO implements IBaseDAO<Contracts, Integer> {
         if (rs.getString("status") != null)
             contract.setStatus(StatusContracts.valueOf(rs.getString("status").replace(" ", "_")));
 
-        // Map Khóa ngoại (Giữ nguyên cấu trúc shell object để BLL/Controller load tiếp)
         Users user = new Users(); user.setId_user(rs.getInt("id_user"));
         contract.setId_user(user);
 
@@ -73,8 +71,6 @@ public class ContractDAO implements IBaseDAO<Contracts, Integer> {
             pstm.setTimestamp(3, Timestamp.valueOf(entity.getEnd_datetime()));
             pstm.setInt(4, entity.getKm_start());
             pstm.setInt(5, entity.getFuel_start());
-
-            // Lưu Enum: Đổi dấu gạch dưới thành khoảng trắng cho khớp DB
             pstm.setString(6, entity.getDeposit_type().name().replace("_", " "));
             pstm.setDouble(7, entity.getDeposit_amount());
             pstm.setDouble(8, entity.getBase_price());
@@ -82,7 +78,6 @@ public class ContractDAO implements IBaseDAO<Contracts, Integer> {
             pstm.setDouble(10, entity.getTotal_price());
             pstm.setString(11, entity.getPayment_status().name().replace("_", " "));
             pstm.setString(12, entity.getStatus().name().replace("_", " "));
-
             pstm.setInt(13, entity.getId_user().getId_user());
             pstm.setInt(14, entity.getId_vehicle().getId_vehicle());
             pstm.setInt(15, entity.getId_customer().getId_customer());
@@ -101,7 +96,6 @@ public class ContractDAO implements IBaseDAO<Contracts, Integer> {
 
     @Override
     public boolean update(Contracts entity) {
-        // SQL Update đầy đủ để phục vụ hàm returnVehicle trong BLL
         String sql = "UPDATE Contracts SET end_datetime = ?, return_datetime = ?, km_end = ?, fuel_end = ?, " +
                 "discount_amount = ?, total_price = ?, payment_status = ?, status = ? WHERE id_contract = ?";
 
@@ -131,7 +125,6 @@ public class ContractDAO implements IBaseDAO<Contracts, Integer> {
 
     @Override
     public boolean delete(Integer id) {
-        // Nghiệp vụ Hủy: Chuyển trạng thái sang 'DA HUY' (Khớp với DB và BLL)
         String sql = "UPDATE Contracts SET status = 'DA HUY' WHERE id_contract = ?";
         try (Connection cnt = DBConnection.getInstance().getConnection();
              PreparedStatement pstm = cnt.prepareStatement(sql)) {
@@ -142,8 +135,6 @@ public class ContractDAO implements IBaseDAO<Contracts, Integer> {
             return false;
         }
     }
-
-    // --- CÁC HÀM TRUY VẤN VÀ THỐNG KÊ ---
 
     @Override
     public Contracts findById(Integer id) {
@@ -170,8 +161,92 @@ public class ContractDAO implements IBaseDAO<Contracts, Integer> {
         return list;
     }
 
+    // ==========================================================
+    // FIX 1: Tìm HĐ theo mã code — dùng cho Step4Controller
+    // sau khi insert để lấy id_contract tạo biên bản GIAO_XE
+    // ==========================================================
+    public Contracts findByCode(String code) {
+        String sql = "SELECT * FROM Contracts WHERE code_contract = ?";
+        try (Connection cnt = DBConnection.getInstance().getConnection();
+             PreparedStatement pstm = cnt.prepareStatement(sql)) {
+            pstm.setString(1, code);
+            try (ResultSet rs = pstm.executeQuery()) {
+                if (rs.next()) return mapResultSetToContract(rs);
+            }
+        } catch (SQLException e) {
+            System.err.println("LỖI findByCode: " + e.getMessage());
+        }
+        return null;
+    }
+
+    // ==========================================================
+    // FIX 2: Kiểm tra mã HĐ đã tồn tại chưa — tránh trùng mã
+    // ==========================================================
+    public boolean isCodeExists(String code) {
+        String sql = "SELECT COUNT(*) FROM Contracts WHERE code_contract = ?";
+        try (Connection cnt = DBConnection.getInstance().getConnection();
+             PreparedStatement pstm = cnt.prepareStatement(sql)) {
+            pstm.setString(1, code);
+            try (ResultSet rs = pstm.executeQuery()) {
+                if (rs.next()) return rs.getInt(1) > 0;
+            }
+        } catch (SQLException e) {
+            System.err.println("LỖI isCodeExists: " + e.getMessage());
+        }
+        return false;
+    }
+
+    // ==========================================================
+    // FIX 3: Cập nhật QUA_HAN — gọi khi mở app
+    // Chuyển tất cả HĐ DANG_THUE đã quá end_datetime → QUA_HAN
+    // ==========================================================
+    public int markOverdueContracts() {
+        String sql = "UPDATE Contracts SET status = 'QUA HAN' " +
+                "WHERE status = 'DANG THUE' AND end_datetime < NOW()";
+        try (Connection cnt = DBConnection.getInstance().getConnection();
+             Statement st = cnt.createStatement()) {
+            return st.executeUpdate(sql); // trả về số HĐ vừa được cập nhật
+        } catch (SQLException e) {
+            System.err.println("LỖI markOverdueContracts: " + e.getMessage());
+            return 0;
+        }
+    }
+
+    // ==========================================================
+    // FIX 4: Hủy HĐ — giảm rental_count của khách
+    // ==========================================================
+    public boolean deleteAndDecrementRentalCount(int contractId) {
+        // Lấy id_customer trước khi hủy
+        Contracts contract = findById(contractId);
+        if (contract == null) return false;
+
+        // Hủy HĐ
+        String sqlCancel = "UPDATE Contracts SET status = 'DA HUY' WHERE id_contract = ?";
+        try (Connection cnt = DBConnection.getInstance().getConnection();
+             PreparedStatement pstm = cnt.prepareStatement(sqlCancel)) {
+            pstm.setInt(1, contractId);
+            boolean cancelled = pstm.executeUpdate() > 0;
+
+            if (cancelled && contract.getId_customer() != null) {
+                // Giảm rental_count, không để âm
+                String sqlDecrement = "UPDATE customers SET rental_count = GREATEST(rental_count - 1, 0) " +
+                        "WHERE id_customer = ?";
+                try (PreparedStatement pstm2 = cnt.prepareStatement(sqlDecrement)) {
+                    pstm2.setInt(1, contract.getId_customer().getId_customer());
+                    pstm2.executeUpdate();
+                }
+            }
+            return cancelled;
+        } catch (SQLException e) {
+            System.err.println("LỖI deleteAndDecrementRentalCount: " + e.getMessage());
+            return false;
+        }
+    }
+
+    // ==========================================================
+    // CÁC HÀM THỐNG KÊ
+    // ==========================================================
     public double getMonthlyRevenue() {
-        // Loại trừ 'DA HUY' để khớp với yêu cầu tài chính
         String sql = "SELECT SUM(total_price) FROM Contracts WHERE MONTH(start_datetime) = MONTH(CURDATE()) " +
                 "AND YEAR(start_datetime) = YEAR(CURDATE()) AND status != 'DA HUY'";
         try (Connection cnt = DBConnection.getInstance().getConnection();
@@ -193,7 +268,6 @@ public class ContractDAO implements IBaseDAO<Contracts, Integer> {
     }
 
     public int getActiveContractsCount() {
-        // 'DANG THUE' có khoảng trắng cho khớp DB
         String sql = "SELECT COUNT(*) FROM Contracts WHERE status = 'DANG THUE'";
         try (Connection cnt = DBConnection.getInstance().getConnection();
              Statement st = cnt.createStatement();

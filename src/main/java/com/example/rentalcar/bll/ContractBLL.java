@@ -15,13 +15,21 @@ public class ContractBLL {
     private final PenaltyDAO  penaltyDAO  = new PenaltyDAO();
     private final PriceBLL    priceBLL    = new PriceBLL();
 
-    public double getTodayRevenue()       { return contractDAO.getTodayRevenue(); }
-    public double getMonthlyRevenue()     { return contractDAO.getMonthlyRevenue(); }
+    public double getTodayRevenue()        { return contractDAO.getTodayRevenue(); }
+    public double getMonthlyRevenue()      { return contractDAO.getMonthlyRevenue(); }
     public int    getActiveContractsCount(){ return contractDAO.getActiveContractsCount(); }
 
     public List<Contracts> getRecentContracts(int limit) { return contractDAO.findRecentContracts(limit); }
     public List<Contracts> getAllContracts()              { return contractDAO.findAll(); }
     public Contracts       getContractById(int id)       { return contractDAO.findById(id); }
+
+    // =========================================================
+    // FIX: Tự động cập nhật QUA_HAN khi mở app
+    // Gọi từ DashboardController.initialize()
+    // =========================================================
+    public int markOverdueContracts() {
+        return contractDAO.markOverdueContracts();
+    }
 
     // =========================================================
     // TẠO HỢP ĐỒNG
@@ -68,32 +76,18 @@ public class ContractBLL {
     }
 
     // =========================================================
-    // TRẢ XE – tính đủ: trễ giờ + xăng + hư hỏng
+    // TRẢ XE
     // =========================================================
     public boolean returnVehicle(Contracts contract) {
         if (contract.getReturn_datetime() == null)
             throw new IllegalArgumentException("Thời gian trả xe không được để trống!");
 
-        // Phạt trễ giờ
-        double latePenalty = priceBLL.calculateLatePenalty(
-                contract.getEnd_datetime(),
-                contract.getReturn_datetime());
+        // Tổng phạt = đọc từ bảng penalties (đã được insert trước khi gọi hàm này)
+        double totalPenalty = getTotalPenalty(contract.getId_contract());
 
-        // Phạt thiếu xăng
-        double fuelPenalty = priceBLL.calculateFuelPenalty(
-                contract.getFuel_start(),
-                contract.getFuel_end(),
-                contract.getId_vehicle().getFuel_capacity());
-
-        // Phạt hư hỏng: lấy từ bảng penalties đã được tạo trước
-        double damagePenalty = getTotalDamagePenalty(contract.getId_contract());
-
-        // Tổng tiền = tiền thuê - giảm giá + các khoản phạt
         double finalTotal = contract.getBase_price()
                 - contract.getDiscount_amount()
-                + latePenalty
-                + fuelPenalty
-                + damagePenalty;
+                + totalPenalty;
 
         contract.setTotal_price(finalTotal);
         contract.setStatus(StatusContracts.HOAN_THANH);
@@ -102,24 +96,22 @@ public class ContractBLL {
     }
 
     /**
-     * Lấy tổng tiền phạt hư hỏng (HU_HONG) của một hợp đồng.
-     * Được gọi sau khi ReturnVehicleController đã tạo các Penalties.
+     * Lấy TỔNG TẤT CẢ các khoản phạt của hợp đồng (trễ giờ + xăng + hư hỏng).
+     * Gọi sau khi ReturnVehicleController đã insert đủ vào bảng penalties.
      */
-    private double getTotalDamagePenalty(int contractId) {
+    private double getTotalPenalty(int contractId) {
         try {
             return penaltyDAO.findByContractId(contractId).stream()
-                    .filter(p -> p.getPenalty_type() != null
-                            && p.getPenalty_type().name().equals("HU_HONG"))
                     .mapToDouble(Penalties::getAmount)
                     .sum();
         } catch (Exception e) {
-            System.err.println("Lỗi lấy phạt hư hỏng: " + e.getMessage());
+            System.err.println("Lỗi lấy tổng phạt: " + e.getMessage());
             return 0;
         }
     }
 
     // =========================================================
-    // HỦY HỢP ĐỒNG
+    // HỦY HỢP ĐỒNG — FIX: giảm rental_count khách hàng
     // =========================================================
     public boolean cancelContract(int id) {
         if (!AppSession.isAdmin())
@@ -131,6 +123,23 @@ public class ContractBLL {
         if (contract.getStatus() == StatusContracts.HOAN_THANH)
             throw new IllegalStateException("Không thể hủy hợp đồng đã hoàn thành!");
 
-        return contractDAO.delete(id);
+        // FIX: dùng method mới — vừa hủy HĐ vừa giảm rental_count
+        boolean cancelled = contractDAO.deleteAndDecrementRentalCount(id);
+
+        // Nếu xe đang RENTED thì chuyển về AVAILABLE
+        if (cancelled && contract.getId_vehicle() != null) {
+            try {
+                VehicleBLL vehicleBLL = new VehicleBLL();
+                var vehicle = vehicleBLL.getVehicleById(contract.getId_vehicle().getId_vehicle());
+                if (vehicle != null && vehicle.getStatus() == StatusVehicle.RENTED) {
+                    vehicle.setStatus(StatusVehicle.AVAILABLE);
+                    vehicleBLL.updateVehicle(vehicle);
+                }
+            } catch (Exception e) {
+                System.err.println("Lỗi cập nhật trạng thái xe khi hủy HĐ: " + e.getMessage());
+            }
+        }
+
+        return cancelled;
     }
 }
