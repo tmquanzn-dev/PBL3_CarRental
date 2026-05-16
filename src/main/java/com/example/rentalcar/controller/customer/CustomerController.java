@@ -215,7 +215,10 @@ public class CustomerController implements Initializable {
         lblTotalCustomers.setText(String.valueOf(list.size()));
         long bl = list.stream().filter(Customers::isIs_blacklist).count();
         lblBlacklist.setText(String.valueOf(bl));
-        lblNewCustomers.setText("0"); // TODO: tính theo tháng
+
+        // FIX: đếm khách xuất hiện trong hợp đồng tháng này
+        int newThisMonth = customerBLL.getNewCustomerCountThisMonth();
+        lblNewCustomers.setText(String.valueOf(newThisMonth));
     }
 
     //Search & Filter

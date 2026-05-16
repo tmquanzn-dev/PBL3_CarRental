@@ -85,4 +85,9 @@ public class CustomerBLL {
             throw new IllegalStateException("Khách hàng bị cấm thuê: " + customer.getBlacklist_reason());
         return true;
     }
+
+    public int getNewCustomerCountThisMonth() {
+        // Bạn có thể thêm logic nghiệp vụ ở đây nếu cần
+        return customerDAO.countNewCustomersThisMonth();
+    }
 }

@@ -331,4 +331,22 @@ public class ReportDAO {
         }
         return map;
     }
+
+    public int getContractsByStaffThisMonth(int userId) {
+        String sql = "SELECT COUNT(*) FROM contracts " +
+                "WHERE id_user = ? " +
+                "AND MONTH(start_datetime) = MONTH(CURDATE()) " +
+                "AND YEAR(start_datetime) = YEAR(CURDATE()) " +
+                "AND status != 'DA HUY'";
+        try (Connection cnt = DBConnection.getInstance().getConnection();
+             PreparedStatement pstm = cnt.prepareStatement(sql)) {
+            pstm.setInt(1, userId);
+            try (ResultSet rs = pstm.executeQuery()) {
+                if (rs.next()) return rs.getInt(1);
+            }
+        } catch (SQLException e) {
+            System.err.println("LỖI getContractsByStaff: " + e.getMessage());
+        }
+        return 0;
+    }
 }

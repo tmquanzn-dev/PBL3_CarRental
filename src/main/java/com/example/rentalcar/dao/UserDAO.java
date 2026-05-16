@@ -57,6 +57,23 @@ public class UserDAO implements IBaseDAO<Users, Integer>
         return null;
     }
 
+    // UserDAO.java — thêm method này
+    public Users findByUsernameAll(String username) {
+        String sql = "SELECT u.*, r.role_name FROM users u " +
+                "JOIN roles r ON u.role_id = r.role_id " +
+                "WHERE u.username = ?";   // BỎ is_active = 1
+        try (Connection cnt = DBConnection.getInstance().getConnection();
+             PreparedStatement pstm = cnt.prepareStatement(sql)) {
+            pstm.setString(1, username);
+            try (ResultSet rs = pstm.executeQuery()) {
+                if (rs.next()) return mapResultSetToUser(rs);
+            }
+        } catch (SQLException e) {
+            System.err.println("LỖI findByUsernameAll: " + e.getMessage());
+        }
+        return null;
+    }
+
     @Override
     public boolean insert(Users entity)
     {

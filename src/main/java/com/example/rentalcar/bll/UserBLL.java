@@ -141,4 +141,10 @@ public class UserBLL {
             throw new IllegalArgumentException("Username không được để trống");
         return userDAO.findByUsername(username);
     }
+    public Users getUserAllByUsername(String username)
+    {
+        if (username == null || username.isBlank())
+            throw new IllegalArgumentException("Username không được để trống");
+        return userDAO.findByUsernameAll(username);
+    }
 }
