@@ -61,6 +61,7 @@ public class ReturnVehicleController {
     private final InspectionBLL inspectionBLL = new InspectionBLL();
     private final PenaltyBLL    penaltyBLL    = new PenaltyBLL();
     private final PartPriceBLL  partPriceBLL  = new PartPriceBLL();
+    private final PriceBLL      priceBLL      = new PriceBLL();
     private final CustomerDAO   customerDAO   = new CustomerDAO();
     private final VehicleDAO    vehicleDAO    = new VehicleDAO();
     private final SystemSettingBLL systemSettingBLL = new SystemSettingBLL();
@@ -252,11 +253,28 @@ public class ReturnVehicleController {
     // =========================================================
     // TÍNH TIỀN (chỉ dùng để hiển thị UI)
     // =========================================================
+    // =========================================================
+    // TÍNH TIỀN (chỉ dùng để hiển thị UI LIVE PREVIEW)
+    // =========================================================
     private void recalculate() {
         if (contract == null) return;
         LocalDateTime returnDt = buildReturnDatetime();
         if (returnDt == null) return;
 
+        // 1. TÍNH LẠI GIÁ GỐC NẾU TRẢ SỚM (Hiển thị preview tính phí 20%)
+        double currentBasePrice = contract.getBase_price();
+        if (returnDt.isBefore(contract.getEnd_datetime()) && fullVehicle != null) {
+            // Khách trả trước hạn -> Tính lại tiền ngay trên màn hình
+            currentBasePrice = priceBLL.calculateEarlyReturnPrice(
+                    contract.getStart_datetime(),
+                    contract.getEnd_datetime(),
+                    returnDt,
+                    fullVehicle.getPrice_day(),
+                    fullVehicle.getPrice_hour()
+            );
+        }
+
+        // 2. TÍNH PHẠT TRỄ
         double latePenalty = 0;
         boolean isLate = returnDt.isAfter(contract.getEnd_datetime());
         if (isLate) {
@@ -266,25 +284,35 @@ public class ReturnVehicleController {
             hideLateWarning();
         }
 
+        // 3. TÍNH PHẠT XĂNG
         int fuelEnd  = (int) sliderFuel.getValue();
         int capacity = (fullVehicle != null) ? fullVehicle.getFuel_capacity() : 0;
         double fuelPenalty = calculateFuelPenaltyAmount(contract.getFuel_start(), fuelEnd, capacity);
 
+        // 4. TÍNH PHẠT HƯ HỎNG
         double damagePenalty = 0;
         if (chkDamage != null && chkDamage.isSelected()) {
             damagePenalty = getSelectedDamageParts().stream()
                     .mapToDouble(PartPrices::getPrice).sum();
         }
 
-        double base  = contract.getBase_price() - contract.getDiscount_amount();
+        // 5. CHỐT TỔNG TIỀN (Có chặn giảm giá không vượt quá giá gốc)
+        double currentDiscount = contract.getDiscount_amount();
+        if (currentDiscount > currentBasePrice) {
+            currentDiscount = currentBasePrice;
+        }
+
+        double base  = currentBasePrice - currentDiscount;
         double total = base + latePenalty + fuelPenalty + damagePenalty;
 
+        // 6. CẬP NHẬT LÊN GIAO DIỆN
         setLabel(lblBasePrice,     fmt(base));
         setLabel(lblLatePenalty,   latePenalty   > 0 ? "+ " + fmt(latePenalty)   : "0 đ");
         setLabel(lblFuelPenalty,   fuelPenalty   > 0 ? "+ " + fmt(fuelPenalty)   : "0 đ");
         setLabel(lblDamagePenalty, damagePenalty > 0 ? "+ " + fmt(damagePenalty) : "0 đ");
         setLabel(lblFinalTotal,    fmt(total));
 
+        // Màu mè UI
         if (lblLatePenalty != null)
             lblLatePenalty.setStyle(latePenalty > 0
                     ? "-fx-text-fill: #e11d48; -fx-font-weight: bold;" : "-fx-text-fill: #64748b;");

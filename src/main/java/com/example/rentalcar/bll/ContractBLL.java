@@ -6,6 +6,7 @@ import com.example.rentalcar.models.Contracts;
 import com.example.rentalcar.models.Penalties;
 import com.example.rentalcar.models.StatusContracts;
 import com.example.rentalcar.models.StatusVehicle;
+import com.example.rentalcar.models.Vehicles;
 import com.example.rentalcar.utils.AppSession;
 
 import java.util.List;
@@ -24,15 +25,14 @@ public class ContractBLL {
     public Contracts       getContractById(int id)       { return contractDAO.findById(id); }
 
     // =========================================================
-    // FIX: Tự động cập nhật QUA_HAN khi mở app
-    // Gọi từ DashboardController.initialize()
+    // CODE CỦA BẠN EM: Tự động cập nhật QUA_HAN
     // =========================================================
     public int markOverdueContracts() {
         return contractDAO.markOverdueContracts();
     }
 
     // =========================================================
-    // TẠO HỢP ĐỒNG
+    // TẠO HỢP ĐỒNG (Giữ nguyên)
     // =========================================================
     public boolean createContract(Contracts contract, String voucherCode) {
         if (contract.getStart_datetime() == null || contract.getEnd_datetime() == null)
@@ -76,18 +76,37 @@ public class ContractBLL {
     }
 
     // =========================================================
-    // TRẢ XE
+    // TRẢ XE: GỘP CODE CỦA EM (20%) VÀ CỦA BẠN (PenaltyDAO)
     // =========================================================
     public boolean returnVehicle(Contracts contract) {
         if (contract.getReturn_datetime() == null)
             throw new IllegalArgumentException("Thời gian trả xe không được để trống!");
 
-        // Tổng phạt = đọc từ bảng penalties (đã được insert trước khi gọi hàm này)
+        double finalBasePrice = contract.getBase_price();
+
+        // 1. CODE CỦA EM: Tính phí 20% nếu trả sớm
+        if (contract.getReturn_datetime().isBefore(contract.getEnd_datetime())) {
+            finalBasePrice = priceBLL.calculateEarlyReturnPrice(
+                    contract.getStart_datetime(),
+                    contract.getEnd_datetime(),
+                    contract.getReturn_datetime(),
+                    contract.getId_vehicle().getPrice_day(),
+                    contract.getId_vehicle().getPrice_hour()
+            );
+            contract.setBase_price(finalBasePrice);
+        }
+
+        // 2. CODE CỦA BẠN: Lấy tổng tiền phạt từ DB thay vì tính chay
         double totalPenalty = getTotalPenalty(contract.getId_contract());
 
-        double finalTotal = contract.getBase_price()
-                - contract.getDiscount_amount()
-                + totalPenalty;
+        // 3. LOGIC CỦA EM: Chặn voucher vượt quá giá gốc
+        double finalDiscount = contract.getDiscount_amount();
+        if (finalDiscount > finalBasePrice) {
+            finalDiscount = finalBasePrice;
+            contract.setDiscount_amount(finalDiscount);
+        }
+
+        double finalTotal = finalBasePrice - finalDiscount + totalPenalty;
 
         contract.setTotal_price(finalTotal);
         contract.setStatus(StatusContracts.HOAN_THANH);
@@ -95,10 +114,6 @@ public class ContractBLL {
         return contractDAO.update(contract);
     }
 
-    /**
-     * Lấy TỔNG TẤT CẢ các khoản phạt của hợp đồng (trễ giờ + xăng + hư hỏng).
-     * Gọi sau khi ReturnVehicleController đã insert đủ vào bảng penalties.
-     */
     private double getTotalPenalty(int contractId) {
         try {
             return penaltyDAO.findByContractId(contractId).stream()
@@ -111,26 +126,29 @@ public class ContractBLL {
     }
 
     // =========================================================
-    // HỦY HỢP ĐỒNG — FIX: giảm rental_count khách hàng
+    // HỦY HỢP ĐỒNG: GỘP XÓA MỀM (Em) VÀ GIẢM RENTAL COUNT (Bạn)
     // =========================================================
     public boolean cancelContract(int id) {
         if (!AppSession.isAdmin())
-            throw new IllegalStateException("Chỉ Admin mới được phép hủy hợp đồng!");
+            throw new IllegalStateException("Cảnh báo bảo mật: Chỉ Admin mới được phép hủy hợp đồng!");
 
         Contracts contract = contractDAO.findById(id);
         if (contract == null)
             throw new IllegalArgumentException("Không tìm thấy hợp đồng!");
         if (contract.getStatus() == StatusContracts.HOAN_THANH)
             throw new IllegalStateException("Không thể hủy hợp đồng đã hoàn thành!");
+        if (contract.getStatus() == StatusContracts.DA_HUY)
+            throw new IllegalStateException("Hợp đồng này đã bị hủy từ trước!");
 
-        // FIX: dùng method mới — vừa hủy HĐ vừa giảm rental_count
+        // 1. CODE CỦA BẠN EM: Dùng hàm của DAO để update logic giảm rental_count
+        // (Lưu ý: Anh gọi hàm của bạn em, nhưng em cần nhắc bạn kiểm tra lại xem hàm này trong DAO là XÓA CỨNG hay XÓA MỀM nhé. Nên là UPDATE status = DA_HUY)
         boolean cancelled = contractDAO.deleteAndDecrementRentalCount(id);
 
-        // Nếu xe đang RENTED thì chuyển về AVAILABLE
+        // 2. CODE CỦA EM: Giải phóng xe
         if (cancelled && contract.getId_vehicle() != null) {
             try {
                 VehicleBLL vehicleBLL = new VehicleBLL();
-                var vehicle = vehicleBLL.getVehicleById(contract.getId_vehicle().getId_vehicle());
+                Vehicles vehicle = vehicleBLL.getVehicleById(contract.getId_vehicle().getId_vehicle());
                 if (vehicle != null && vehicle.getStatus() == StatusVehicle.RENTED) {
                     vehicle.setStatus(StatusVehicle.AVAILABLE);
                     vehicleBLL.updateVehicle(vehicle);

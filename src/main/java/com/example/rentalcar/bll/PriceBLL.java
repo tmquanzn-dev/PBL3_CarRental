@@ -84,4 +84,36 @@ public class PriceBLL
 
         return lostLiters * fuelMarketPrice;
     }
+
+    // ==========================================================
+    // 4. TÍNH TIỀN KHI TRẢ XE TRƯỚC HẠN (Sớm hơn dự kiến)
+    // ==========================================================
+    public double calculateEarlyReturnPrice(LocalDateTime startDate, LocalDateTime expectedEndDate, LocalDateTime actualReturnDate, double pricePerDay, double pricePerHour)
+    {
+        // Nếu trả đúng hạn hoặc trễ hạn thì hệ thống tính giá bình thường
+        if (!actualReturnDate.isBefore(expectedEndDate))
+        {
+            return calculateBasePrice(startDate, expectedEndDate, pricePerDay, pricePerHour);
+        }
+
+        // Bắt lỗi: Trả xe trước cả lúc bắt đầu thuê (Khách chưa nhận xe đã hủy)
+        if (actualReturnDate.isBefore(startDate))
+        {
+            throw new IllegalArgumentException("Thời gian trả xe không hợp lệ (nhỏ hơn cả thời gian bắt đầu)!");
+        }
+
+        // 1. Tính tiền cho khoảng thời gian THỰC TẾ ĐÃ SỬ DỤNG
+        // Hàm calculateBasePrice sẽ tự động check luật cuối tuần/ngày lễ cho khúc này
+        double actualUsedPrice = calculateBasePrice(startDate, actualReturnDate, pricePerDay, pricePerHour);
+
+        // 2. Tính tiền cho khoảng thời gian KHÔNG SỬ DỤNG (Bị hủy ngang)
+        // Phần bị hủy cũng sẽ được tính giá trị dựa trên ngày lễ/cuối tuần tương ứng
+        double unusedPrice = calculateBasePrice(actualReturnDate, expectedEndDate, pricePerDay, pricePerHour);
+
+        // 3. Tính phí bồi thường 20% cho những ngày không sử dụng
+        double penaltyFee = unusedPrice * 0.20;
+
+        // 4. Tổng tiền gốc mới = Tiền xài thực tế + Phí bồi thường
+        return actualUsedPrice + penaltyFee;
+    }
 }
