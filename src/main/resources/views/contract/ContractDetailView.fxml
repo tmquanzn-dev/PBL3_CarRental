@@ -5,75 +5,216 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.Font?>
 
-<VBox prefWidth="450.0" spacing="20.0" style="-fx-background-color: white; -fx-background-radius: 15; -fx-border-color: #E0E0E0; -fx-border-radius: 15;" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.rentalcar.controller.contract.ContractDetailController">
+<VBox prefWidth="560.0" spacing="16.0"
+      style="-fx-background-color: white; -fx-background-radius: 15;
+             -fx-border-color: #e2e8f0; -fx-border-radius: 15;"
+      stylesheets="@../../css/contractview/contractstyle.css"
+      xmlns="http://javafx.com/javafx/8.0.171"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.example.rentalcar.controller.contract.ContractDetailController">
+
     <padding>
-        <Insets bottom="30.0" left="30.0" right="30.0" top="30.0" />
+        <Insets bottom="24.0" left="28.0" right="28.0" top="24.0"/>
     </padding>
+
     <children>
+
+        <!-- HEADER -->
         <HBox alignment="CENTER_LEFT" spacing="10.0">
             <children>
-                <Label text="CHI TIẾT HỢP ĐỒNG" textFill="#555555">
-                    <font>
-                        <Font name="System Bold" size="16.0" />
-                    </font>
-                </Label>
-                <Label fx:id="label_contract_code" text="#HD-001" textFill="#1a73e8">
-                    <font>
-                        <Font name="System Bold" size="16.0" />
-                    </font>
-                </Label>
+                <Label text="📄" style="-fx-font-size: 20px;"/>
+                <VBox spacing="2.0">
+                    <children>
+                        <Label style="-fx-font-weight: bold; -fx-font-size: 16px; -fx-text-fill: #1e293b;"
+                               text="Chi tiết hợp đồng"/>
+                        <Label fx:id="label_contract_code"
+                               style="-fx-font-weight: bold; -fx-text-fill: #146dff; -fx-font-size: 14px;"
+                               text="#HD-001"/>
+                    </children>
+                </VBox>
             </children>
         </HBox>
 
-        <Separator prefWidth="200.0" />
+        <Separator/>
 
-        <GridPane vgap="18.0">
+        <!-- THÔNG TIN 2 BÊN -->
+        <GridPane hgap="16.0" vgap="10.0">
             <columnConstraints>
-                <ColumnConstraints hgrow="SOMETIMES" maxWidth="150.0" minWidth="10.0" prefWidth="130.0" />
-                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="250.0" />
+                <ColumnConstraints hgrow="SOMETIMES" percentWidth="50.0"/>
+                <ColumnConstraints hgrow="SOMETIMES" percentWidth="50.0"/>
             </columnConstraints>
-            <rowConstraints>
-                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-            </rowConstraints>
-            <children>
-                <Label text="Khách hàng:" textFill="#888888" />
-                <Label fx:id="label_customer_name" text="Đang tải..." GridPane.columnIndex="1">
-                    <font> <Font name="System Bold" size="14.0" /> </font>
-                </Label>
 
-                <Label text="Số điện thoại:" textFill="#888888" GridPane.rowIndex="1" />
-                <Label fx:id="label_customer_phone" text="09xx xxx xxx" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+            <!-- Khách hàng -->
+            <VBox spacing="3.0" GridPane.columnIndex="0" GridPane.rowIndex="0">
+                <Label style="-fx-text-fill: #94a3b8; -fx-font-size: 11px; -fx-font-weight: bold;"
+                       text="KHÁCH HÀNG"/>
+                <Label fx:id="label_customer_name"
+                       style="-fx-font-weight: bold; -fx-text-fill: #1e293b; -fx-font-size: 14px;"
+                       text="--"/>
+                <Label fx:id="label_customer_phone"
+                       style="-fx-text-fill: #64748b; -fx-font-size: 12px;"
+                       text="--"/>
+            </VBox>
 
-                <Label text="Xe thuê:" textFill="#888888" GridPane.rowIndex="2" />
-                <Label fx:id="label_vehicle_info" text="Hãng xe - Biển số" GridPane.columnIndex="1" GridPane.rowIndex="2">
-                    <font> <Font name="System Bold" size="13.0" /> </font>
-                </Label>
+            <!-- Xe thuê -->
+            <VBox spacing="3.0" GridPane.columnIndex="1" GridPane.rowIndex="0">
+                <Label style="-fx-text-fill: #94a3b8; -fx-font-size: 11px; -fx-font-weight: bold;"
+                       text="XE THUÊ"/>
+                <Label fx:id="label_vehicle_info"
+                       style="-fx-font-weight: bold; -fx-text-fill: #1e293b; -fx-font-size: 13px;"
+                       text="--" wrapText="true"/>
+            </VBox>
 
-                <Label text="Thời gian thuê:" textFill="#888888" GridPane.rowIndex="3" />
-                <Label fx:id="label_rental_period" text="Từ ... Đến ..." wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+            <!-- Thời gian -->
+            <VBox spacing="3.0" GridPane.columnIndex="0" GridPane.rowIndex="1"
+                  GridPane.columnSpan="2">
+                <Label style="-fx-text-fill: #94a3b8; -fx-font-size: 11px; -fx-font-weight: bold;"
+                       text="THỜI GIAN THUÊ"/>
+                <Label fx:id="label_rental_period"
+                       style="-fx-text-fill: #1e293b; -fx-font-size: 13px;"
+                       text="--"/>
+            </VBox>
 
-                <Label text="Trạng thái:" textFill="#888888" GridPane.rowIndex="4" />
-                <Label fx:id="label_status" style="-fx-background-color: #E8F0FE; -fx-text-fill: #1A73E8; -fx-padding: 4 12; -fx-background-radius: 10;" text="TRẠNG THÁI" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+            <!-- Trạng thái HĐ -->
+            <VBox spacing="3.0" GridPane.columnIndex="0" GridPane.rowIndex="2">
+                <Label style="-fx-text-fill: #94a3b8; -fx-font-size: 11px; -fx-font-weight: bold;"
+                       text="TRẠNG THÁI HĐ"/>
+                <Label fx:id="label_status"
+                       style="-fx-background-color: #dbeafe; -fx-text-fill: #1d4ed8;
+                              -fx-padding: 4 12; -fx-background-radius: 8;
+                              -fx-font-weight: bold; -fx-font-size: 12px;"
+                       text="--"/>
+            </VBox>
 
-                <Label text="Tổng thanh toán:" textFill="#888888" GridPane.rowIndex="5" />
-                <Label fx:id="label_total_price" text="0 đ" textFill="#d32f2f" GridPane.columnIndex="1" GridPane.rowIndex="5">
-                    <font> <Font name="System Bold" size="18.0" /> </font>
-                </Label>
-            </children>
+            <!-- Trạng thái TT -->
+            <VBox spacing="3.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                <Label style="-fx-text-fill: #94a3b8; -fx-font-size: 11px; -fx-font-weight: bold;"
+                       text="THANH TOÁN"/>
+                <Label fx:id="label_payment_status"
+                       style="-fx-text-fill: #1e293b; -fx-font-size: 13px; -fx-font-weight: bold;"
+                       text="--"/>
+            </VBox>
+
+            <!-- Đặt cọc -->
+            <VBox spacing="3.0" GridPane.columnIndex="0" GridPane.rowIndex="3"
+                  GridPane.columnSpan="2">
+                <Label style="-fx-text-fill: #94a3b8; -fx-font-size: 11px; -fx-font-weight: bold;"
+                       text="ĐẶT CỌC"/>
+                <Label fx:id="label_deposit"
+                       style="-fx-text-fill: #1e293b; -fx-font-size: 13px;"
+                       text="--"/>
+            </VBox>
         </GridPane>
 
-        <Separator prefWidth="200.0" />
+        <Separator/>
 
-        <HBox alignment="CENTER_RIGHT" spacing="15.0">
+        <!-- GIÁ TIỀN -->
+        <VBox spacing="0.0"
+              style="-fx-background-color: #f8fafc; -fx-background-radius: 10;
+                     -fx-border-color: #e2e8f0; -fx-border-radius: 10; -fx-padding: 14;">
             <children>
-                <Button onAction="#handleClose" prefHeight="38.0" prefWidth="90.0" style="-fx-background-color: #F1F3F4; -fx-text-fill: #5F6368; -fx-background-radius: 8; -fx-cursor: hand;" text="Đóng" />
-                <Button prefHeight="38.0" prefWidth="120.0" style="-fx-background-color: #1A73E8; -fx-text-fill: white; -fx-background-radius: 8; -fx-cursor: hand; -fx-font-weight: bold;" text="In hợp đồng" />
+                <Label style="-fx-font-weight: bold; -fx-text-fill: #475569; -fx-font-size: 12px;
+                              -fx-padding: 0 0 8 0;"
+                       text="💰  TỔNG THANH TOÁN"/>
+
+                <HBox alignment="CENTER_LEFT" spacing="8.0">
+                    <children>
+                        <Label text="Tiền thuê cơ bản:"
+                               style="-fx-text-fill: #64748b; -fx-font-size: 13px;"
+                               prefWidth="160.0"/>
+                        <Label fx:id="label_base_price"
+                               style="-fx-text-fill: #1e293b; -fx-font-size: 13px;"
+                               text="--"/>
+                    </children>
+                </HBox>
+
+                <HBox alignment="CENTER_LEFT" spacing="8.0" style="-fx-padding: 4 0 0 0;">
+                    <children>
+                        <Label text="Giảm giá:"
+                               style="-fx-text-fill: #64748b; -fx-font-size: 13px;"
+                               prefWidth="160.0"/>
+                        <Label fx:id="label_discount"
+                               style="-fx-text-fill: #10b981; -fx-font-size: 13px;"
+                               text="0 đ"/>
+                    </children>
+                </HBox>
+
+                <Region prefHeight="8.0"
+                        style="-fx-background-color: #e2e8f0; -fx-max-height: 1; -fx-margin: 8 0;"/>
+
+                <HBox alignment="CENTER_LEFT" spacing="8.0" style="-fx-padding: 6 0 0 0;">
+                    <children>
+                        <Label text="TỔNG CỘNG:"
+                               style="-fx-font-weight: bold; -fx-text-fill: #1e293b; -fx-font-size: 14px;"
+                               prefWidth="160.0"/>
+                        <Label fx:id="label_total_price"
+                               style="-fx-font-weight: bold; -fx-text-fill: #ef4444; -fx-font-size: 20px;"
+                               text="--"/>
+                    </children>
+                </HBox>
+            </children>
+        </VBox>
+
+        <!-- LỊCH SỬ PHẠT -->
+        <VBox spacing="0.0"
+              style="-fx-background-color: white; -fx-background-radius: 10;
+                     -fx-border-color: #fcd34d; -fx-border-radius: 10;
+                     -fx-border-width: 1.5; -fx-padding: 14;">
+            <children>
+                <HBox alignment="CENTER_LEFT" spacing="8.0" style="-fx-padding: 0 0 8 0;">
+                    <children>
+                        <Label style="-fx-font-weight: bold; -fx-text-fill: #92400e; -fx-font-size: 12px;"
+                               text="⚠  CÁC KHOẢN PHẠT"/>
+                        <Region HBox.hgrow="ALWAYS"/>
+                        <HBox alignment="CENTER_LEFT" spacing="4.0">
+                            <children>
+                                <Label style="-fx-text-fill: #64748b; -fx-font-size: 12px;"
+                                       text="Tổng:"/>
+                                <Label fx:id="lblTotalPenalty"
+                                       style="-fx-font-weight: bold; -fx-text-fill: #dc2626; -fx-font-size: 13px;"
+                                       text="0 đ"/>
+                            </children>
+                        </HBox>
+                    </children>
+                </HBox>
+
+                <Separator style="-fx-padding: 0 0 6 0;"/>
+
+                <!-- Header penalties -->
+                <HBox style="-fx-background-color: #fffbeb; -fx-padding: 6 10;
+                             -fx-background-radius: 6; -fx-margin: 4 0;">
+                    <VBox.margin><Insets top="4.0"/></VBox.margin>
+                    <children>
+                        <Label text="Loại vi phạm"
+                               style="-fx-font-size: 11px; -fx-font-weight: bold; -fx-text-fill: #92400e;"
+                               HBox.hgrow="ALWAYS"/>
+                        <Label text="Số tiền"
+                               style="-fx-font-size: 11px; -fx-font-weight: bold; -fx-text-fill: #92400e;"/>
+                    </children>
+                </HBox>
+
+                <!-- Rows render bằng code -->
+                <VBox fx:id="vboxPenalties" spacing="0.0"/>
+
+                <Label fx:id="lblNoPenalties"
+                       text="✅  Không có khoản phạt nào"
+                       visible="true" managed="true"
+                       style="-fx-text-fill: #16a34a; -fx-font-size: 13px; -fx-padding: 8 0;"/>
+            </children>
+        </VBox>
+
+        <Separator/>
+
+        <!-- BUTTONS -->
+        <HBox alignment="CENTER_RIGHT" spacing="12.0">
+            <children>
+                <Button onAction="#handleClose"
+                        prefHeight="38.0" prefWidth="90.0"
+                        style="-fx-background-color: #f1f5f9; -fx-text-fill: #475569;
+                               -fx-background-radius: 8; -fx-cursor: hand; -fx-font-weight: bold;"
+                        text="Đóng"/>
             </children>
         </HBox>
+
     </children>
 </VBox>

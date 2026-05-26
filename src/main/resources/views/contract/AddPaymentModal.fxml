@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Font?>
+
+<VBox prefWidth="480.0" spacing="18.0"
+      style="-fx-background-color: white; -fx-background-radius: 14;
+             -fx-border-color: #e2e8f0; -fx-border-radius: 14;"
+      stylesheets="@../../css/contractview/contractstyle.css"
+      xmlns="http://javafx.com/javafx/8.0.171"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.example.rentalcar.controller.contract.AddPaymentController">
+
+    <padding>
+        <Insets bottom="26.0" left="30.0" right="30.0" top="24.0"/>
+    </padding>
+
+    <children>
+
+        <!-- HEADER -->
+        <HBox alignment="CENTER_LEFT" spacing="10.0">
+            <children>
+                <Label text="💳" style="-fx-font-size: 22px;"/>
+                <VBox spacing="2.0">
+                    <children>
+                        <Label style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #1e293b;"
+                               text="Ghi nhận thanh toán"/>
+                        <HBox spacing="6.0">
+                            <children>
+                                <Label style="-fx-text-fill: #94a3b8; -fx-font-size: 12px;" text="Hợp đồng:"/>
+                                <Label fx:id="lblContractCode"
+                                       style="-fx-font-weight: bold; -fx-text-fill: #146dff; -fx-font-size: 12px;"
+                                       text="--"/>
+                            </children>
+                        </HBox>
+                    </children>
+                </VBox>
+            </children>
+        </HBox>
+
+        <Separator/>
+
+        <!-- THÔNG TIN HĐ -->
+        <HBox spacing="16.0"
+              style="-fx-background-color: #f8fafc; -fx-background-radius: 10; -fx-padding: 12 14;">
+            <children>
+                <VBox spacing="3.0" HBox.hgrow="ALWAYS">
+                    <children>
+                        <Label style="-fx-text-fill: #94a3b8; -fx-font-size: 11px;" text="Khách hàng"/>
+                        <Label fx:id="lblCustomerName"
+                               style="-fx-font-weight: bold; -fx-text-fill: #1e293b; -fx-font-size: 13px;"
+                               text="--"/>
+                    </children>
+                </VBox>
+                <VBox spacing="3.0">
+                    <children>
+                        <Label style="-fx-text-fill: #94a3b8; -fx-font-size: 11px;" text="Tổng tiền HĐ"/>
+                        <Label fx:id="lblTotalPrice"
+                               style="-fx-font-weight: bold; -fx-text-fill: #ef4444; -fx-font-size: 14px;"
+                               text="--"/>
+                    </children>
+                </VBox>
+            </children>
+        </HBox>
+
+        <!-- FORM -->
+        <VBox spacing="14.0">
+            <children>
+
+                <!-- Số tiền -->
+                <VBox spacing="5.0">
+                    <children>
+                        <Label style="-fx-font-size: 13px; -fx-font-weight: bold; -fx-text-fill: #475569;"
+                               text="Số tiền thu (VNĐ) *"/>
+                        <TextField fx:id="txtAmount"
+                                   promptText="VD: 150000"
+                                   style="-fx-background-color: white; -fx-border-color: #cbd5e1;
+                                          -fx-border-radius: 8; -fx-background-radius: 8;
+                                          -fx-padding: 0 14; -fx-pref-height: 44px;
+                                          -fx-font-size: 15px; -fx-font-weight: bold;
+                                          -fx-text-fill: #146dff;"/>
+                    </children>
+                </VBox>
+
+                <!-- Loại thanh toán -->
+                <VBox spacing="5.0">
+                    <children>
+                        <Label style="-fx-font-size: 13px; -fx-font-weight: bold; -fx-text-fill: #475569;"
+                               text="Loại thanh toán *"/>
+                        <ComboBox fx:id="cbPaymentType" maxWidth="Infinity"
+                                  style="-fx-background-color: white; -fx-border-color: #cbd5e1;
+                                         -fx-border-radius: 8; -fx-background-radius: 8;
+                                         -fx-pref-height: 44px; -fx-font-size: 14px;"/>
+                    </children>
+                </VBox>
+
+                <!-- Phương thức -->
+                <VBox spacing="5.0">
+                    <children>
+                        <Label style="-fx-font-size: 13px; -fx-font-weight: bold; -fx-text-fill: #475569;"
+                               text="Phương thức thanh toán *"/>
+                        <ComboBox fx:id="cbPaymentMethod" maxWidth="Infinity"
+                                  style="-fx-background-color: white; -fx-border-color: #cbd5e1;
+                                         -fx-border-radius: 8; -fx-background-radius: 8;
+                                         -fx-pref-height: 44px; -fx-font-size: 14px;"/>
+                    </children>
+                </VBox>
+
+            </children>
+        </VBox>
+
+        <!-- Lưu ý -->
+        <HBox alignment="CENTER_LEFT" spacing="8.0"
+              style="-fx-background-color: #eff6ff; -fx-background-radius: 8;
+                     -fx-border-color: #bfdbfe; -fx-border-radius: 8; -fx-padding: 10 14;">
+            <children>
+                <Label text="💡" style="-fx-font-size: 14px;"/>
+                <Label text="Giao dịch sẽ được ghi nhận vào lịch sử thanh toán của hợp đồng."
+                       style="-fx-text-fill: #3b82f6; -fx-font-size: 12px;"
+                       wrapText="true" HBox.hgrow="ALWAYS"/>
+            </children>
+        </HBox>
+
+        <!-- Toast message -->
+        <Label fx:id="lblMsg" text="" visible="false" managed="false"
+               style="-fx-font-size: 13px; -fx-font-weight: bold;"/>
+
+        <Separator/>
+
+        <!-- BUTTONS -->
+        <HBox alignment="CENTER_RIGHT" spacing="12.0">
+            <children>
+                <Button mnemonicParsing="false" onAction="#handleCancel"
+                        prefHeight="42.0" prefWidth="100.0"
+                        style="-fx-background-color: #f1f5f9; -fx-text-fill: #475569;
+                               -fx-background-radius: 8; -fx-cursor: hand; -fx-font-weight: bold;"
+                        text="Hủy"/>
+                <Button mnemonicParsing="false" onAction="#handleSave"
+                        prefHeight="42.0" prefWidth="200.0"
+                        style="-fx-background-color: linear-gradient(to right, #10b981, #059669);
+                               -fx-text-fill: white; -fx-font-weight: bold;
+                               -fx-background-radius: 8; -fx-cursor: hand; -fx-font-size: 13px;
+                               -fx-effect: dropshadow(three-pass-box,rgba(16,185,129,0.3),10,0,0,3);"
+                        text="💾  Ghi nhận thanh toán">
+                    <font><Font name="System Bold" size="13.0"/></font>
+                </Button>
+            </children>
+        </HBox>
+
+    </children>
+</VBox>
