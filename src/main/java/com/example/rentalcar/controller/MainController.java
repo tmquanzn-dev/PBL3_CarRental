@@ -37,6 +37,7 @@ public class MainController {
     @FXML private Button btnPartPrice;   // Admin only
     @FXML private Button btnReport;      // Admin only
     @FXML private Button btnSettings;    // tất cả
+    @FXML private Button btnStaffReport; //Staff
 
     // ─────────────────────────────────────────────────────────
     @FXML
@@ -64,12 +65,16 @@ public class MainController {
     // ── Ẩn/hiện menu theo role ────────────────────────────────
     private void applyRoleMenu() {
         boolean admin = AppSession.isAdmin();
+        boolean staff = AppSession.isStaff();
 
         // Chỉ Admin thấy các mục này
         setVisible(btnEmployee, admin);
         setVisible(btnRule,     admin);
         setVisible(btnPartPrice,admin);
-        setVisible(btnReport,   admin);
+        setVisible(btnReport,   admin);   // Báo cáo tổng - Admin only
+
+        // Staff thấy báo cáo cá nhân, Admin KHÔNG thấy (vì Admin đã có báo cáo tổng)
+        setVisible(btnStaffReport, staff);
     }
 
     private void setVisible(Button btn, boolean show) {
@@ -101,6 +106,7 @@ public class MainController {
             case "Luật tính giá"   -> AppSession.isAdmin() ? "rule/RuleManagement.fxml"           : "";
             case "Phụ tùng"        -> AppSession.isAdmin() ? "partprice/PartPriceManagement.fxml" : "";
             case "Báo cáo"         -> AppSession.isAdmin() ? "report/ReportView.fxml"             : "";
+            case "Báo cáo của tôi"    -> "report/StaffReportView.fxml";
             case "Cài đặt"         -> "setting/SettingsView.fxml";
             default                -> "";
         };

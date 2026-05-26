@@ -1,5 +1,6 @@
 package com.example.rentalcar.controller.employee;
 
+import com.example.rentalcar.bll.ReportBLL;
 import com.example.rentalcar.bll.UserBLL;
 import com.example.rentalcar.models.Users;
 import com.example.rentalcar.utils.AppSession;
@@ -31,6 +32,7 @@ public class EmployeeCardController {
     private Users    currentUser;
     private Runnable onRefresh;
     private final UserBLL userBLL = new UserBLL();
+    private final ReportBLL reportBLL = new ReportBLL();
 
     public void setData(Users user) {
         if (user == null) return;
@@ -40,21 +42,27 @@ public class EmployeeCardController {
         if (lblRoleName   != null) lblRoleName.setText(
                 user.getRole_name() != null ? user.getRole_name() : "Nhân viên");
         if (lblUsername   != null) lblUsername.setText("@" + user.getUsername());
-        if (lblOrderCount != null) lblOrderCount.setText("0 đơn");
-        if (lblInitial    != null && user.getFull_name() != null && !user.getFull_name().isEmpty())
+
+        // FIX: lấy số đơn tháng này thay vì hardcode "0 đơn"
+        if (lblOrderCount != null) {
+            int count = reportBLL.getStaffPerformanceCount(user.getId_user());
+            String month = java.time.LocalDate.now().getMonthValue() + "/" +
+                    java.time.LocalDate.now().getYear();
+            lblOrderCount.setText(count + " đơn T" + month);
+        }
+
+        if (lblInitial != null && user.getFull_name() != null && !user.getFull_name().isEmpty())
             lblInitial.setText(user.getFull_name().substring(0, 1).toUpperCase());
 
         refreshStatusBadge(user.isIs_active());
         refreshLockButton(user.isIs_active());
 
-        // Staff chỉ xem, ẩn hết nút hành động
         boolean isAdmin = AppSession.isAdmin();
         if (btnBox != null) {
             btnBox.setVisible(isAdmin);
             btnBox.setManaged(isAdmin);
         }
 
-        // Màu avatar: Admin đỏ, Staff tím
         if (circleAvatar != null) {
             circleAvatar.setFill(user.getRole_id() == 1
                     ? javafx.scene.paint.Color.web("#ef4444")

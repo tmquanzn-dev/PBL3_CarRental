@@ -105,6 +105,7 @@ public class ReportController implements Initializable {
         cbMonth.setOnAction(e -> {
             int idx = cbMonth.getSelectionModel().getSelectedIndex();
             selectedMonth = idx; // 0 = cả năm, 1..12 = tháng cụ thể
+            loadBarChart();        // cập nhật highlight cột tháng
             refreshTopTables();
             refreshMonthSummary();
         });
@@ -189,7 +190,15 @@ public class ReportController implements Initializable {
             }
             barChartRevenue.getData().add(series);
 
-            setLabel(lblChartSubtitle, "Tổng: " + ReportBLL.formatMoneySmart(total) + "  •  Đơn vị: triệu đồng");
+            // Subtitle: nếu đang chọn tháng thì hiện DT tháng đó
+            if (selectedMonth > 0) {
+                double monthRev = data.getOrDefault(selectedMonth, 0.0);
+                setLabel(lblChartSubtitle, MONTH_NAMES[selectedMonth-1] + ": "
+                        + ReportBLL.formatMoneySmart(monthRev)
+                        + "  •  Tổng năm: " + ReportBLL.formatMoneySmart(total));
+            } else {
+                setLabel(lblChartSubtitle, "Tổng: " + ReportBLL.formatMoneySmart(total) + "  •  Đơn vị: triệu đồng");
+            }
 
             if (lblPeakMonth != null) {
                 if (peak > 0) {
@@ -201,14 +210,40 @@ public class ReportController implements Initializable {
                 }
             }
 
-            // Tô màu thanh
+            // Tô màu thanh:
+            // - Tháng đỉnh → đỏ
+            // - Tháng đang chọn (selectedMonth) → cam nổi bật
+            // - Các tháng khác → xanh
             final int pkMonth = peakMonth;
+            final int selMonth = selectedMonth;
             Platform.runLater(() -> {
                 for (int i = 0; i < series.getData().size(); i++) {
                     XYChart.Data<String, Number> d = series.getData().get(i);
-                    if (d.getNode() != null) {
-                        String color = (i + 1 == pkMonth) ? "#ef4444" : "#3b82f6";
-                        d.getNode().setStyle("-fx-bar-fill: " + color + "; -fx-background-radius: 4 4 0 0;");
+                    if (d.getNode() == null) continue;
+                    int month = i + 1;
+                    String color;
+                    String opacity = "1.0";
+                    if (selMonth > 0 && month == selMonth) {
+                        // Tháng đang chọn → xanh đậm nổi bật + to hơn
+                        color = "#1d4ed8";
+                        d.getNode().setStyle(
+                                "-fx-bar-fill: " + color + ";" +
+                                        "-fx-background-radius: 6 6 0 0;" +
+                                        "-fx-effect: dropshadow(three-pass-box, rgba(29,78,216,0.4), 8, 0, 0, 2);");
+                    } else if (month == pkMonth) {
+                        // Tháng đỉnh → đỏ
+                        color = "#ef4444";
+                        d.getNode().setStyle(
+                                "-fx-bar-fill: " + color + ";" +
+                                        "-fx-background-radius: 4 4 0 0;" +
+                                        (selMonth > 0 ? "-fx-opacity: 0.5;" : ""));
+                    } else {
+                        // Các tháng còn lại
+                        color = "#3b82f6";
+                        d.getNode().setStyle(
+                                "-fx-bar-fill: " + color + ";" +
+                                        "-fx-background-radius: 4 4 0 0;" +
+                                        (selMonth > 0 ? "-fx-opacity: 0.35;" : ""));
                     }
                 }
             });

@@ -155,4 +155,15 @@ public class ReportBLL {
         if (pct < 0) return String.format("↘ %.1f%%", pct);
         return "→ 0%";
     }
+
+    /**
+     * Lấy số lượng hợp đồng mà một nhân viên cụ thể đã thực hiện trong tháng hiện tại.
+     * @param userId ID của nhân viên (từ bảng users)
+     * @return Số lượng hợp đồng (không tính các hợp đồng đã hủy)
+     */
+    public int getStaffPerformanceCount(int userId) {
+        if (userId <= 0) return 0;
+
+        return reportDAO.getContractsByStaffThisMonth(userId);
+    }
 }

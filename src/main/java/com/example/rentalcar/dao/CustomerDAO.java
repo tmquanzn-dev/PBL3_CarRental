@@ -186,4 +186,18 @@ public class CustomerDAO implements IBaseDAO<Customers, Integer>
         }
         return listCustomers;
     }
+
+    public int countNewCustomersThisMonth() {
+        String sql = "SELECT COUNT(DISTINCT id_customer) FROM contracts " +
+                "WHERE MONTH(start_datetime) = MONTH(CURDATE()) " +
+                "AND YEAR(start_datetime) = YEAR(CURDATE())";
+        try (Connection cnt = DBConnection.getInstance().getConnection();
+             PreparedStatement pstm = cnt.prepareStatement(sql);
+             ResultSet rs = pstm.executeQuery()) {
+            if (rs.next()) return rs.getInt(1);
+        } catch (SQLException e) {
+            System.err.println("LỖI đếm khách mới: " + e.getMessage());
+        }
+        return 0;
+    }
 }
