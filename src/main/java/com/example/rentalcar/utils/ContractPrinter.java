@@ -574,19 +574,22 @@ public class ContractPrinter {
     // =========================================================
 
     private static PdfFont loadFont(boolean bold) throws IOException {
-        // Thử tải font có hỗ trợ Unicode tiếng Việt
-        // Nếu không có, dùng Helvetica (có thể mất dấu tiếng Việt)
         String[] fontPaths = {
+                // Windows
                 "src/main/resources/fonts/NotoSans-Regular.ttf",
                 "src/main/resources/fonts/NotoSans-Bold.ttf",
-                "src/main/resources/fonts/arial.ttf",
                 "C:/Windows/Fonts/arial.ttf",
-                "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf"
+                "C:/Windows/Fonts/times.ttf",
+                // macOS
+                "/Library/Fonts/Arial.ttf",
+                "/System/Library/Fonts/Helvetica.ttc",
+                // Linux
+                "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf",
+                "/usr/share/fonts/truetype/liberation/LiberationSans-Regular.ttf"
         };
 
-        // Thử font hệ thống
         for (String path : fontPaths) {
-            File f = new File(path);
+            java.io.File f = new java.io.File(path);
             if (f.exists()) {
                 try {
                     return PdfFontFactory.createFont(path, PdfEncodings.IDENTITY_H);
@@ -594,10 +597,12 @@ public class ContractPrinter {
             }
         }
 
-        // Fallback: Helvetica (không có dấu tiếng Việt nhưng không crash)
+        // Fallback: Helvetica (không dấu tiếng Việt nhưng không crash)
         return bold
-                ? PdfFontFactory.createFont(com.itextpdf.io.font.constants.StandardFonts.HELVETICA_BOLD)
-                : PdfFontFactory.createFont(com.itextpdf.io.font.constants.StandardFonts.HELVETICA);
+                ? PdfFontFactory.createFont(
+                com.itextpdf.io.font.constants.StandardFonts.HELVETICA_BOLD)
+                : PdfFontFactory.createFont(
+                com.itextpdf.io.font.constants.StandardFonts.HELVETICA);
     }
 
     private static void addSectionTitle(Document doc, String title, PdfFont bold) {
@@ -636,8 +641,7 @@ public class ContractPrinter {
     }
 
     private static String formatMoney(double amount) {
-        return String.format("%,.0f d", amount).replace(",", ".") + "ong";
-        // Dùng 'dong' thay 'đ' để tránh lỗi font
+        return String.format("%,.0f VND", amount).replace(",", ".");
     }
 
     private static String nvl(String s) {
