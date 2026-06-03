@@ -32,7 +32,6 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.Window;
 
-
 import java.awt.Desktop;
 import java.io.File;
 import java.net.URL;
@@ -86,6 +85,11 @@ public class ContractManagementController implements Initializable {
     }
 
     private void setupTableColumns() {
+
+        // ÉP CỐ ĐỊNH ĐỘ RỘNG CỘT HÀNH ĐỘNG - KHÔNG CHO PHÉP BỊ BÓP NGHẸT LAYOUT
+        colAction.setMinWidth(190);
+        colAction.setMaxWidth(220);
+        colAction.setPrefWidth(195);
 
         // Mã hợp đồng
         colCode.setCellValueFactory(new PropertyValueFactory<>("code_contract"));
@@ -239,12 +243,12 @@ public class ContractManagementController implements Initializable {
         });
 
 
-        // ── Cột thao tác: Xem | In | Trả xe | Hủy
+        // ── Cột thao tác: Xem | In | Trả xe | Thu tiền | Hủy
         colAction.setCellFactory(col -> new TableCell<>() {
             private final Button btnView    = new Button();
             private final Button btnPrint   = new Button();
-            private final Button btnReturn  = new Button("🏁 Trả xe");
-            private final Button btnPayment = new Button("💳 Thu tiền");  // << THÊM MỚI
+            private final Button btnReturn  = new Button(); // Chuyển sang Icon Button
+            private final Button btnPayment = new Button(); // Chuyển sang Icon Button
             private final Button btnCancel  = new Button();
             private final HBox   pane       = new HBox(6, btnView, btnPrint, btnReturn, btnPayment, btnCancel);
 
@@ -253,24 +257,26 @@ public class ContractManagementController implements Initializable {
                 btnView.getStyleClass().add("btn-action");
                 btnPrint.getStyleClass().add("btn-action");
                 btnCancel.getStyleClass().add("btn-action");
+                btnReturn.getStyleClass().add("btn-action");
+                btnPayment.getStyleClass().add("btn-action");
 
-                // Style nút Trả xe
-                btnReturn.setStyle(
-                        "-fx-background-color: #dcfce7; -fx-text-fill: #15803d;" +
-                                " -fx-background-radius: 6; -fx-cursor: hand;" +
-                                " -fx-font-size: 11px; -fx-font-weight: bold; -fx-padding: 4 8;"
-                );
+                // Style CSS hiện đại đồng bộ hóa kích thước nút biểu tượng
+                btnReturn.setStyle("-fx-background-color: #dcfce7; -fx-background-radius: 6; -fx-cursor: hand; -fx-padding: 5;");
+                btnPayment.setStyle("-fx-background-color: #dbeafe; -fx-background-radius: 6; -fx-cursor: hand; -fx-padding: 5;");
 
-                // Style nút Thu tiền  << THÊM MỚI
-                btnPayment.setStyle(
-                        "-fx-background-color: #dbeafe; -fx-text-fill: #1d4ed8;" +
-                                " -fx-background-radius: 6; -fx-cursor: hand;" +
-                                " -fx-font-size: 11px; -fx-font-weight: bold; -fx-padding: 4 8;"
-                );
+                // Đặt Tooltip giải nghĩa chuyên nghiệp khi người dùng di chuột vào nút bấm
+                btnView.setTooltip(new Tooltip("Xem chi tiết hợp đồng"));
+                btnPrint.setTooltip(new Tooltip("Xuất dữ liệu / In PDF hợp đồng"));
+                btnReturn.setTooltip(new Tooltip("Bàn giao xe / Trả xe và kết thúc hợp đồng"));
+                btnPayment.setTooltip(new Tooltip("Thực hiện thu tiền / Thanh toán hợp đồng"));
+                btnCancel.setTooltip(new Tooltip("Hủy bỏ hợp đồng"));
 
-                loadIcon(btnView,   "/image/dashboardform/view.png");
-                loadIcon(btnPrint,  "/image/dashboardform/printer.png");
-                loadIcon(btnCancel, "/image/dashboardform/delete.png");
+                // Nạp đồ họa biểu tượng hình ảnh an toàn vào ứng dụng
+                loadIcon(btnView,    "/image/dashboardform/view.png");
+                loadIcon(btnPrint,   "/image/dashboardform/printer.png");
+                loadIcon(btnReturn,  "/image/mainform/btn-motor.png"); // Tận dụng ảnh xe máy làm icon trả xe rất hợp nghiệp vụ
+                loadIcon(btnPayment, "/image/dashboardform/dollar.png");
+                loadIcon(btnCancel,  "/image/dashboardform/delete.png");
 
                 btnView.setOnAction(e -> {
                     Contracts c = getTableView().getItems().get(getIndex());
@@ -287,7 +293,6 @@ public class ContractManagementController implements Initializable {
                     showReturnModal(c);
                 });
 
-                // << THÊM MỚI: xử lý nút Thu tiền
                 btnPayment.setOnAction(e -> {
                     Contracts c = getTableView().getItems().get(getIndex());
                     showAddPaymentModal(c);
@@ -304,7 +309,7 @@ public class ContractManagementController implements Initializable {
                     URL url = getClass().getResource(path);
                     if (url != null) {
                         ImageView iv = new ImageView(new Image(url.toExternalForm()));
-                        iv.setFitHeight(17); iv.setFitWidth(17);
+                        iv.setFitHeight(16); iv.setFitWidth(16);
                         btn.setGraphic(iv);
                     }
                 } catch (Exception ignored) {}
@@ -334,8 +339,7 @@ public class ContractManagementController implements Initializable {
                 btnCancel.setVisible(canAct);
                 btnCancel.setManaged(canAct);
 
-                // Nút Thu tiền: hiện khi HĐ đang thuê/quá hạn và chưa thanh toán đủ
-                // << THÊM MỚI
+                // Kiểm tra bộ lọc hiển thị nút Thanh toán: Chỉ hiện với HĐ Đang thuê/Quá hạn và Chưa trả hết tiền
                 boolean canPay = canAct
                         && c.getPayment_status() != null
                         && c.getPayment_status() != com.example.rentalcar.models.PaymentStatus.DA_THANH_TOAN;
@@ -347,24 +351,17 @@ public class ContractManagementController implements Initializable {
         });
     }
 
-    //   IN HỢP ĐỒNG PDF
-    /**
-     * Mở FileChooser để người dùng chọn nơi lưu, sau đó tạo PDF.
-     * Sau khi tạo xong hỏi có muốn mở file không.
-     */
+    // ======= IN HỢP ĐỒNG PDF =======
     private void handlePrintContract(Contracts contract) {
         try {
             Window window = tableContracts.getScene().getWindow();
-            // Gọi ContractPrinter
             String savedPath = ContractPrinter.print(contract, window);
 
             if (savedPath != null) {
                 Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
                 confirm.setTitle("In hợp đồng thành công");
                 confirm.setHeaderText("✅ Đã lưu hợp đồng " + contract.getCode_contract());
-                confirm.setContentText(
-                        "Đường dẫn: " + savedPath + "\n\n" +
-                                "Bạn có muốn mở file PDF ngay bây giờ không?");
+                confirm.setContentText("Đường dẫn: " + savedPath + "\n\nBạn có muốn mở file PDF ngay bây giờ không?");
 
                 confirm.showAndWait()
                         .filter(r -> r == ButtonType.OK)
@@ -380,16 +377,13 @@ public class ContractManagementController implements Initializable {
                             }
                         });
             }
-
         } catch (Exception ex) {
             ex.printStackTrace();
-            showError("Lỗi tạo PDF: " + ex.getMessage()
-                    + "\n\nHãy đảm bảo đã thêm dependency iText 7 vào pom.xml");
+            showError("Lỗi tạo PDF: " + ex.getMessage() + "\n\nHãy đảm bảo đã thêm dependency iText 7 vào pom.xml");
         }
     }
 
-
-    //  LOAD DATA
+    // ======= LOAD DATA =======
     private void loadData() {
         try {
             List<Contracts> list = contractBLL.getAllContracts();
@@ -460,8 +454,7 @@ public class ContractManagementController implements Initializable {
     @FXML
     void showCreateContractModal(ActionEvent event) {
         try {
-            FXMLLoader loader = new FXMLLoader(
-                    getClass().getResource("/views/create_contract/MainLayout.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/views/create_contract/MainLayout.fxml"));
             Parent root = loader.load();
             Stage stage = new Stage();
             stage.setScene(new Scene(root));
@@ -477,8 +470,7 @@ public class ContractManagementController implements Initializable {
 
     private void showDetailModal(Contracts contract) {
         try {
-            FXMLLoader loader = new FXMLLoader(
-                    getClass().getResource("/views/contract/ContractDetailView.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/views/contract/ContractDetailView.fxml"));
             Parent root = loader.load();
             ContractDetailController ctrl = loader.getController();
             ctrl.setContractData(contract);
@@ -496,8 +488,7 @@ public class ContractManagementController implements Initializable {
 
     private void showReturnModal(Contracts contract) {
         try {
-            FXMLLoader loader = new FXMLLoader(
-                    getClass().getResource("/views/contract/ReturnVehicleModal.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/views/contract/ReturnVehicleModal.fxml"));
             Parent root = loader.load();
             ReturnVehicleController ctrl = loader.getController();
             ctrl.setContract(contract, this::loadData);
@@ -544,8 +535,7 @@ public class ContractManagementController implements Initializable {
 
     private void showAddPaymentModal(Contracts contract) {
         try {
-            FXMLLoader loader = new FXMLLoader(
-                    getClass().getResource("/views/contract/AddPaymentModal.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/views/contract/AddPaymentModal.fxml"));
             Parent root = loader.load();
 
             AddPaymentController ctrl = loader.getController();
@@ -553,13 +543,13 @@ public class ContractManagementController implements Initializable {
 
             Stage stage = new Stage();
             stage.initModality(Modality.APPLICATION_MODAL);
-            stage.setTitle("Thu tiền: " + contract.getCode_contract());
+            stage.setTitle("Quản lý thanh toán - Hợp đồng: " + contract.getCode_contract());
             stage.setScene(new Scene(root));
             stage.setResizable(false);
             stage.centerOnScreen();
             stage.show();
         } catch (Exception e) {
-            showError("Lỗi mở màn hình thu tiền: " + e.getMessage());
+            showError("Lỗi mở màn hình thanh toán: " + e.getMessage());
             e.printStackTrace();
         }
     }
