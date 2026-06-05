@@ -39,9 +39,18 @@
     <!-- ✅ iText 7 Core - Tạo PDF hợp đồng -->
     <dependency>
       <groupId>com.itextpdf</groupId>
-      <artifactId>itext7-core</artifactId>
-      <version>${itext.version}</version>
-      <type>pom</type>
+      <artifactId>kernel</artifactId>
+      <version>7.2.5</version>
+    </dependency>
+    <dependency>
+      <groupId>com.itextpdf</groupId>
+      <artifactId>layout</artifactId>
+      <version>7.2.5</version>
+    </dependency>
+    <dependency>
+      <groupId>com.itextpdf</groupId>
+      <artifactId>io</artifactId>
+      <version>7.2.5</version>
     </dependency>
 
     <!-- JUnit -->

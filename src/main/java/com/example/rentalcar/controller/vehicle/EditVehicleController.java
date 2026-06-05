@@ -119,7 +119,7 @@ public class EditVehicleController {
                 lblImagePath.setManaged(true);
             }
         } else {
-            ImageHelper.loadDefault(imgVehiclePreview, "/image/dashboardform/card-moto.png");
+            ImageHelper.loadDefault(imgVehiclePreview, "/icon/dashboardform/card-moto.png");
         }
     }
 

@@ -4,7 +4,6 @@ import com.example.rentalcar.dao.PaymentDAO;
 import com.example.rentalcar.models.Payments;
 import com.example.rentalcar.utils.AppSession;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 public class PaymentBLL {
@@ -19,13 +18,18 @@ public class PaymentBLL {
         return paymentDAO.findById(id);
     }
 
+    // ✅ BỔ SUNG: Trung gian gọi từ Controller lấy danh sách lịch sử dòng tiền
+    public List<Payments> getPaymentsByContractId(int contractId) {
+        return paymentDAO.findByContractId(contractId);
+    }
+
     // ==========================================================
     // THÊM MỚI GIAO DỊCH (Staff thu tiền)
     // ==========================================================
     public boolean createPayment(Payments payment) {
         validatePayment(payment);
 
-        // NGHIỆP VỤ: Tự động gán người thu tiền là người đang đăng nhập hệ thống
+        // NGHIỆP VỤ: Tự động gán người thu tiền là người đang đăng nhập hệ thống thông qua AppSession
         if (AppSession.getCurrentUser() != null) {
             payment.setId_user(AppSession.getCurrentUser());
         } else {

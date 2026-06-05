@@ -68,7 +68,7 @@
                   <ImageView fitHeight="48.0" fitWidth="48.0" opacity="0.18"
                              pickOnBounds="true" preserveRatio="true"
                              AnchorPane.rightAnchor="16.0" AnchorPane.topAnchor="22.0">
-                     <image><Image url="@../image/dashboardform/dollar.png"/></image>
+                     <image><Image url="@../icon/dashboardform/dollar.png"/></image>
                   </ImageView>
                </children>
             </AnchorPane>
@@ -87,7 +87,7 @@
                   <ImageView fitHeight="48.0" fitWidth="48.0" opacity="0.18"
                              pickOnBounds="true" preserveRatio="true"
                              AnchorPane.rightAnchor="16.0" AnchorPane.topAnchor="22.0">
-                     <image><Image url="@../image/dashboardform/growth.png"/></image>
+                     <image><Image url="@../icon/dashboardform/growth.png"/></image>
                   </ImageView>
                </children>
             </AnchorPane>
@@ -106,7 +106,7 @@
                   <ImageView fitHeight="48.0" fitWidth="48.0" opacity="0.18"
                              pickOnBounds="true" preserveRatio="true"
                              AnchorPane.rightAnchor="16.0" AnchorPane.topAnchor="22.0">
-                     <image><Image url="@../image/dashboardform/invoice.png"/></image>
+                     <image><Image url="@../icon/dashboardform/invoice.png"/></image>
                   </ImageView>
                </children>
             </AnchorPane>
@@ -125,7 +125,7 @@
                   <ImageView fitHeight="56.0" fitWidth="70.0" opacity="0.18"
                              pickOnBounds="true" preserveRatio="true"
                              AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="20.0">
-                     <image><Image url="@../image/dashboardform/card-moto.png"/></image>
+                     <image><Image url="@../icon/dashboardform/card-moto.png"/></image>
                   </ImageView>
                </children>
             </AnchorPane>
@@ -142,7 +142,7 @@
                <padding><Insets left="20.0" right="20.0"/></padding>
                <children>
                   <ImageView fitHeight="22.0" fitWidth="22.0" pickOnBounds="true" preserveRatio="true">
-                     <image><Image url="@../image/dashboardform/exclamation.png"/></image>
+                     <image><Image url="@../icon/dashboardform/exclamation.png"/></image>
                   </ImageView>
                   <VBox spacing="3.0">
                      <HBox.margin><Insets left="14.0"/></HBox.margin>
@@ -160,7 +160,7 @@
                <padding><Insets left="20.0" right="20.0"/></padding>
                <children>
                   <ImageView fitHeight="22.0" fitWidth="22.0" pickOnBounds="true" preserveRatio="true">
-                     <image><Image url="@../image/mainform/btn-bell.png"/></image>
+                     <image><Image url="@../icon/mainform/btn-bell.png"/></image>
                   </ImageView>
                   <VBox spacing="3.0">
                      <HBox.margin><Insets left="14.0"/></HBox.margin>
@@ -178,7 +178,7 @@
                <padding><Insets left="20.0" right="20.0"/></padding>
                <children>
                   <ImageView fitHeight="22.0" fitWidth="22.0" pickOnBounds="true" preserveRatio="true">
-                     <image><Image url="@../image/dashboardform/marketing.png"/></image>
+                     <image><Image url="@../icon/dashboardform/marketing.png"/></image>
                   </ImageView>
                   <VBox spacing="3.0">
                      <HBox.margin><Insets left="14.0"/></HBox.margin>

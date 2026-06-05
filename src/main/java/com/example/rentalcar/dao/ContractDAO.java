@@ -40,22 +40,66 @@ public class ContractDAO implements IBaseDAO<Contracts, Integer> {
         if (rs.getString("status") != null)
             contract.setStatus(StatusContracts.valueOf(rs.getString("status").replace(" ", "_")));
 
-        Users user = new Users(); user.setId_user(rs.getInt("id_user"));
+        // Nạp đầy đủ thông tin nhân viên (Tránh lỗi hiển thị nhân viên lập)
+        Users user = new Users();
+        user.setId_user(rs.getInt("id_user"));
+        if (hasColumn(rs, "user_full_name")) {
+            user.setFull_name(rs.getString("user_full_name"));
+        }
         contract.setId_user(user);
 
-        Vehicles vehicle = new Vehicles(); vehicle.setId_vehicle(rs.getInt("id_vehicle"));
+        // Nạp đầy đủ thông tin xe máy
+        Vehicles vehicle = new Vehicles();
+        vehicle.setId_vehicle(rs.getInt("id_vehicle"));
+        if (hasColumn(rs, "vehicle_code")) {
+            vehicle.setCode_vehicle(rs.getString("vehicle_code"));
+            vehicle.setBrand(rs.getString("vehicle_brand"));
+            vehicle.setModel(rs.getString("vehicle_model"));
+        }
         contract.setId_vehicle(vehicle);
 
-        Customers customer = new Customers(); customer.setId_customer(rs.getInt("id_customer"));
+        // Nạp đầy đủ thông tin khách hàng
+        Customers customer = new Customers();
+        customer.setId_customer(rs.getInt("id_customer"));
+        if (hasColumn(rs, "customer_full_name")) {
+            customer.setFull_name(rs.getString("customer_full_name"));
+            customer.setPhone(rs.getString("customer_phone"));
+        }
         contract.setId_customer(customer);
 
         int idVoucher = rs.getInt("id_voucher");
         if (!rs.wasNull()) {
-            Vouchers v = new Vouchers(); v.setId_voucher(idVoucher);
+            Vouchers v = new Vouchers();
+            v.setId_voucher(idVoucher);
+            if (hasColumn(rs, "voucher_code")) {
+                v.setCode_vouchers(rs.getString("voucher_code"));
+            }
             contract.setId_voucher(v);
         }
         return contract;
     }
+
+    private boolean hasColumn(ResultSet rs, String columnName) {
+        try {
+            rs.findColumn(columnName);
+            return true;
+        } catch (SQLException e) {
+            return false;
+        }
+    }
+
+    // ✅ ĐÃ FIX: Sửa thành vc.code_voucher để khớp chuẩn xác database
+    private final String SELECT_BASE =
+            "SELECT c.*, " +
+                    "u.full_name AS user_full_name, " +
+                    "v.code_vehicle AS vehicle_code, v.brand AS vehicle_brand, v.model AS vehicle_model, " +
+                    "cust.full_name AS customer_full_name, cust.phone AS customer_phone, " +
+                    "vc.code_voucher AS voucher_code " +
+                    "FROM Contracts c " +
+                    "LEFT JOIN users u ON c.id_user = u.id_user " +
+                    "LEFT JOIN vehicles v ON c.id_vehicle = v.id_vehicle " +
+                    "LEFT JOIN customers cust ON c.id_customer = cust.id_customer " +
+                    "LEFT JOIN vouchers vc ON c.id_voucher = vc.id_voucher ";
 
     @Override
     public boolean insert(Contracts entity) {
@@ -138,7 +182,7 @@ public class ContractDAO implements IBaseDAO<Contracts, Integer> {
 
     @Override
     public Contracts findById(Integer id) {
-        String sql = "SELECT * FROM Contracts WHERE id_contract = ?";
+        String sql = SELECT_BASE + "WHERE c.id_contract = ?";
         try (Connection cnt = DBConnection.getInstance().getConnection();
              PreparedStatement pstm = cnt.prepareStatement(sql)) {
             pstm.setInt(1, id);
@@ -152,7 +196,7 @@ public class ContractDAO implements IBaseDAO<Contracts, Integer> {
     @Override
     public List<Contracts> findAll() {
         List<Contracts> list = new ArrayList<>();
-        String sql = "SELECT * FROM Contracts ORDER BY id_contract DESC";
+        String sql = SELECT_BASE + "ORDER BY c.id_contract DESC";
         try (Connection cnt = DBConnection.getInstance().getConnection();
              Statement st = cnt.createStatement();
              ResultSet rs = st.executeQuery(sql)) {
@@ -161,12 +205,8 @@ public class ContractDAO implements IBaseDAO<Contracts, Integer> {
         return list;
     }
 
-    // ==========================================================
-    // FIX 1: Tìm HĐ theo mã code — dùng cho Step4Controller
-    // sau khi insert để lấy id_contract tạo biên bản GIAO_XE
-    // ==========================================================
     public Contracts findByCode(String code) {
-        String sql = "SELECT * FROM Contracts WHERE code_contract = ?";
+        String sql = SELECT_BASE + "WHERE c.code_contract = ?";
         try (Connection cnt = DBConnection.getInstance().getConnection();
              PreparedStatement pstm = cnt.prepareStatement(sql)) {
             pstm.setString(1, code);
@@ -179,9 +219,6 @@ public class ContractDAO implements IBaseDAO<Contracts, Integer> {
         return null;
     }
 
-    // ==========================================================
-    // FIX 2: Kiểm tra mã HĐ đã tồn tại chưa — tránh trùng mã
-    // ==========================================================
     public boolean isCodeExists(String code) {
         String sql = "SELECT COUNT(*) FROM Contracts WHERE code_contract = ?";
         try (Connection cnt = DBConnection.getInstance().getConnection();
@@ -196,31 +233,22 @@ public class ContractDAO implements IBaseDAO<Contracts, Integer> {
         return false;
     }
 
-    // ==========================================================
-    // FIX 3: Cập nhật QUA_HAN — gọi khi mở app
-    // Chuyển tất cả HĐ DANG_THUE đã quá end_datetime → QUA_HAN
-    // ==========================================================
     public int markOverdueContracts() {
         String sql = "UPDATE Contracts SET status = 'QUA HAN' " +
                 "WHERE status = 'DANG THUE' AND end_datetime < NOW()";
         try (Connection cnt = DBConnection.getInstance().getConnection();
              Statement st = cnt.createStatement()) {
-            return st.executeUpdate(sql); // trả về số HĐ vừa được cập nhật
+            return st.executeUpdate(sql);
         } catch (SQLException e) {
             System.err.println("LỖI markOverdueContracts: " + e.getMessage());
             return 0;
         }
     }
 
-    // ==========================================================
-    // FIX 4: Hủy HĐ — giảm rental_count của khách
-    // ==========================================================
     public boolean deleteAndDecrementRentalCount(int contractId) {
-        // Lấy id_customer trước khi hủy
         Contracts contract = findById(contractId);
         if (contract == null) return false;
 
-        // Hủy HĐ
         String sqlCancel = "UPDATE Contracts SET status = 'DA HUY' WHERE id_contract = ?";
         try (Connection cnt = DBConnection.getInstance().getConnection();
              PreparedStatement pstm = cnt.prepareStatement(sqlCancel)) {
@@ -228,7 +256,6 @@ public class ContractDAO implements IBaseDAO<Contracts, Integer> {
             boolean cancelled = pstm.executeUpdate() > 0;
 
             if (cancelled && contract.getId_customer() != null) {
-                // Giảm rental_count, không để âm
                 String sqlDecrement = "UPDATE customers SET rental_count = GREATEST(rental_count - 1, 0) " +
                         "WHERE id_customer = ?";
                 try (PreparedStatement pstm2 = cnt.prepareStatement(sqlDecrement)) {
@@ -279,7 +306,7 @@ public class ContractDAO implements IBaseDAO<Contracts, Integer> {
 
     public List<Contracts> findRecentContracts(int limit) {
         List<Contracts> list = new ArrayList<>();
-        String sql = "SELECT * FROM Contracts ORDER BY id_contract DESC LIMIT ?";
+        String sql = SELECT_BASE + "ORDER BY c.id_contract DESC LIMIT ?";
         try (Connection cnt = DBConnection.getInstance().getConnection();
              PreparedStatement pstm = cnt.prepareStatement(sql)) {
             pstm.setInt(1, limit);

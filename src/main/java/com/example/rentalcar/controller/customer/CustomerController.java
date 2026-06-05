@@ -142,8 +142,8 @@ public class CustomerController implements Initializable {
                 btnEdit.getStyleClass().add("btn-action");
                 btnBlacklist.getStyleClass().add("btn-action");
 
-                loadIcon(btnView, "/image/dashboardform/view.png");
-                loadIcon(btnEdit, "/image/dashboardform/edit.png");
+                loadIcon(btnView, "/icon/dashboardform/view.png");
+                loadIcon(btnEdit, "/icon/dashboardform/edit.png");
 
                 //chỉ Admin blacklist được
                 btnBlacklist.setVisible(AppSession.isAdmin());

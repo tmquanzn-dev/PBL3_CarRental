@@ -327,6 +327,9 @@ public class ReturnVehicleController {
     // =========================================================
     // XÁC NHẬN TRẢ XE — ĐÃ FIX: lưu phạt trễ và xăng vào DB
     // =========================================================
+    // =========================================================
+    // XÁC NHẬN TRẢ XE — ĐÃ FIX LỖI LƯU TIỀN TRẢ SỚM VÀ THÊM POP-UP UX
+    // =========================================================
     @FXML
     void handleConfirm() {
         LocalDateTime returnDt = buildReturnDatetime();
@@ -351,30 +354,94 @@ public class ReturnVehicleController {
                 ? getSelectedDamageParts() : new ArrayList<>();
 
         try {
-            // ── Tính các khoản phạt ──────────────────────────────
+            // ── 1. TÍNH TOÁN CHI PHÍ & LUẬT TRẢ SỚM DÀNH CHO DATABASE ──────────────────
+            double finalBasePrice = contract.getBase_price();
+            double earlyReturnPenaltyFee = 0.0;
+            boolean isEarlyReturn = returnDt.isBefore(contract.getEnd_datetime());
+
+            if (isEarlyReturn && fullVehicle != null) {
+                // Khách trả sớm: Gọi priceBLL bóc tách (Tiền đã đi + 20% tiền ngày thừa)
+                double priceDay = fullVehicle.getPrice_day();
+                double priceHour = fullVehicle.getPrice_hour();
+
+                double actualUsedPrice = priceBLL.calculateBasePrice(contract.getStart_datetime(), returnDt, priceDay, priceHour);
+                double unusedPrice = priceBLL.calculateBasePrice(returnDt, contract.getEnd_datetime(), priceDay, priceHour);
+                earlyReturnPenaltyFee = unusedPrice * 0.20;
+
+                finalBasePrice = actualUsedPrice + earlyReturnPenaltyFee;
+            }
+
+            // Tính các khoản phạt vi phạm thông thường
             int fuelEnd  = (int) sliderFuel.getValue();
             int capacity = (fullVehicle != null) ? fullVehicle.getFuel_capacity() : 0;
 
-            double latePenaltyAmount = calculateLatePenaltyAmount(
-                    contract.getEnd_datetime(), returnDt);
-            double fuelPenaltyAmount = calculateFuelPenaltyAmount(
-                    contract.getFuel_start(), fuelEnd, capacity);
-            double damagePenaltyAmount = damagedParts.stream()
-                    .mapToDouble(PartPrices::getPrice).sum();
+            double latePenaltyAmount = calculateLatePenaltyAmount(contract.getEnd_datetime(), returnDt);
+            double fuelPenaltyAmount = calculateFuelPenaltyAmount(contract.getFuel_start(), fuelEnd, capacity);
+            double damagePenaltyAmount = damagedParts.stream().mapToDouble(PartPrices::getPrice).sum();
 
-            // ── 1. Cập nhật hợp đồng ─────────────────────────────
+            // Tính toán tổng số tiền cuối cùng sau giảm giá voucher (nếu có)
+            double currentDiscount = contract.getDiscount_amount();
+            if (currentDiscount > finalBasePrice) currentDiscount = finalBasePrice;
+
+            double finalTotalPrice = (finalBasePrice - currentDiscount) + latePenaltyAmount + fuelPenaltyAmount + damagePenaltyAmount;
+
+            // ── 2. HIỂN THỊ THÔNG BÁO XÁC NHẬN TRẢ XE SỚM (NẾU CÓ TRẢ SỚM) ──────────────────
+            if (isEarlyReturn) {
+                long totalHoursUnused = java.time.Duration.between(returnDt, contract.getEnd_datetime()).toHours();
+                long daysUnused = totalHoursUnused / 24;
+                long hoursUnused = totalHoursUnused % 24;
+                String timeUnusedStr = daysUnused > 0 ? daysUnused + " ngày " + hoursUnused + " giờ" : totalHoursUnused + " giờ";
+
+                double priceDay = fullVehicle.getPrice_day();
+                double priceHour = fullVehicle.getPrice_hour();
+
+                // Tính toán live chuẩn để đẩy sang giao diện Modal
+                double actualUsedPrice = priceBLL.calculateBasePrice(contract.getStart_datetime(), returnDt, priceDay, priceHour);
+                double penaltyFee30 = actualUsedPrice * 0.30; // 30% trên tiền đã đi
+
+                try {
+                    // Load file giao diện FXML của Popup mới tạo
+                    javafx.fxml.FXMLLoader loader = new javafx.fxml.FXMLLoader(getClass().getResource("/views/contract/EarlyReturnModal.fxml"));
+                    javafx.scene.Parent root = loader.load();
+
+                    // Lấy Controller của Popup và đẩy dữ liệu sang
+                    EarlyReturnModalController modalController = loader.getController();
+                    modalController.setData(timeUnusedStr, actualUsedPrice, penaltyFee30, finalBasePrice);
+
+                    // Tạo Stage (cửa sổ modal) chạy ngầm
+                    Stage stage = new Stage();
+                    stage.initModality(javafx.stage.Modality.APPLICATION_MODAL);
+                    stage.initStyle(javafx.stage.StageStyle.UNDECORATED); // Ẩn thanh tiêu đề trên cùng để nhìn cho đẹp, bo góc
+                    stage.setScene(new javafx.scene.Scene(root));
+                    stage.showAndWait(); // Đợi cho đến khi nhân viên bấm nút trên popup mới chạy tiếp code phía dưới
+
+                    // Nếu nhân viên bấm nút Hủy bỏ trên Popup -> Thoát luồng, không lưu gì vào DB hết
+                    if (!modalController.isConfirmed()) {
+                        return;
+                    }
+
+                } catch (Exception e) {
+                    System.err.println("Lỗi hiển thị Popup Trả Sớm FXML: " + e.getMessage());
+                    e.printStackTrace();
+                    return;
+                }
+            }
+
+            // ── 3. ĐẨY CẬP NHẬT DỮ LIỆU ĐÃ ĐỒNG BỘ XUỐNG MYSQL ─────────────────────
             contract.setReturn_datetime(returnDt);
             contract.setFuel_end(fuelEnd);
             contract.setKm_end(kmEnd);
+            contract.setBase_price(finalBasePrice);   // ✅ FIX LỖI: Cập nhật lại giá gốc mới
+            contract.setTotal_price(finalTotalPrice); // ✅ FIX LỖI: Cập nhật tổng tiền thanh toán mới
             contract.setPayment_status(displayToPaymentStatus(cbPaymentStatus.getValue()));
 
             boolean ok = contractBLL.returnVehicle(contract);
             if (!ok) {
-                showAlert(Alert.AlertType.ERROR, "Không thể cập nhật hợp đồng!");
+                showAlert(Alert.AlertType.ERROR, "Không thể cập nhật hợp đồng vào cơ sở dữ liệu!");
                 return;
             }
 
-            // ── 2. Cập nhật xe ───────────────────────────────────
+            // ── 4. CẬP NHẬT TRẠNG THÁI XE XE ───────────────────────────────────
             if (fullVehicle != null) {
                 fullVehicle.setStatus(!damagedParts.isEmpty()
                         ? StatusVehicle.MAINTENANCE : StatusVehicle.AVAILABLE);
@@ -382,14 +449,14 @@ public class ReturnVehicleController {
                 vehicleDAO.update(fullVehicle);
             }
 
-            // ── 3. Biên bản kiểm tra TRẢ XE ─────────────────────
+            // ── 5. BIÊN BẢN KIỂM TRA TRẢ XE ─────────────────────
             Inspections inspection = new Inspections();
             inspection.setId_contract(contract);
             inspection.setId_user(AppSession.getCurrentUser());
             inspection.setInspection_type(InspectionType.TRA_XE);
             inspectionBLL.createInspection(inspection);
 
-            // ── 4. LƯU PHẠT TRỄ GIỜ vào bảng penalties ──────────
+            // ── 6. LƯU PHẠT TRỄ GIỜ VÀO BẢNG PENALTIES ──────────
             if (latePenaltyAmount > 0) {
                 Penalties latePenalty = new Penalties();
                 latePenalty.setId_contract(contract);
@@ -398,7 +465,7 @@ public class ReturnVehicleController {
                 penaltyBLL.createPenalty(latePenalty);
             }
 
-            // ── 5. LƯU PHẠT THIẾU XĂNG vào bảng penalties ───────
+            // ── 7. LƯU PHẠT THIẾU XĂNG VÀO BẢNG PENALTIES ───────
             if (fuelPenaltyAmount > 0) {
                 Penalties fuelPenalty = new Penalties();
                 fuelPenalty.setId_contract(contract);
@@ -407,7 +474,7 @@ public class ReturnVehicleController {
                 penaltyBLL.createPenalty(fuelPenalty);
             }
 
-            // ── 6. LƯU PHẠT HƯ HỎNG vào bảng penalties ──────────
+            // ── 8. LƯU PHẠT HƯ HỎNG VÀO BẢNG PENALTIES ──────────
             for (PartPrices part : damagedParts) {
                 Penalties damagePenalty = new Penalties();
                 damagePenalty.setId_contract(contract);
@@ -416,24 +483,23 @@ public class ReturnVehicleController {
                 penaltyBLL.createPenalty(damagePenalty);
             }
 
-            // ── 7. Thông báo kết quả ─────────────────────────────
+            // ── 9. THÔNG BÁO KẾT QUẢ CUỐI CÙNG THÀNH CÔNG ─────────────────────────────
             StringBuilder msg = new StringBuilder();
-            msg.append("✅ Hợp đồng ").append(contract.getCode_contract())
-                    .append(" đã hoàn thành!\n");
+            msg.append("✅ Hợp đồng ").append(contract.getCode_contract()).append(" đã hoàn thành!\n\n");
 
+            if (isEarlyReturn)
+                msg.append("🔄 Đã áp dụng giá trả xe sớm: ").append(fmt(finalBasePrice)).append("\n");
             if (latePenaltyAmount > 0)
                 msg.append("⏰ Phạt trễ giờ: ").append(fmt(latePenaltyAmount)).append("\n");
-
             if (fuelPenaltyAmount > 0)
-                msg.append("⛽ Phạt thiếu xăng: ").append(fmt(fuelPenaltyAmount)).append("\n");
+                msg.append("Bakery ⛽ Phạt thiếu xăng: ").append(fmt(fuelPenaltyAmount)).append("\n");
 
             if (!damagedParts.isEmpty()) {
-                msg.append("🔧 Xe chuyển sang Bảo dưỡng. Phạt hư hỏng:\n");
+                msg.append("\n🔧 Xe chuyển sang trạng thái Bảo dưỡng. Phạt hư hỏng:\n");
                 for (PartPrices p : damagedParts)
-                    msg.append("  • ").append(p.getPart_name()).append(": ")
-                            .append(fmt(p.getPrice())).append("\n");
+                    msg.append("  • ").append(p.getPart_name()).append(": ").append(fmt(p.getPrice())).append("\n");
             } else {
-                msg.append("🏍 Xe đã chuyển sang trạng thái Sẵn sàng.");
+                msg.append("\n🏍 Xe máy đã tự động chuyển về trạng thái Sẵn sàng phục vụ.");
             }
 
             Alert success = new Alert(Alert.AlertType.INFORMATION);
@@ -446,7 +512,7 @@ public class ReturnVehicleController {
             closeStage();
 
         } catch (Exception e) {
-            showAlert(Alert.AlertType.ERROR, "Lỗi: " + e.getMessage());
+            showAlert(Alert.AlertType.ERROR, "Gặp lỗi hệ thống: " + e.getMessage());
             e.printStackTrace();
         }
     }

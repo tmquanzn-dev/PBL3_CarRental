@@ -18,7 +18,6 @@ import com.itextpdf.layout.element.*;
 import com.itextpdf.layout.properties.HorizontalAlignment;
 import com.itextpdf.layout.properties.TextAlignment;
 import com.itextpdf.layout.properties.UnitValue;
-import com.itextpdf.layout.properties.VerticalAlignment;
 import javafx.stage.FileChooser;
 import javafx.stage.Window;
 
@@ -31,13 +30,8 @@ import java.util.List;
 /**
  * ContractPrinter – Tạo file PDF hợp đồng thuê xe.
  *
- * Dùng iText 7 Community (AGPL).
- * Hỗ trợ font Unicode tiếng Việt qua NotoSans hoặc ArialUnicode.
- *
- * Cách dùng:
- *   ContractPrinter.print(contract, parentWindow);
- *
- * File: src/main/java/com/example/rentalcar/utils/ContractPrinter.java
+ * ĐÃ SỬA: Ưu tiên hiển thị đúng nhân viên đã lập hợp đồng gốc từ trước.
+ * ĐÃ FIX: Chống lỗi văng IllegalArgumentException từ iText 7 khi gặp chuỗi null.
  */
 public class ContractPrinter {
 
@@ -64,17 +58,9 @@ public class ContractPrinter {
     //  PUBLIC API
     // =========================================================
 
-    /**
-     * Mở FileChooser → Người dùng chọn nơi lưu → Tạo PDF.
-     *
-     * @param contract  Hợp đồng cần in
-     * @param owner     Cửa sổ cha (dùng cho FileChooser)
-     * @return đường dẫn file đã lưu, hoặc null nếu người dùng hủy
-     */
     public static String print(Contracts contract, Window owner) {
         if (contract == null) return null;
 
-        // Mở FileChooser
         FileChooser chooser = new FileChooser();
         chooser.setTitle("Lưu hợp đồng PDF");
         chooser.getExtensionFilters().add(
@@ -93,9 +79,6 @@ public class ContractPrinter {
         }
     }
 
-    /**
-     * Tạo PDF trực tiếp vào đường dẫn chỉ định (không mở dialog).
-     */
     public static void printToPath(Contracts contract, String outputPath) throws Exception {
         if (contract == null || outputPath == null) return;
         generatePdf(contract, outputPath);
@@ -106,7 +89,6 @@ public class ContractPrinter {
     // =========================================================
 
     private static void generatePdf(Contracts contract, String outputPath) throws Exception {
-
         // Load dữ liệu liên quan
         Customers customer = contract.getId_customer() != null
                 ? customerDAO.findById(contract.getId_customer().getId_customer()) : null;
@@ -120,7 +102,6 @@ public class ContractPrinter {
         Document   doc     = new Document(pdf, PageSize.A4);
         doc.setMargins(36, 36, 36, 36);
 
-        // Font Unicode cho tiếng Việt
         PdfFont fontRegular = loadFont(false);
         PdfFont fontBold    = loadFont(true);
 
@@ -137,7 +118,7 @@ public class ContractPrinter {
         addPricingSection(doc, contract, fontRegular, fontBold);
 
         // ── 5. PHẠT (nếu có) ─────────────────────────────────
-        if (!penalties.isEmpty()) {
+        if (penalties != null && !penalties.isEmpty()) {
             addPenaltySection(doc, penalties, fontRegular, fontBold);
         }
 
@@ -161,7 +142,6 @@ public class ContractPrinter {
     // =========================================================
     private static void addHeader(Document doc, Contracts contract,
                                   PdfFont regular, PdfFont bold) {
-        // Company name
         Paragraph company = new Paragraph("VEHICLERENT PRO")
                 .setFont(bold).setFontSize(22)
                 .setFontColor(COLOR_PRIMARY)
@@ -176,12 +156,10 @@ public class ContractPrinter {
                 .setMarginBottom(16);
         doc.add(tagline);
 
-        // Đường kẻ phân cách
         doc.add(new LineSeparator(
                 new com.itextpdf.kernel.pdf.canvas.draw.SolidLine(1.5f))
                 .setStrokeColor(COLOR_PRIMARY).setMarginBottom(16));
 
-        // Tiêu đề hợp đồng
         Paragraph title = new Paragraph("HỢP ĐỒNG THUÊ XE")
                 .setFont(bold).setFontSize(18)
                 .setFontColor(COLOR_DARK)
@@ -189,7 +167,6 @@ public class ContractPrinter {
                 .setMarginBottom(4);
         doc.add(title);
 
-        // Mã hợp đồng + ngày tạo
         String createdDate = contract.getStart_datetime() != null
                 ? contract.getStart_datetime().format(DATE_FMT)
                 : "---";
@@ -202,7 +179,6 @@ public class ContractPrinter {
                 .setMarginBottom(4);
         doc.add(meta);
 
-        // Badge trạng thái
         String statusText = getStatusText(contract.getStatus());
         DeviceRgb[] statusColors = getStatusColors(contract.getStatus());
         Paragraph status = new Paragraph(statusText)
@@ -228,7 +204,6 @@ public class ContractPrinter {
                 .setWidth(UnitValue.createPercentValue(100))
                 .setMarginBottom(16);
 
-        // Bên A – Cửa hàng
         Cell cellA = new Cell().setPadding(12)
                 .setBackgroundColor(COLOR_LIGHT_BG)
                 .setBorder(new SolidBorder(COLOR_BORDER, 1));
@@ -239,12 +214,15 @@ public class ContractPrinter {
         cellA.add(infoRow("Địa chỉ:", "Đà Nẵng, Việt Nam", regular, bold));
         cellA.add(infoRow("Điện thoại:", "1900 xxxx", regular, bold));
 
-        // Tên nhân viên tạo HĐ
-        String staffName = (contract.getId_user() != null && contract.getId_user().getFull_name() != null)
-                ? contract.getId_user().getFull_name() : "---";
+        // ✅ ĐÃ SỬA: Ưu tiên lấy đúng Nhân viên tạo hợp đồng gốc từ trước
+        String staffName = "---";
+        if (contract.getId_user() != null && contract.getId_user().getFull_name() != null) {
+            staffName = contract.getId_user().getFull_name();
+        } else if (AppSession.getCurrentUser() != null) {
+            staffName = AppSession.getCurrentUser().getFull_name();
+        }
         cellA.add(infoRow("Nhân viên lập:", staffName, regular, bold));
 
-        // Bên B – Khách hàng
         Cell cellB = new Cell().setPadding(12)
                 .setBorder(new SolidBorder(COLOR_BORDER, 1));
 
@@ -283,7 +261,6 @@ public class ContractPrinter {
                 .setWidth(UnitValue.createPercentValue(100))
                 .setMarginBottom(16);
 
-        // Header row
         String[] headers = {"Biển số xe", "Hãng xe / Model", "Loại xe", "Màu sắc"};
         for (String h : headers) {
             table.addHeaderCell(new Cell()
@@ -293,7 +270,6 @@ public class ContractPrinter {
                     .add(new Paragraph(h).setFont(bold).setFontSize(9).setFontColor(ColorConstants.WHITE)));
         }
 
-        // Data row
         addTableCell(table, vehicle.getCode_vehicle(), regular, true);
         addTableCell(table, vehicle.getBrand() + " " + vehicle.getModel(), regular, true);
         addTableCell(table, nvl(vehicle.getVehicle_type()), regular, false);
@@ -301,7 +277,6 @@ public class ContractPrinter {
 
         doc.add(table);
 
-        // KM + xăng lúc giao
         Table table2 = new Table(UnitValue.createPercentArray(new float[]{25, 25, 25, 25}))
                 .setWidth(UnitValue.createPercentValue(100))
                 .setMarginBottom(16);
@@ -348,7 +323,6 @@ public class ContractPrinter {
         cellLeft.add(infoRow("Ngày trả dự kiến:", end, regular, bold));
         cellLeft.add(infoRow("Ngày trả thực tế:", ret, regular, bold));
 
-        // Tính tổng thời gian
         if (contract.getStart_datetime() != null && contract.getEnd_datetime() != null) {
             long hours = java.time.Duration.between(
                     contract.getStart_datetime(), contract.getEnd_datetime()).toHours();
@@ -372,15 +346,16 @@ public class ContractPrinter {
         cellRight.add(infoRow("Hình thức cọc:", depositType, regular, bold));
         cellRight.add(infoRow("Số tiền cọc:", formatMoney(contract.getDeposit_amount()), regular, bold));
 
-        String payStatus = contract.getPayment_status() != null
-                ? switch (contract.getPayment_status()) {
-            case CHUA_THANH_TOAN   -> "Chưa thanh toán";
-            case THANH_TOAN_1_PHAN -> "Thanh toán một phần";
-            case DA_THANH_TOAN     -> "Đã thanh toán đủ";
-        } : "---";
+        String payStatus = "---";
+        if (contract.getPayment_status() != null) {
+            payStatus = switch (contract.getPayment_status()) {
+                case CHUA_THANH_TOAN   -> "Chưa thanh toán";
+                case THANH_TOAN_1_PHAN -> "Thanh toán một phần";
+                case DA_THANH_TOAN     -> "Đã thanh toán đủ";
+            };
+        }
         cellRight.add(infoRow("Trạng thái TT:", payStatus, regular, bold));
 
-        // Voucher
         if (contract.getId_voucher() != null) {
             cellRight.add(infoRow("Voucher:", contract.getId_voucher().getCode_vouchers(), regular, bold));
         }
@@ -401,7 +376,6 @@ public class ContractPrinter {
                 .setWidth(UnitValue.createPercentValue(100))
                 .setMarginBottom(16);
 
-        // Header
         table.addHeaderCell(new Cell().setBackgroundColor(COLOR_YELLOW_BG)
                 .setBorder(new SolidBorder(COLOR_BORDER, 1)).setPadding(8)
                 .add(new Paragraph("Loại phạt").setFont(bold).setFontSize(9).setFontColor(COLOR_YELLOW_FG)));
@@ -429,7 +403,6 @@ public class ContractPrinter {
             totalPenalty += p.getAmount();
         }
 
-        // Total row
         table.addCell(new Cell().setBackgroundColor(new DeviceRgb(254, 226, 226))
                 .setBorder(new SolidBorder(COLOR_BORDER, 1)).setPadding(8)
                 .add(new Paragraph("TỔNG PHẠT").setFont(bold).setFontSize(9).setFontColor(COLOR_RED)));
@@ -461,15 +434,15 @@ public class ContractPrinter {
                     regular, bold, false);
         }
 
-        // Tính phạt từ danh sách
         List<Penalties> penalties = penaltyDAO.findByContractId(contract.getId_contract());
-        double totalPenalty = penalties.stream().mapToDouble(Penalties::getAmount).sum();
-        if (totalPenalty > 0) {
-            addSummaryRow(table, "Tổng tiền phạt:", formatMoney(totalPenalty),
-                    regular, bold, false);
+        if (penalties != null) {
+            double totalPenalty = penalties.stream().mapToDouble(Penalties::getAmount).sum();
+            if (totalPenalty > 0) {
+                addSummaryRow(table, "Tổng tiền phạt:", formatMoney(totalPenalty),
+                        regular, bold, false);
+            }
         }
 
-        // Total row – nổi bật
         Cell labelCell = new Cell().setBackgroundColor(COLOR_PRIMARY)
                 .setBorder(new SolidBorder(COLOR_PRIMARY, 1)).setPadding(12)
                 .add(new Paragraph("TỔNG CỘNG CẦN THANH TOÁN")
@@ -533,8 +506,14 @@ public class ContractPrinter {
                 .setFontColor(COLOR_PRIMARY).setTextAlignment(TextAlignment.CENTER));
         sigA.add(new Paragraph("(Ký, ghi rõ họ tên)").setFont(regular).setFontSize(8)
                 .setFontColor(COLOR_GRAY).setTextAlignment(TextAlignment.CENTER).setMarginBottom(50));
-        String staffName = (contract.getId_user() != null && contract.getId_user().getFull_name() != null)
-                ? contract.getId_user().getFull_name() : "_______________";
+
+        // ✅ ĐÃ SỬA: Bộ ký tên ưu tiên lấy đúng nhân viên lập hợp đồng gốc
+        String staffName = "_______________";
+        if (contract.getId_user() != null && contract.getId_user().getFull_name() != null) {
+            staffName = contract.getId_user().getFull_name();
+        } else if (AppSession.getCurrentUser() != null) {
+            staffName = AppSession.getCurrentUser().getFull_name();
+        }
         sigA.add(new Paragraph(staffName).setFont(bold).setFontSize(10)
                 .setFontColor(COLOR_DARK).setTextAlignment(TextAlignment.CENTER));
 
@@ -575,15 +554,12 @@ public class ContractPrinter {
 
     private static PdfFont loadFont(boolean bold) throws IOException {
         String[] fontPaths = {
-                // Windows
                 "src/main/resources/fonts/NotoSans-Regular.ttf",
                 "src/main/resources/fonts/NotoSans-Bold.ttf",
                 "C:/Windows/Fonts/arial.ttf",
                 "C:/Windows/Fonts/times.ttf",
-                // macOS
                 "/Library/Fonts/Arial.ttf",
                 "/System/Library/Fonts/Helvetica.ttc",
-                // Linux
                 "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf",
                 "/usr/share/fonts/truetype/liberation/LiberationSans-Regular.ttf"
         };
@@ -597,16 +573,14 @@ public class ContractPrinter {
             }
         }
 
-        // Fallback: Helvetica (không dấu tiếng Việt nhưng không crash)
         return bold
-                ? PdfFontFactory.createFont(
-                com.itextpdf.io.font.constants.StandardFonts.HELVETICA_BOLD)
-                : PdfFontFactory.createFont(
-                com.itextpdf.io.font.constants.StandardFonts.HELVETICA);
+                ? PdfFontFactory.createFont(com.itextpdf.io.font.constants.StandardFonts.HELVETICA_BOLD)
+                : PdfFontFactory.createFont(com.itextpdf.io.font.constants.StandardFonts.HELVETICA);
     }
 
     private static void addSectionTitle(Document doc, String title, PdfFont bold) {
-        doc.add(new Paragraph(title)
+        String safeTitle = (title != null) ? title : "";
+        doc.add(new Paragraph(safeTitle)
                 .setFont(bold).setFontSize(11)
                 .setFontColor(COLOR_PRIMARY)
                 .setMarginTop(10).setMarginBottom(8)
@@ -616,24 +590,31 @@ public class ContractPrinter {
     }
 
     private static Paragraph infoRow(String label, String value, PdfFont regular, PdfFont bold) {
-        Text labelText = new Text(label + " ").setFont(bold).setFontSize(9).setFontColor(COLOR_GRAY);
-        Text valueText = new Text(value).setFont(regular).setFontSize(9).setFontColor(COLOR_DARK);
+        String safeLabel = (label != null) ? label : "";
+        String safeValue = (value != null && !value.isBlank()) ? value : "---";
+
+        Text labelText = new Text(safeLabel + " ").setFont(bold).setFontSize(9).setFontColor(COLOR_GRAY);
+        Text valueText = new Text(safeValue).setFont(regular).setFontSize(9).setFontColor(COLOR_DARK);
         return new Paragraph().add(labelText).add(valueText).setMarginBottom(4);
     }
 
     private static void addTableCell(Table table, String text, PdfFont font, boolean highlight) {
+        String safeText = (text != null) ? text : "---";
         Cell cell = new Cell().setBorder(new SolidBorder(COLOR_BORDER, 0.5f)).setPadding(7);
         if (highlight) cell.setBackgroundColor(new DeviceRgb(239, 246, 255));
-        cell.add(new Paragraph(text).setFont(font).setFontSize(9).setFontColor(COLOR_DARK));
+        cell.add(new Paragraph(safeText).setFont(font).setFontSize(9).setFontColor(COLOR_DARK));
         table.addCell(cell);
     }
 
     private static void addSummaryRow(Table table, String label, String value,
                                       PdfFont regular, PdfFont bold, boolean isTotal) {
+        String safeLabel = (label != null) ? label : "";
+        String safeValue = (value != null) ? value : "0 VND";
+
         Cell c1 = new Cell().setBorder(new SolidBorder(COLOR_BORDER, 0.5f)).setPadding(8)
-                .add(new Paragraph(label).setFont(isTotal ? bold : regular).setFontSize(9).setFontColor(COLOR_DARK));
+                .add(new Paragraph(safeLabel).setFont(isTotal ? bold : regular).setFontSize(9).setFontColor(COLOR_DARK));
         Cell c2 = new Cell().setBorder(new SolidBorder(COLOR_BORDER, 0.5f)).setPadding(8)
-                .add(new Paragraph(value).setFont(bold).setFontSize(10)
+                .add(new Paragraph(safeValue).setFont(bold).setFontSize(10)
                         .setFontColor(isTotal ? COLOR_RED : COLOR_DARK)
                         .setTextAlignment(TextAlignment.RIGHT));
         table.addCell(c1);

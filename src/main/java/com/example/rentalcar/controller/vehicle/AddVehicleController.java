@@ -34,7 +34,7 @@ public class AddVehicleController {
     public void initialize() {
         cbType.getItems().addAll("Tay ga", "Xe số", "Xe côn");
         // Load ảnh mặc định
-        ImageHelper.loadDefault(imgVehiclePreview, "/image/dashboardform/card-moto.png");
+        ImageHelper.loadDefault(imgVehiclePreview, "/icon/dashboardform/card-moto.png");
     }
 
     // =========================================================
@@ -103,7 +103,7 @@ public class AddVehicleController {
             if (savedImagePathRelative != null && !savedImagePathRelative.isBlank()) {
                 v.setImage_url(savedImagePathRelative);
             } else {
-                v.setImage_url("/image/dashboardform/card-moto.png");
+                v.setImage_url("/icon/dashboardform/card-moto.png");
             }
 
             if (vehicleBLL.addVehicle(v)) {

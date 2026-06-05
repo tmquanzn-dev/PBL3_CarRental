@@ -1,9 +1,7 @@
 package com.example.rentalcar.controller.partprice;
 
 import com.example.rentalcar.bll.PartPriceBLL;
-import com.example.rentalcar.dao.PartPriceDAO;
 import com.example.rentalcar.models.PartPrices;
-import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -115,8 +113,8 @@ public class PartPriceController implements Initializable {
                 pane.setAlignment(Pos.CENTER_LEFT);
                 btnEdit.getStyleClass().add("btn-action");
                 btnDelete.getStyleClass().add("btn-action");
-                loadIcon(btnEdit,   "/image/dashboardform/edit.png");
-                loadIcon(btnDelete, "/image/dashboardform/delete.png");
+                loadIcon(btnEdit, "/icon/dashboardform/edit.png");
+                loadIcon(btnDelete, "/icon/dashboardform/delete.png");
 
                 btnEdit.setOnAction(e -> {
                     PartPrices part = getTableView().getItems().get(getIndex());

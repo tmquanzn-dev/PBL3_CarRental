@@ -81,7 +81,7 @@
                                 style="-fx-background-color: #fff;">
                             <graphic>
                                 <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
-                                    <image><Image url="@../image/mainform/btn-bell.png" /></image>
+                                    <image><Image url="@../icon/mainform/btn-bell.png" /></image>
                                 </ImageView>
                             </graphic>
                             <HBox.margin><Insets left="400.0" top="60.0" /></HBox.margin>
@@ -126,7 +126,7 @@
                                 styleClass="btn-logout">
                             <graphic>
                                 <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
-                                    <image><Image url="@../image/mainform/btn-logout.png" /></image>
+                                    <image><Image url="@../icon/mainform/btn-logout.png" /></image>
                                 </ImageView>
                             </graphic>
                             <HBox.margin><Insets top="60.0" /></HBox.margin>
@@ -169,7 +169,7 @@
                             <VBox.margin><Insets left="25.0" /></VBox.margin>
                             <graphic>
                                 <ImageView fitHeight="23.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
-                                    <image><Image url="@../image/mainform/btn-home.png" /></image>
+                                    <image><Image url="@../icon/mainform/btn-home.png" /></image>
                                 </ImageView>
                             </graphic>
                         </Button>
@@ -185,7 +185,7 @@
                             <VBox.margin><Insets left="25.0" top="10.0" /></VBox.margin>
                             <graphic>
                                 <ImageView fitHeight="23.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
-                                    <image><Image url="@../image/mainform/btn-bill.png" /></image>
+                                    <image><Image url="@../icon/mainform/btn-bill.png" /></image>
                                 </ImageView>
                             </graphic>
                         </Button>
@@ -200,7 +200,7 @@
                             <font><Font size="18.0" /></font>
                             <graphic>
                                 <ImageView fitHeight="23.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
-                                    <image><Image url="@../image/mainform/btn-motor.png" /></image>
+                                    <image><Image url="@../icon/mainform/btn-motor.png" /></image>
                                 </ImageView>
                             </graphic>
                         </Button>
@@ -215,7 +215,7 @@
                             <VBox.margin><Insets left="25.0" top="10.0" /></VBox.margin>
                             <graphic>
                                 <ImageView fitHeight="23.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
-                                    <image><Image url="@../image/mainform/btn-customer.png" /></image>
+                                    <image><Image url="@../icon/mainform/btn-customer.png" /></image>
                                 </ImageView>
                             </graphic>
                         </Button>
@@ -231,7 +231,7 @@
                             <VBox.margin><Insets left="25.0" top="10.0" /></VBox.margin>
                             <graphic>
                                 <ImageView fitHeight="23.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
-                                    <image><Image url="@../image/mainform/btn-staff.png" /></image>
+                                    <image><Image url="@../icon/mainform/btn-staff.png" /></image>
                                 </ImageView>
                             </graphic>
                         </Button>
@@ -247,7 +247,7 @@
                             <font><Font size="18.0" /></font>
                             <graphic>
                                 <ImageView fitHeight="23.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
-                                    <image><Image url="@../image/mainform/btn-money.png" /></image>
+                                    <image><Image url="@../icon/mainform/btn-money.png" /></image>
                                 </ImageView>
                             </graphic>
                         </Button>
@@ -262,7 +262,7 @@
                             <VBox.margin><Insets left="25.0" top="10.0" /></VBox.margin>
                             <graphic>
                                 <ImageView fitHeight="23.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
-                                    <image><Image url="@../image/mainform/btn-voucher.png" /></image>
+                                    <image><Image url="@../icon/mainform/btn-voucher.png" /></image>
                                 </ImageView>
                             </graphic>
                         </Button>
@@ -277,7 +277,7 @@
                             <VBox.margin><Insets left="25.0" top="10.0" /></VBox.margin>
                             <graphic>
                                 <ImageView fitHeight="23.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
-                                    <image><Image url="@../image/mainform/btn-report.png" /></image>
+                                    <image><Image url="@../icon/mainform/btn-report.png" /></image>
                                 </ImageView>
                             </graphic>
                         </Button>
@@ -293,7 +293,7 @@
                             <font><Font size="18.0" /></font>
                             <graphic>
                                 <ImageView fitHeight="23.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
-                                    <image><Image url="@../image/mainform/btn-components.png" /></image>
+                                    <image><Image url="@../icon/mainform/btn-components.png" /></image>
                                 </ImageView>
                             </graphic>
                         </Button>
@@ -309,7 +309,7 @@
                             <VBox.margin><Insets left="25.0" top="10.0" /></VBox.margin>
                             <graphic>
                                 <ImageView fitHeight="23.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
-                                    <image><Image url="@../image/mainform/btn-report.png" /></image>
+                                    <image><Image url="@../icon/mainform/btn-report.png" /></image>
                                 </ImageView>
                             </graphic>
                         </Button>
@@ -325,7 +325,7 @@
                             <font><Font size="18.0" /></font>
                             <graphic>
                                 <ImageView fitHeight="23.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
-                                    <image><Image url="@../image/mainform/btn-setting.png" /></image>
+                                    <image><Image url="@../icon/mainform/btn-setting.png" /></image>
                                 </ImageView>
                             </graphic>
                         </Button>

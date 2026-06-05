@@ -28,7 +28,7 @@
                <center>
                   <ImageView fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true" BorderPane.alignment="CENTER">
                      <image>
-                        <Image url="@../image/loginform/logo.jpg" />
+                        <Image url="@../icon/loginform/logo.jpg" />
                      </image>
                   </ImageView>
                </center>
@@ -93,12 +93,12 @@
             </Label>
             <ImageView fitHeight="39.0" fitWidth="38.0" layoutX="54.0" layoutY="207.0" pickOnBounds="true" preserveRatio="true">
                <image>
-                  <Image url="@../image/loginform/user.png" />
+                  <Image url="@../icon/loginform/user.png" />
                </image>
             </ImageView>
             <ImageView fitHeight="43.0" fitWidth="41.0" layoutX="52.0" layoutY="276.0" pickOnBounds="true" preserveRatio="true">
                <image>
-                  <Image url="@../image/loginform/password.png" />
+                  <Image url="@../icon/loginform/password.png" />
                </image>
             </ImageView>
             <Button fx:id="btnLogin" layoutX="100.0" layoutY="347.0" mnemonicParsing="false" onAction="#onLoginClick" prefHeight="40.0" prefWidth="220.0" styleClass="btn-login" stylesheets="@../css/login/loginstyle.css" text="Đăng nhập" textFill="#f2eceb" AnchorPane.leftAnchor="100.0" AnchorPane.rightAnchor="80.0">

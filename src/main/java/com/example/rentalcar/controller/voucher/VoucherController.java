@@ -1,7 +1,6 @@
 package com.example.rentalcar.controller.voucher;
 
 import com.example.rentalcar.bll.VoucherBLL;
-import com.example.rentalcar.dao.VoucherDAO;
 import com.example.rentalcar.models.DiscountType;
 import com.example.rentalcar.models.Vouchers;
 import javafx.beans.property.SimpleStringProperty;
@@ -253,8 +252,8 @@ public class VoucherController implements Initializable {
                 btnEdit.getStyleClass().add("btn-action");
                 btnToggle.getStyleClass().add("btn-action");
 
-                loadIcon(btnEdit, "/image/dashboardform/edit.png");
-                loadIcon(btnToggle, "/image/dashboardform/delete.png");
+                loadIcon(btnEdit, "/icon/dashboardform/edit.png");
+                loadIcon(btnToggle, "/icon/dashboardform/delete.png");
 
                 btnEdit.setOnAction(e -> {
                     Vouchers v = getTableView().getItems().get(getIndex());

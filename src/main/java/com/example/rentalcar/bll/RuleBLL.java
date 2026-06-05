@@ -124,17 +124,12 @@ public class RuleBLL {
     }
 
     // ================================================================
-    // LOGIC TÍNH TOÁN GIÁ TRỊ (Dùng cho PriceBLL)
+    // LOGIC TÍNH TOÁN GIÁ TRỊ (Cũ - Giữ nguyên tương thích ngược)
     // ================================================================
 
-    /**
-     * Dò tìm xem khoảng thời gian thuê có dính vào ngày Lễ/Tết nào không.
-     * Trả về hệ số nhân cao nhất (VD: 1.5). Nếu không dính luật nào, trả về 1.0.
-     */
     public double getHighestMultiplier(java.time.LocalDateTime startDateTime, java.time.LocalDateTime endDateTime) {
         if (startDateTime == null || endDateTime == null) return 1.0;
 
-        // Chuyển LocalDateTime (có giờ) sang sql.Date (chỉ có ngày) để so sánh với Database
         Date rentalStart = Date.valueOf(startDateTime.toLocalDate());
         Date rentalEnd = Date.valueOf(endDateTime.toLocalDate());
 
@@ -144,8 +139,6 @@ public class RuleBLL {
         for (Rules rule : activeRules) {
             if (rule.getStart_date() == null || rule.getEnd_date() == null) continue;
 
-            // Thuật toán kiểm tra 2 khoảng thời gian có giao nhau (Overlap) hay không:
-            // (Ngày bắt đầu thuê <= Ngày kết thúc luật) VÀ (Ngày kết thúc thuê >= Ngày bắt đầu luật)
             boolean isOverlapping = !rentalStart.after(rule.getEnd_date()) && !rentalEnd.before(rule.getStart_date());
 
             if (isOverlapping) {
@@ -154,7 +147,59 @@ public class RuleBLL {
                 }
             }
         }
+        return maxMultiplier;
+    }
 
+    // ================================================================
+    // NÂNG CẤP MỚI: DÒ LUẬT THÔNG MINH CHO TỪNG NGÀY ĐƠN LẺ
+    // ================================================================
+    /**
+     * Dò tìm hệ số nhân áp dụng riêng cho một ngày cụ thể (Bóc tách lịch).
+     * Quy tắc ưu tiên: Ngày Lễ (NGAY_LE) > Cuối tuần thực tế (CUOI_TUAN - T7, CN) > Luật Khác.
+     *
+     * @param targetDate Ngày cần kiểm tra hệ số
+     * @return Hệ số nhân của ngày đó (Mặc định trả về 1.0 nếu là ngày thường)
+     */
+    public double getSmartMultiplierForDate(java.time.LocalDate targetDate) {
+        if (targetDate == null) return 1.0;
+
+        Date sqlDate = Date.valueOf(targetDate);
+        java.time.DayOfWeek dayOfWeek = targetDate.getDayOfWeek();
+        List<Rules> activeRules = ruleDAO.findAllActive();
+
+        double maxMultiplier = 1.0;
+        boolean hasHolidayRule = false;
+
+        for (Rules rule : activeRules) {
+            if (rule.getStart_date() == null || rule.getEnd_date() == null) continue;
+
+            // Kiểm tra ngày đang xét có nằm trong khoảng hiệu lực của Luật không
+            boolean isWithinPeriod = !sqlDate.before(rule.getStart_date()) && !sqlDate.after(rule.getEnd_date());
+
+            if (isWithinPeriod) {
+                // ƯU TIÊN 1: Luật Ngày Lễ (NGAY_LE) -> Kích hoạt lập tức không cần check thứ
+                if (rule.getRule_type() == RuleType.NGAY_LE) {
+                    if (rule.getMulti() > maxMultiplier) {
+                        maxMultiplier = rule.getMulti();
+                        hasHolidayRule = true; // Đánh dấu dính lễ để chặn đè luật cuối tuần bên dưới
+                    }
+                }
+                // ƯU TIÊN 2: Luật Cuối tuần (CUOI_TUAN) -> Chỉ áp dụng nếu thực tế là THỨ 7 hoặc CHỦ NHẬT
+                else if (rule.getRule_type() == RuleType.CUOI_TUAN && !hasHolidayRule) {
+                    if (dayOfWeek == java.time.DayOfWeek.SATURDAY || dayOfWeek == java.time.DayOfWeek.SUNDAY) {
+                        if (rule.getMulti() > maxMultiplier) {
+                            maxMultiplier = rule.getMulti();
+                        }
+                    }
+                }
+                // ƯU TIÊN 3: Các loại luật cấu hình khác (KHAC)
+                else if (rule.getRule_type() == RuleType.KHAC && !hasHolidayRule) {
+                    if (rule.getMulti() > maxMultiplier) {
+                        maxMultiplier = rule.getMulti();
+                    }
+                }
+            }
+        }
         return maxMultiplier;
     }
 }

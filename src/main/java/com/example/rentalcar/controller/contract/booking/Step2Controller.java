@@ -194,7 +194,7 @@ public class Step2Controller {
     private void loadVehicleImage(ImageView img, Vehicles v) {
         String imgUrl = (v.getImage_url() != null && !v.getImage_url().isBlank())
                 ? v.getImage_url().trim()
-                : "/image/dashboardform/card-moto.png";
+                : "/icon/dashboardform/card-moto.png";
 
         try {
             if (imgUrl.startsWith("/")) {
@@ -226,7 +226,7 @@ public class Step2Controller {
 
     private void loadDefaultImage(ImageView img) {
         try {
-            var url = getClass().getResource("/image/dashboardform/card-moto.png");
+            var url = getClass().getResource("/icon/dashboardform/card-moto.png");
             if (url != null) img.setImage(new Image(url.toExternalForm()));
         } catch (Exception ignored) {}
     }

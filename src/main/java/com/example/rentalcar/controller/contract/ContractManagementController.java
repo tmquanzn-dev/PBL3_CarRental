@@ -272,11 +272,11 @@ public class ContractManagementController implements Initializable {
                 btnCancel.setTooltip(new Tooltip("Hủy bỏ hợp đồng"));
 
                 // Nạp đồ họa biểu tượng hình ảnh an toàn vào ứng dụng
-                loadIcon(btnView,    "/image/dashboardform/view.png");
-                loadIcon(btnPrint,   "/image/dashboardform/printer.png");
-                loadIcon(btnReturn,  "/image/mainform/btn-motor.png"); // Tận dụng ảnh xe máy làm icon trả xe rất hợp nghiệp vụ
-                loadIcon(btnPayment, "/image/dashboardform/dollar.png");
-                loadIcon(btnCancel,  "/image/dashboardform/delete.png");
+                loadIcon(btnView, "/icon/dashboardform/view.png");
+                loadIcon(btnPrint, "/icon/dashboardform/printer.png");
+                loadIcon(btnReturn, "/icon/mainform/btn-motor.png"); // Tận dụng ảnh xe máy làm icon trả xe rất hợp nghiệp vụ
+                loadIcon(btnPayment, "/icon/dashboardform/dollar.png");
+                loadIcon(btnCancel, "/icon/dashboardform/delete.png");
 
                 btnView.setOnAction(e -> {
                     Contracts c = getTableView().getItems().get(getIndex());

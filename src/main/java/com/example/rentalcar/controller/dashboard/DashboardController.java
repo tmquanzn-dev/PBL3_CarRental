@@ -272,8 +272,8 @@ public class DashboardController {
                 pane.setAlignment(Pos.CENTER_LEFT);
                 btnView.getStyleClass().add("btn-action");
                 btnPrint.getStyleClass().add("btn-action");
-                loadIcon(btnView,  "/image/dashboardform/view.png");
-                loadIcon(btnPrint, "/image/dashboardform/printer.png");
+                loadIcon(btnView, "/icon/dashboardform/view.png");
+                loadIcon(btnPrint, "/icon/dashboardform/printer.png");
                 btnView.setOnAction(e -> showDetailPopup(
                         getTableView().getItems().get(getIndex())));
             }

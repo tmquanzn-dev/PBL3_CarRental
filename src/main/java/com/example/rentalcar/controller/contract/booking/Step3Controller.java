@@ -1,13 +1,14 @@
 package com.example.rentalcar.controller.contract.booking;
 
 import com.example.rentalcar.bll.PriceBLL;
+import com.example.rentalcar.bll.RuleBLL;
 import com.example.rentalcar.dao.VoucherDAO;
 import com.example.rentalcar.models.DepositType;
 import com.example.rentalcar.models.DiscountType;
 import com.example.rentalcar.models.Vouchers;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
-import javafx.scene.layout.HBox;  // FIX BUG 3: phải là HBox, không phải VBox
+import javafx.scene.layout.HBox;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -16,7 +17,8 @@ import java.time.LocalTime;
 /**
  * Step3Controller – Bước 3: Chọn thời gian, đặt cọc và áp dụng voucher.
  *
- * FIX BUG 3: boxVoucherApplied khai báo đúng kiểu HBox (FXML dùng HBox)
+ * ĐÃ CẬP NHẬT: Tích hợp cơ chế tính giá động bóc tách lịch từng ngày cho Thứ 7, Chủ Nhật.
+ * GIỮ NGUYÊN: Trọn vẹn tất cả cấu trúc Listeners, trạng thái UI, và luồng khôi phục dữ liệu gốc.
  */
 public class Step3Controller {
 
@@ -38,7 +40,6 @@ public class Step3Controller {
     // ── Voucher ────────────────────────────────────────────────
     @FXML private TextField txtVoucherCode;
     @FXML private Label     lblVoucherMsg;
-    // FIX BUG 3: FXML khai báo <HBox fx:id="boxVoucherApplied"> → phải là HBox
     @FXML private HBox      boxVoucherApplied;
     @FXML private Label     lblVoucherDetail;
 
@@ -51,6 +52,7 @@ public class Step3Controller {
     private Vouchers      appliedVoucher;
 
     private final PriceBLL   priceBLL   = new PriceBLL();
+    private final RuleBLL    ruleBLL    = new RuleBLL(); // Thêm RuleBLL phục vụ bóc tách lịch lúc đặt xe
     private final VoucherDAO voucherDAO = new VoucherDAO();
 
     // =========================================================
@@ -93,6 +95,7 @@ public class Step3Controller {
     //  SETUP UI
     // =========================================================
     private void setupUI() {
+        cbDepositType.getItems().clear();
         cbDepositType.getItems().addAll("Tiền mặt", "Giấy tờ", "Khác");
         cbDepositType.setValue("Tiền mặt");
 
@@ -133,7 +136,7 @@ public class Step3Controller {
     }
 
     // =========================================================
-    //  TÍNH TIỀN TỰ ĐỘNG
+    //  TÍNH TIỀN TỰ ĐỘNG (ĐÃ CẬP NHẬT HOÀN CHỈNH BÓC TÁCH LỊCH)
     // =========================================================
     private void recalculate() {
         if (draft == null || draft.getSelectedVehicle() == null) return;
@@ -149,9 +152,36 @@ public class Step3Controller {
             return;
         }
 
+        // ✅ SỬA LOGIC TẠI ĐÂY: Áp dụng cơ chế bóc tách phụ thu cuối tuần thông minh từng ngày lẻ khi hiển thị tạm tính
+        java.time.Duration duration = java.time.Duration.between(start, end);
+        long totalHours = duration.toHours();
+        double basePrice = 0.0;
+
         double priceDay  = draft.getSelectedVehicle().getPrice_day();
         double priceHour = draft.getSelectedVehicle().getPrice_hour();
-        double basePrice = priceBLL.calculateBasePrice(start, end, priceDay, priceHour);
+
+        if (totalHours < 24) {
+            double baseAmount = totalHours * priceHour;
+            double multiplier = ruleBLL.getSmartMultiplierForDate(start.toLocalDate());
+            basePrice = baseAmount * multiplier;
+        } else {
+            long days = totalHours / 24;
+            long remainingHours = totalHours % 24;
+            LocalDate startLocalDate = start.toLocalDate();
+
+            // Tính toán cộng dồn tiền thuê theo ngày thực tế dính Thứ 7, Chủ Nhật
+            for (int i = 0; i < days; i++) {
+                LocalDate currentDay = startLocalDate.plusDays(i);
+                double dayMultiplier = ruleBLL.getSmartMultiplierForDate(currentDay);
+                basePrice += (priceDay * dayMultiplier);
+            }
+
+            // Tính toán cộng dồn tiền thuê của giờ lẻ còn lại
+            if (remainingHours > 0) {
+                double hourMultiplier = ruleBLL.getSmartMultiplierForDate(end.toLocalDate());
+                basePrice += (remainingHours * priceHour * hourMultiplier);
+            }
+        }
 
         double discount = 0;
         if (appliedVoucher != null) {
@@ -164,12 +194,12 @@ public class Step3Controller {
         setLabel(lblDiscount,   discount > 0 ? "- " + formatMoney(discount) : "0 đ");
         setLabel(lblTotalPrice, formatMoney(total));
 
-        // Tổng thời gian
+        // Tổng thời gian hiển thị nhãn UI
         long hours = java.time.Duration.between(start, end).toHours();
-        long days  = hours / 24;
+        long daysCount  = hours / 24;
         long remH  = hours % 24;
-        String dur = days > 0
-                ? days + " ngày" + (remH > 0 ? " " + remH + " giờ" : "")
+        String dur = daysCount > 0
+                ? daysCount + " ngày" + (remH > 0 ? " " + remH + " giờ" : "")
                 : hours + " giờ";
         setLabel(lblTotalDays,     dur);
         setLabel(lblTotalDuration, dur);
@@ -244,7 +274,7 @@ public class Step3Controller {
     }
 
     // =========================================================
-    //  VALIDATE & LƯU VÀO DRAFT
+    //  VALIDATE & LƯU VÀO DRAFT (ĐÃ CẬP NHẬT ĐỒNG BỘ CHUẨN)
     // =========================================================
     public boolean validateAndSave() {
         if (dpStart.getValue() == null || dpEnd.getValue() == null) {
@@ -283,9 +313,35 @@ public class Step3Controller {
         draft.setDepositAmount(deposit);
         draft.setAppliedVoucher(appliedVoucher);
 
+        // ✅ SỬA LOGIC TẠI ĐÂY: Lưu trữ chính xác tổng tiền sau bóc tách vào đối tượng Draft để chuyển tiếp sang Step4 chốt hợp đồng
+        java.time.Duration duration = java.time.Duration.between(start, end);
+        long totalHours = duration.toHours();
+        double base = 0.0;
+
         double priceDay  = draft.getSelectedVehicle().getPrice_day();
         double priceHour = draft.getSelectedVehicle().getPrice_hour();
-        double base      = priceBLL.calculateBasePrice(start, end, priceDay, priceHour);
+
+        if (totalHours < 24) {
+            double baseAmount = totalHours * priceHour;
+            double multiplier = ruleBLL.getSmartMultiplierForDate(start.toLocalDate());
+            base = baseAmount * multiplier;
+        } else {
+            long days = totalHours / 24;
+            long remainingHours = totalHours % 24;
+            LocalDate startLocalDate = start.toLocalDate();
+
+            for (int i = 0; i < days; i++) {
+                LocalDate currentDay = startLocalDate.plusDays(i);
+                double dayMultiplier = ruleBLL.getSmartMultiplierForDate(currentDay);
+                base += (priceDay * dayMultiplier);
+            }
+
+            if (remainingHours > 0) {
+                double hourMultiplier = ruleBLL.getSmartMultiplierForDate(end.toLocalDate());
+                base += (remainingHours * priceHour * hourMultiplier);
+            }
+        }
+
         double discount  = appliedVoucher != null ? calculateDiscount(base, appliedVoucher) : 0;
 
         draft.setBasePrice(base);

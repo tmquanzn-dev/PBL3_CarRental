@@ -19,7 +19,6 @@ import javafx.stage.Stage;
 
 import java.text.NumberFormat;
 import java.util.Locale;
-import java.util.Optional;
 
 public class VehicleCardController {
 
@@ -69,7 +68,7 @@ public class VehicleCardController {
         // Load ảnh
         String imgUrl = vehicle.getImage_url();
         if (imgUrl == null || imgUrl.isBlank()) {
-            ImageHelper.loadDefault(imgVehicle, "/image/dashboardform/card-moto.png");
+            ImageHelper.loadDefault(imgVehicle, "/icon/dashboardform/card-moto.png");
         } else if (imgUrl.startsWith("/") || imgUrl.startsWith("classpath:")) {
             ImageHelper.loadDefault(imgVehicle, imgUrl.replace("classpath:", ""));
         } else {
