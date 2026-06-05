@@ -82,35 +82,23 @@ public class ContractBLL {
         if (contract.getReturn_datetime() == null)
             throw new IllegalArgumentException("Thời gian trả xe không được để trống!");
 
+        // KHÔNG TÍNH LẠI CHAY TẠI ĐÂY NỮA!
+        // Vì bên ReturnVehicleController đã tính toán Live Preview cực chuẩn,
+        // bẫy đầy đủ giá giờ/giá ngày và gán thẳng vào đối tượng contract rồi.
+
         double finalBasePrice = contract.getBase_price();
-
-        // 1. CODE CỦA EM: Tính phí 20% nếu trả sớm
-        if (contract.getReturn_datetime().isBefore(contract.getEnd_datetime())) {
-            finalBasePrice = priceBLL.calculateEarlyReturnPrice(
-                    contract.getStart_datetime(),
-                    contract.getEnd_datetime(),
-                    contract.getReturn_datetime(),
-                    contract.getId_vehicle().getPrice_day(),
-                    contract.getId_vehicle().getPrice_hour()
-            );
-            contract.setBase_price(finalBasePrice);
-        }
-
-        // 2. CODE CỦA BẠN: Lấy tổng tiền phạt từ DB thay vì tính chay
-        double totalPenalty = getTotalPenalty(contract.getId_contract());
-
-        // 3. LOGIC CỦA EM: Chặn voucher vượt quá giá gốc
         double finalDiscount = contract.getDiscount_amount();
+
+        // Giữ lại logic bảo mật chặn voucher vượt quá giá gốc
         if (finalDiscount > finalBasePrice) {
             finalDiscount = finalBasePrice;
             contract.setDiscount_amount(finalDiscount);
         }
 
-        double finalTotal = finalBasePrice - finalDiscount + totalPenalty;
-
-        contract.setTotal_price(finalTotal);
+        // Chuyển trạng thái hợp đồng sang hoàn thành
         contract.setStatus(StatusContracts.HOAN_THANH);
 
+        // Lưu trực tiếp đối tượng đã có tiền chuẩn xuống MySQL
         return contractDAO.update(contract);
     }
 

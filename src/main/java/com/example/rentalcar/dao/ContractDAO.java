@@ -140,8 +140,9 @@ public class ContractDAO implements IBaseDAO<Contracts, Integer> {
 
     @Override
     public boolean update(Contracts entity) {
+        // ĐÃ VÁ LỖI: Bổ sung thêm base_price = ? vào câu lệnh UPDATE để MySQL ghi nhận giá gốc mới
         String sql = "UPDATE Contracts SET end_datetime = ?, return_datetime = ?, km_end = ?, fuel_end = ?, " +
-                "discount_amount = ?, total_price = ?, payment_status = ?, status = ? WHERE id_contract = ?";
+                "base_price = ?, discount_amount = ?, total_price = ?, payment_status = ?, status = ? WHERE id_contract = ?";
 
         try (Connection cnt = DBConnection.getInstance().getConnection();
              PreparedStatement pstm = cnt.prepareStatement(sql)) {
@@ -154,19 +155,20 @@ public class ContractDAO implements IBaseDAO<Contracts, Integer> {
 
             pstm.setInt(3, entity.getKm_end());
             pstm.setInt(4, entity.getFuel_end());
-            pstm.setDouble(5, entity.getDiscount_amount());
-            pstm.setDouble(6, entity.getTotal_price());
-            pstm.setString(7, entity.getPayment_status().name().replace("_", " "));
-            pstm.setString(8, entity.getStatus().name().replace("_", " "));
-            pstm.setInt(9, entity.getId_contract());
+            pstm.setDouble(5, entity.getBase_price());       // Thêm nạp dữ liệu base_price vị trí số 5
+            pstm.setDouble(6, entity.getDiscount_amount());   // Dịch chuyển vị trí lên số 6
+            pstm.setDouble(7, entity.getTotal_price());       // Dịch chuyển vị trí lên số 7
+            pstm.setString(8, entity.getPayment_status().name().replace("_", " ")); // Vị trí số 8
+            pstm.setString(9, entity.getStatus().name().replace("_", " "));         // Vị trí số 9
+            pstm.setInt(10, entity.getId_contract());                               // Vị trí số 10
 
             return pstm.executeUpdate() > 0;
         } catch (SQLException e) {
+            System.err.println("LỖI UPDATE CONTRACT DAO: " + e.getMessage());
             e.printStackTrace();
             return false;
         }
     }
-
     @Override
     public boolean delete(Integer id) {
         String sql = "UPDATE Contracts SET status = 'DA HUY' WHERE id_contract = ?";

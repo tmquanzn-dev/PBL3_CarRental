@@ -354,109 +354,91 @@ public class ReturnVehicleController {
                 ? getSelectedDamageParts() : new ArrayList<>();
 
         try {
-            // ── 1. TÍNH TOÁN CHI PHÍ & LUẬT TRẢ SỚM DÀNH CHO DATABASE ──────────────────
+            // ── 1. ĐỒNG BỘ THÔNG SỐ XE & THỜI GIAN TRẢ LÊN OBJECT ──────────────────
+            contract.setReturn_datetime(returnDt);
+            int fuelEnd = (int) sliderFuel.getValue();
+            contract.setFuel_end(fuelEnd);
+            contract.setKm_end(kmEnd);
+            contract.setPayment_status(displayToPaymentStatus(cbPaymentStatus.getValue()));
+
             double finalBasePrice = contract.getBase_price();
-            double earlyReturnPenaltyFee = 0.0;
             boolean isEarlyReturn = returnDt.isBefore(contract.getEnd_datetime());
 
+            // Biến bóc tách riêng để hiển thị thông số gốc trên Popup
+            double actualUsedPricePreview = finalBasePrice;
+            double penaltyFee30Preview = 0.0;
+
+            // ── 2. LOGIC TÍNH TIỀN THUÊ ĐIỀU CHỈNH KHI TRẢ SỚM ──────────────────
             if (isEarlyReturn && fullVehicle != null) {
-                // Khách trả sớm: Gọi priceBLL bóc tách (Tiền đã đi + 20% tiền ngày thừa)
                 double priceDay = fullVehicle.getPrice_day();
-                double priceHour = fullVehicle.getPrice_hour();
+                double priceHour = fullVehicle.getPrice_hour() <= 0 ? (priceDay / 24.0) : fullVehicle.getPrice_hour();
 
-                double actualUsedPrice = priceBLL.calculateBasePrice(contract.getStart_datetime(), returnDt, priceDay, priceHour);
-                double unusedPrice = priceBLL.calculateBasePrice(returnDt, contract.getEnd_datetime(), priceDay, priceHour);
-                earlyReturnPenaltyFee = unusedPrice * 0.20;
+                // Tính tiền thuê gốc mới sau khi trả sớm áp luật phạt 30%
+                finalBasePrice = priceBLL.calculateEarlyReturnPrice(
+                        contract.getStart_datetime(),
+                        contract.getEnd_datetime(),
+                        returnDt,
+                        priceDay,
+                        priceHour
+                );
 
-                finalBasePrice = actualUsedPrice + earlyReturnPenaltyFee;
+                // Nạp thông số cho Popup live preview
+                actualUsedPricePreview = priceBLL.calculateBasePrice(contract.getStart_datetime(), returnDt, priceDay, priceHour);
+                penaltyFee30Preview = actualUsedPricePreview * 0.30;
             }
 
-            // Tính các khoản phạt vi phạm thông thường
-            int fuelEnd  = (int) sliderFuel.getValue();
-            int capacity = (fullVehicle != null) ? fullVehicle.getFuel_capacity() : 0;
+            // Gán luôn giá thuê cơ bản điều chỉnh vào contract
+            contract.setBase_price(finalBasePrice);
 
+            // ── 3. ĐẢO KHỐI TÍNH TỔNG TIỀN LÊN TRƯỚC (ĐỂ TRUYỀN VÀO POPUP) ──────────────────
+            int capacity = (fullVehicle != null) ? fullVehicle.getFuel_capacity() : 0;
             double latePenaltyAmount = calculateLatePenaltyAmount(contract.getEnd_datetime(), returnDt);
             double fuelPenaltyAmount = calculateFuelPenaltyAmount(contract.getFuel_start(), fuelEnd, capacity);
             double damagePenaltyAmount = damagedParts.stream().mapToDouble(PartPrices::getPrice).sum();
 
-            // Tính toán tổng số tiền cuối cùng sau giảm giá voucher (nếu có)
+            // Chặn giảm giá voucher không vượt quá giá gốc mới
             double currentDiscount = contract.getDiscount_amount();
-            if (currentDiscount > finalBasePrice) currentDiscount = finalBasePrice;
+            if (currentDiscount > finalBasePrice) {
+                currentDiscount = finalBasePrice;
+                contract.setDiscount_amount(currentDiscount);
+            }
 
+            // ĐÂY RỒI: Khai báo biến tổng tiền tất toán cuối cùng (đã gộp cả phạt hư hỏng)
             double finalTotalPrice = (finalBasePrice - currentDiscount) + latePenaltyAmount + fuelPenaltyAmount + damagePenaltyAmount;
+            contract.setTotal_price(finalTotalPrice);
 
-            // ── 2. HIỂN THỊ THÔNG BÁO XÁC NHẬN TRẢ XE SỚM (NẾU CÓ TRẢ SỚM) ──────────────────
+            // ── 4. XỬ LÝ QUY TRÌNH HIỂN THỊ POP-UP UX XÁC NHẬN TRẢ SỚM ──────────────────
             if (isEarlyReturn) {
                 long totalHoursUnused = java.time.Duration.between(returnDt, contract.getEnd_datetime()).toHours();
                 long daysUnused = totalHoursUnused / 24;
                 long hoursUnused = totalHoursUnused % 24;
                 String timeUnusedStr = daysUnused > 0 ? daysUnused + " ngày " + hoursUnused + " giờ" : totalHoursUnused + " giờ";
 
-                double priceDay = fullVehicle.getPrice_day();
-                double priceHour = fullVehicle.getPrice_hour();
-
-                // Tính toán live chuẩn để đẩy sang giao diện Modal
-                double actualUsedPrice = priceBLL.calculateBasePrice(contract.getStart_datetime(), returnDt, priceDay, priceHour);
-                double penaltyFee30 = actualUsedPrice * 0.30; // 30% trên tiền đã đi
-
                 try {
-                    // Load file giao diện FXML của Popup mới tạo
                     javafx.fxml.FXMLLoader loader = new javafx.fxml.FXMLLoader(getClass().getResource("/views/contract/EarlyReturnModal.fxml"));
                     javafx.scene.Parent root = loader.load();
 
-                    // Lấy Controller của Popup và đẩy dữ liệu sang
                     EarlyReturnModalController modalController = loader.getController();
-                    modalController.setData(timeUnusedStr, actualUsedPrice, penaltyFee30, finalBasePrice);
 
-                    // Tạo Stage (cửa sổ modal) chạy ngầm
+                    // CHUẨN BÀI: Truyền finalTotalPrice xuống tham số cuối, Popup sẽ hiện 367.160 đ chuẩn đét!
+                    modalController.setData(timeUnusedStr, actualUsedPricePreview, penaltyFee30Preview, finalTotalPrice);
+
                     Stage stage = new Stage();
                     stage.initModality(javafx.stage.Modality.APPLICATION_MODAL);
-                    stage.initStyle(javafx.stage.StageStyle.UNDECORATED); // Ẩn thanh tiêu đề trên cùng để nhìn cho đẹp, bo góc
+                    stage.initStyle(javafx.stage.StageStyle.UNDECORATED);
                     stage.setScene(new javafx.scene.Scene(root));
-                    stage.showAndWait(); // Đợi cho đến khi nhân viên bấm nút trên popup mới chạy tiếp code phía dưới
+                    stage.showAndWait();
 
-                    // Nếu nhân viên bấm nút Hủy bỏ trên Popup -> Thoát luồng, không lưu gì vào DB hết
+                    // Nếu bấm hủy bỏ trên Popup -> Thoát luồng, không lưu gì hết
                     if (!modalController.isConfirmed()) {
                         return;
                     }
-
                 } catch (Exception e) {
-                    System.err.println("Lỗi hiển thị Popup Trả Sớm FXML: " + e.getMessage());
-                    e.printStackTrace();
-                    return;
+                    System.err.println("Cảnh báo lỗi đồng bộ Popup FXML: " + e.getMessage());
                 }
             }
 
-            // ── 3. ĐẨY CẬP NHẬT DỮ LIỆU ĐÃ ĐỒNG BỘ XUỐNG MYSQL ─────────────────────
-            contract.setReturn_datetime(returnDt);
-            contract.setFuel_end(fuelEnd);
-            contract.setKm_end(kmEnd);
-            contract.setBase_price(finalBasePrice);   // ✅ FIX LỖI: Cập nhật lại giá gốc mới
-            contract.setTotal_price(finalTotalPrice); // ✅ FIX LỖI: Cập nhật tổng tiền thanh toán mới
-            contract.setPayment_status(displayToPaymentStatus(cbPaymentStatus.getValue()));
-
-            boolean ok = contractBLL.returnVehicle(contract);
-            if (!ok) {
-                showAlert(Alert.AlertType.ERROR, "Không thể cập nhật hợp đồng vào cơ sở dữ liệu!");
-                return;
-            }
-
-            // ── 4. CẬP NHẬT TRẠNG THÁI XE XE ───────────────────────────────────
-            if (fullVehicle != null) {
-                fullVehicle.setStatus(!damagedParts.isEmpty()
-                        ? StatusVehicle.MAINTENANCE : StatusVehicle.AVAILABLE);
-                fullVehicle.setCurrent_km(kmEnd);
-                vehicleDAO.update(fullVehicle);
-            }
-
-            // ── 5. BIÊN BẢN KIỂM TRA TRẢ XE ─────────────────────
-            Inspections inspection = new Inspections();
-            inspection.setId_contract(contract);
-            inspection.setId_user(AppSession.getCurrentUser());
-            inspection.setInspection_type(InspectionType.TRA_XE);
-            inspectionBLL.createInspection(inspection);
-
-            // ── 6. LƯU PHẠT TRỄ GIỜ VÀO BẢNG PENALTIES ──────────
+            // ── 5. LƯU TOÀN BỘ PHỤ PHÍ VÀO BẢNG PENALTIES TRƯỚC KHI TẤT TOÁN ──────────────────
             if (latePenaltyAmount > 0) {
                 Penalties latePenalty = new Penalties();
                 latePenalty.setId_contract(contract);
@@ -465,7 +447,6 @@ public class ReturnVehicleController {
                 penaltyBLL.createPenalty(latePenalty);
             }
 
-            // ── 7. LƯU PHẠT THIẾU XĂNG VÀO BẢNG PENALTIES ───────
             if (fuelPenaltyAmount > 0) {
                 Penalties fuelPenalty = new Penalties();
                 fuelPenalty.setId_contract(contract);
@@ -474,7 +455,6 @@ public class ReturnVehicleController {
                 penaltyBLL.createPenalty(fuelPenalty);
             }
 
-            // ── 8. LƯU PHẠT HƯ HỎNG VÀO BẢNG PENALTIES ──────────
             for (PartPrices part : damagedParts) {
                 Penalties damagePenalty = new Penalties();
                 damagePenalty.setId_contract(contract);
@@ -483,24 +463,30 @@ public class ReturnVehicleController {
                 penaltyBLL.createPenalty(damagePenalty);
             }
 
-            // ── 9. THÔNG BÁO KẾT QUẢ CUỐI CÙNG THÀNH CÔNG ─────────────────────────────
+            // ── 6. GỌI BLL ĐẨY DỮ LIỆU SẠCH XUỐNG MYSQL ──────────────────
+            boolean ok = contractBLL.returnVehicle(contract);
+            if (!ok) {
+                showAlert(Alert.AlertType.ERROR, "Không thể cập nhật hợp đồng vào cơ sở dữ liệu!");
+                return;
+            }
+
+            // ── 7. CẬP NHẬT TRẠNG THÁI PHƯƠNG TIỆN VÀ TẠO BIÊN BẢN ──────────────────
+            if (fullVehicle != null) {
+                fullVehicle.setStatus(!damagedParts.isEmpty() ? StatusVehicle.MAINTENANCE : StatusVehicle.AVAILABLE);
+                fullVehicle.setCurrent_km(kmEnd);
+                vehicleDAO.update(fullVehicle);
+            }
+
+            Inspections inspection = new Inspections();
+            inspection.setId_contract(contract);
+            inspection.setId_user(AppSession.getCurrentUser());
+            inspection.setInspection_type(InspectionType.TRA_XE);
+            inspectionBLL.createInspection(inspection);
+
+            // ── 8. THÔNG BÁO THÀNH CÔNG ──────────────────
             StringBuilder msg = new StringBuilder();
             msg.append("✅ Hợp đồng ").append(contract.getCode_contract()).append(" đã hoàn thành!\n\n");
-
-            if (isEarlyReturn)
-                msg.append("🔄 Đã áp dụng giá trả xe sớm: ").append(fmt(finalBasePrice)).append("\n");
-            if (latePenaltyAmount > 0)
-                msg.append("⏰ Phạt trễ giờ: ").append(fmt(latePenaltyAmount)).append("\n");
-            if (fuelPenaltyAmount > 0)
-                msg.append("Bakery ⛽ Phạt thiếu xăng: ").append(fmt(fuelPenaltyAmount)).append("\n");
-
-            if (!damagedParts.isEmpty()) {
-                msg.append("\n🔧 Xe chuyển sang trạng thái Bảo dưỡng. Phạt hư hỏng:\n");
-                for (PartPrices p : damagedParts)
-                    msg.append("  • ").append(p.getPart_name()).append(": ").append(fmt(p.getPrice())).append("\n");
-            } else {
-                msg.append("\n🏍 Xe máy đã tự động chuyển về trạng thái Sẵn sàng phục vụ.");
-            }
+            msg.append("💰 Tổng chi phí tất toán thực tế: ").append(fmt(contract.getTotal_price())).append("\n");
 
             Alert success = new Alert(Alert.AlertType.INFORMATION);
             success.setTitle("Hoàn thành hợp đồng");
@@ -516,7 +502,6 @@ public class ReturnVehicleController {
             e.printStackTrace();
         }
     }
-
     @FXML void handleCancel() { closeStage(); }
 
     // =========================================================
