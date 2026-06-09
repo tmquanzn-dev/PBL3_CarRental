@@ -107,7 +107,7 @@ public class MainController {
             case "Phụ tùng"        -> AppSession.isAdmin() ? "partprice/PartPriceManagement.fxml" : "";
             case "Báo cáo"         -> AppSession.isAdmin() ? "report/ReportView.fxml"             : "";
             case "Báo cáo của tôi"    -> "report/StaffReportView.fxml";
-            case "Cài đặt"         -> "setting/SettingsView.fxml";
+            case "Cài đặt"         -> "setting/SettingsMain.fxml";
             default                -> "";
         };
 

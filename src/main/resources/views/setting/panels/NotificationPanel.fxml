@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<ScrollPane fx:id="panelNotification" fitToWidth="true" hbarPolicy="NEVER" styleClass="scroll-pane" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.rentalcar.controller.settings.NotificationPanelController">
+    <content>
+        <VBox spacing="20.0" styleClass="settings-content">
+            <padding><Insets bottom="30.0" left="30.0" right="30.0" top="28.0" /></padding>
+            <children>
+                <VBox spacing="4.0">
+                    <children>
+                        <Label styleClass="settings-section-title" text="Cài đặt thông báo" />
+                        <Label styleClass="settings-section-desc" text="Chọn các sự kiện muốn nhận thông báo" />
+                    </children>
+                </VBox>
+                <Separator />
+                <VBox spacing="12.0" styleClass="setting-group-card">
+                    <padding><Insets bottom="20.0" left="20.0" right="20.0" top="20.0" /></padding>
+                    <children>
+                        <Label styleClass="setting-group-title" text="🔔  Sự kiện hợp đồng" />
+                        <HBox alignment="CENTER_LEFT" spacing="15.0" styleClass="setting-row">
+                            <children>
+                                <VBox spacing="3.0" HBox.hgrow="ALWAYS">
+                                    <children>
+                                        <Label styleClass="setting-label" text="Hợp đồng mới được tạo" />
+                                        <Label styleClass="setting-sublabel" text="Thông báo khi có đơn thuê mới" />
+                                    </children>
+                                </VBox>
+                                <Button fx:id="toggleNotiNewContract" onAction="#handleToggleNotiNewContract" styleClass="toggle-btn-on" text="BẬT" />
+                            </children>
+                        </HBox>
+                        <HBox alignment="CENTER_LEFT" spacing="15.0" styleClass="setting-row">
+                            <children>
+                                <VBox spacing="3.0" HBox.hgrow="ALWAYS">
+                                    <children>
+                                        <Label styleClass="setting-label" text="Hợp đồng quá hạn" />
+                                        <Label styleClass="setting-sublabel" text="Cảnh báo khi đến giờ trả xe mà chưa trả" />
+                                    </children>
+                                </VBox>
+                                <Button fx:id="toggleNotiOverdue" onAction="#handleToggleNotiOverdue" styleClass="toggle-btn-on" text="BẬT" />
+                            </children>
+                        </HBox>
+                        <HBox alignment="CENTER_LEFT" spacing="15.0" styleClass="setting-row">
+                            <children>
+                                <VBox spacing="3.0" HBox.hgrow="ALWAYS">
+                                    <children>
+                                        <Label styleClass="setting-label" text="Xe cần bảo dưỡng" />
+                                        <Label styleClass="setting-sublabel" text="Nhắc nhở khi xe đạt mốc km bảo dưỡng" />
+                                    </children>
+                                </VBox>
+                                <Button fx:id="toggleNotiMaint" onAction="#handleToggleNotiMaint" styleClass="toggle-btn-on" text="BẬT" />
+                            </children>
+                        </HBox>
+                        <HBox alignment="CENTER_LEFT" spacing="15.0" styleClass="setting-row">
+                            <children>
+                                <VBox spacing="3.0" HBox.hgrow="ALWAYS">
+                                    <children>
+                                        <Label styleClass="setting-label" text="Voucher sắp hết hạn" />
+                                        <Label styleClass="setting-sublabel" text="Thông báo khi voucher còn ít lượt dùng" />
+                                    </children>
+                                </VBox>
+                                <Button fx:id="toggleNotiVoucher" onAction="#handleToggleNotiVoucher" styleClass="toggle-btn-off" text="TẮT" />
+                            </children>
+                        </HBox>
+                    </children>
+                </VBox>
+                <HBox alignment="CENTER_RIGHT" spacing="12.0">
+                    <children>
+                        <Button mnemonicParsing="false" onAction="#handleNotiSave" styleClass="btn-primary" text="💾  Lưu cài đặt" />
+                    </children>
+                </HBox>
+            </children>
+        </VBox>
+    </content>
+</ScrollPane>

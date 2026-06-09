@@ -13,18 +13,8 @@ import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
 import javafx.stage.Stage;
 
-/**
- * EditVehicleController – Controller xử lý sửa thông tin xe.
- *
- * Chức năng:
- *  1. Nhận dữ liệu xe hiện tại và điền vào form.
- *  2. Cho phép upload ảnh mới (tùy chọn).
- *  3. Validate và lưu thay đổi xuống DB qua VehicleBLL.
- *  4. Gọi callback onSaved để reload danh sách xe ở màn hình cha.
- */
 public class EditVehicleController {
 
-    // ── FXML fields ──────────────────────────────────────────────
     @FXML private TextField txtCode;          // Biển số – chỉ đọc (không cho đổi)
     @FXML private TextField txtBrand;
     @FXML private TextField txtModel;
@@ -40,18 +30,16 @@ public class EditVehicleController {
     @FXML private TextField txtFuelCapacity;
 
     @FXML private ImageView imgVehiclePreview;
-    @FXML private Label     lblImagePath;
-    @FXML private Button    btnUploadImage;
-    @FXML private Label     lblVehicleId;
+    @FXML private Label lblImagePath;
+    @FXML private Button btnUploadImage;
+    @FXML private Label lblVehicleId;
 
-    // ── State ─────────────────────────────────────────────────────
-    private Vehicles    currentVehicle;
-    private Runnable    onSaved;
-    private String      newImagePath = null;
+    private Vehicles currentVehicle;
+    private Runnable onSaved;
+    private String newImagePath = null;
 
     private final VehicleBLL vehicleBLL = new VehicleBLL();
 
-    // ─────────────────────────────────────────────────────────────
     @FXML
     public void initialize() {
         cbType.getItems().addAll("Tay ga", "Xe số", "Xe côn");
@@ -65,7 +53,6 @@ public class EditVehicleController {
         );
     }
 
-    // ── Nhận dữ liệu từ VehicleCardController ────────────────────
     public void setVehicle(Vehicles vehicle) {
         this.currentVehicle = vehicle;
         fillForm(vehicle);
@@ -75,7 +62,7 @@ public class EditVehicleController {
         this.onSaved = callback;
     }
 
-    // ── Điền dữ liệu vào form ────────────────────────────────────
+
     private void fillForm(Vehicles v) {
         if (lblVehicleId != null)
             lblVehicleId.setText("ID: " + v.getId_vehicle());
@@ -123,7 +110,6 @@ public class EditVehicleController {
         }
     }
 
-    // ── Upload ảnh mới ───────────────────────────────────────────
     @FXML
     void handleUploadVehicleImage() {
         Stage stage = (Stage) btnUploadImage.getScene().getWindow();
@@ -142,7 +128,6 @@ public class EditVehicleController {
         }
     }
 
-    // ── Lưu thay đổi ─────────────────────────────────────────────
     @FXML
     void handleSave() {
         try {
@@ -198,7 +183,6 @@ public class EditVehicleController {
         }
     }
 
-    // ── Hủy ──────────────────────────────────────────────────────
     @FXML
     void handleCancel() {
         closeStage();

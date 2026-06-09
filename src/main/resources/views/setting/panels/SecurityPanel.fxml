@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<ScrollPane fx:id="panelSecurity" fitToWidth="true" hbarPolicy="NEVER" styleClass="scroll-pane" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.rentalcar.controller.settings.SecurityPanelController">
+    <content>
+        <VBox spacing="20.0" styleClass="settings-content">
+            <padding><Insets bottom="30.0" left="30.0" right="30.0" top="28.0" /></padding>
+            <children>
+                <VBox spacing="4.0">
+                    <children>
+                        <Label styleClass="settings-section-title" text="Bảo mật &amp; Mật khẩu" />
+                        <Label styleClass="settings-section-desc" text="Cập nhật mật khẩu để bảo vệ tài khoản của bạn" />
+                    </children>
+                </VBox>
+                <Separator />
+                <VBox spacing="14.0" styleClass="setting-group-card">
+                    <padding><Insets bottom="20.0" left="20.0" right="20.0" top="20.0" /></padding>
+                    <children>
+                        <Label styleClass="setting-group-title" text="🔑  Đổi mật khẩu" />
+                        <VBox spacing="5.0">
+                            <children>
+                                <Label styleClass="input-label" text="Mật khẩu hiện tại *" />
+                                <PasswordField fx:id="txtOldPassword" styleClass="modern-password" />
+                            </children>
+                        </VBox>
+                        <HBox spacing="16.0">
+                            <children>
+                                <VBox spacing="5.0" HBox.hgrow="ALWAYS">
+                                    <children>
+                                        <Label styleClass="input-label" text="Mật khẩu mới *" />
+                                        <PasswordField fx:id="txtNewPassword" styleClass="modern-password" />
+                                    </children>
+                                </VBox>
+                                <VBox spacing="5.0" HBox.hgrow="ALWAYS">
+                                    <children>
+                                        <Label styleClass="input-label" text="Xác nhận mật khẩu mới *" />
+                                        <PasswordField fx:id="txtConfirmPassword" styleClass="modern-password" />
+                                    </children>
+                                </VBox>
+                            </children>
+                        </HBox>
+                        <VBox spacing="5.0">
+                            <children>
+                                <Label styleClass="input-label" text="Độ mạnh mật khẩu:" />
+                                <HBox alignment="CENTER_LEFT" spacing="6.0">
+                                    <children>
+                                        <AnchorPane fx:id="strengthBar1" prefHeight="6.0" prefWidth="60.0" style="-fx-background-color: #e2e8f0; -fx-background-radius: 3;" />
+                                        <AnchorPane fx:id="strengthBar2" prefHeight="6.0" prefWidth="60.0" style="-fx-background-color: #e2e8f0; -fx-background-radius: 3;" />
+                                        <AnchorPane fx:id="strengthBar3" prefHeight="6.0" prefWidth="60.0" style="-fx-background-color: #e2e8f0; -fx-background-radius: 3;" />
+                                        <AnchorPane fx:id="strengthBar4" prefHeight="6.0" prefWidth="60.0" style="-fx-background-color: #e2e8f0; -fx-background-radius: 3;" />
+                                        <Label fx:id="lblStrength" style="-fx-text-fill: #94a3b8; -fx-font-size: 12px;" text="Chưa nhập" />
+                                    </children>
+                                </HBox>
+                            </children>
+                        </VBox>
+                        <Label fx:id="lblSecurityMsg" style="-fx-font-size: 13px; -fx-font-weight: bold;" visible="false" />
+                        <HBox alignment="CENTER_RIGHT" spacing="12.0">
+                            <children>
+                                <Button mnemonicParsing="false" onAction="#handleSecurityCancel" styleClass="btn-secondary" text="Hủy" />
+                                <Button mnemonicParsing="false" onAction="#handleChangePassword" styleClass="btn-primary" text="🔒  Cập nhật mật khẩu" />
+                            </children>
+                        </HBox>
+                    </children>
+                </VBox>
+                <VBox spacing="12.0" styleClass="setting-group-card">
+                    <padding><Insets bottom="20.0" left="20.0" right="20.0" top="20.0" /></padding>
+                    <children>
+                        <Label styleClass="setting-group-title" text="🛡️  Phiên hoạt động" />
+                        <HBox alignment="CENTER_LEFT" spacing="15.0" styleClass="setting-row">
+                            <children>
+                                <VBox spacing="3.0" HBox.hgrow="ALWAYS">
+                                    <children>
+                                        <Label styleClass="setting-label" text="Phiên đăng nhập hiện tại" />
+                                        <Label fx:id="lblSessionInfo" styleClass="setting-sublabel" text="Đăng nhập lúc: đang tải..." />
+                                    </children>
+                                </VBox>
+                                <Label styleClass="badge-green" text="● Đang hoạt động" />
+                            </children>
+                        </HBox>
+                        <HBox alignment="CENTER_RIGHT">
+                            <children>
+                                <Button mnemonicParsing="false" onAction="#handleLogoutAll" styleClass="btn-danger" text="Đăng xuất tất cả phiên" />
+                            </children>
+                        </HBox>
+                    </children>
+                </VBox>
+            </children>
+        </VBox>
+    </content>
+</ScrollPane>

@@ -54,7 +54,6 @@ public class VehicleController {
     }
 
     public void loadVehicles() {
-        // Dùng getAllVehiclesIncludeInactive() để Admin thấy xe đã xóa mềm
         List<Vehicles> list = vehicleBLL.getAllVehiclesIncludeInactive();
         renderCards(list);
     }
@@ -93,9 +92,9 @@ public class VehicleController {
     //Tìm kiếm và lọc
     @FXML
     void handleSearch() {
-        String keyword = txtSearch != null ? txtSearch.getText().trim()  : "";
-        String brand   = cbBrand  != null ? cbBrand.getValue()           : "Tất cả";
-        String status  = cbStatus != null ? cbStatus.getValue()          : "Tất cả";
+        String keyword = txtSearch != null ? txtSearch.getText().trim() : "";
+        String brand = cbBrand  != null ? cbBrand.getValue() : "Tất cả";
+        String status = cbStatus != null ? cbStatus.getValue() : "Tất cả";
         List<Vehicles> filtered = vehicleBLL.searchVehicles(keyword, brand, status);
         renderCards(filtered);
     }

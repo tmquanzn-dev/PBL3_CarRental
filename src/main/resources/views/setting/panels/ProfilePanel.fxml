@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.*?>
+
+<ScrollPane fx:id="panelProfile" fitToWidth="true" hbarPolicy="NEVER" styleClass="scroll-pane" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.rentalcar.controller.settings.ProfilePanelController">
+    <content>
+        <VBox spacing="20.0" styleClass="settings-content">
+            <padding><Insets bottom="30.0" left="30.0" right="30.0" top="28.0" /></padding>
+            <children>
+                <VBox spacing="4.0">
+                    <children>
+                        <Label styleClass="settings-section-title" text="Hồ sơ cá nhân" />
+                        <Label styleClass="settings-section-desc" text="Quản lý thông tin tài khoản và ảnh đại diện của bạn" />
+                    </children>
+                </VBox>
+                <Separator />
+                <HBox alignment="CENTER_LEFT" spacing="25.0" style="-fx-background-color: linear-gradient(to right, #eff6ff, #f0f9ff); -fx-background-radius: 14; -fx-padding: 22;">
+                    <children>
+                        <StackPane fx:id="avatarStack" styleClass="avatar-circle-large" style="-fx-min-width: 90; -fx-min-height: 90; -fx-max-width: 90; -fx-max-height: 90; -fx-background-radius: 50; -fx-clip: true;">
+                            <children>
+                                <ImageView fx:id="imgAvatar" fitHeight="90.0" fitWidth="90.0" visible="false" />
+                                <Label fx:id="lblAvatarInitial" styleClass="avatar-initial-large" text="A" />
+                            </children>
+                        </StackPane>
+                        <VBox spacing="6.0" HBox.hgrow="ALWAYS">
+                            <children>
+                                <Label fx:id="lblProfileName" styleClass="profile-name" text="Admin User" />
+                                <HBox alignment="CENTER_LEFT" spacing="8.0">
+                                    <children>
+                                        <Label fx:id="lblProfileRole" styleClass="profile-role" text="Quản lý" />
+                                        <Label fx:id="lblProfileStatus" styleClass="badge-green" text="● Đang hoạt động" />
+                                    </children>
+                                </HBox>
+                                <Label fx:id="lblProfileUsername" style="-fx-text-fill: #64748b; -fx-font-size: 13px;" text="@admin01" />
+                            </children>
+                        </VBox>
+                        <Button mnemonicParsing="false" onAction="#handleChangeAvatar" style="-fx-font-size: 13px; -fx-padding: 9 18;" styleClass="btn-secondary" text="📷  Đổi ảnh đại diện" />
+                    </children>
+                </HBox>
+                <VBox spacing="14.0" styleClass="setting-group-card">
+                    <padding><Insets bottom="20.0" left="20.0" right="20.0" top="20.0" /></padding>
+                    <children>
+                        <Label styleClass="setting-group-title" text="Thông tin cơ bản" />
+                        <HBox spacing="16.0">
+                            <children>
+                                <VBox spacing="5.0" HBox.hgrow="ALWAYS">
+                                    <children>
+                                        <Label styleClass="input-label" text="Họ và tên *" />
+                                        <TextField fx:id="txtFullName" styleClass="modern-input" />
+                                    </children>
+                                </VBox>
+                                <VBox spacing="5.0" HBox.hgrow="ALWAYS">
+                                    <children>
+                                        <Label styleClass="input-label" text="Tên đăng nhập" />
+                                        <TextField fx:id="txtUsername" disable="true" styleClass="modern-input" />
+                                    </children>
+                                </VBox>
+                            </children>
+                        </HBox>
+                        <HBox spacing="16.0">
+                            <children>
+                                <VBox spacing="5.0" HBox.hgrow="ALWAYS">
+                                    <children>
+                                        <Label styleClass="input-label" text="Số điện thoại" />
+                                        <TextField fx:id="txtPhone" styleClass="modern-input" />
+                                    </children>
+                                </VBox>
+                                <VBox spacing="5.0" HBox.hgrow="ALWAYS">
+                                    <children>
+                                        <Label styleClass="input-label" text="Email" />
+                                        <TextField fx:id="txtEmail" styleClass="modern-input" />
+                                    </children>
+                                </VBox>
+                            </children>
+                        </HBox>
+                        <HBox spacing="16.0">
+                            <children>
+                                <VBox spacing="5.0" HBox.hgrow="ALWAYS">
+                                    <children>
+                                        <Label styleClass="input-label" text="Số CCCD" />
+                                        <TextField fx:id="txtCccd" styleClass="modern-input" />
+                                    </children>
+                                </VBox>
+                                <VBox spacing="5.0" HBox.hgrow="ALWAYS">
+                                    <children>
+                                        <Label styleClass="input-label" text="Địa chỉ" />
+                                        <TextField fx:id="txtAddress" styleClass="modern-input" />
+                                    </children>
+                                </VBox>
+                            </children>
+                        </HBox>
+                    </children>
+                </VBox>
+                <Label fx:id="lblProfileMsg" style="-fx-font-size: 13px; -fx-font-weight: bold;" visible="false" />
+                <HBox alignment="CENTER_RIGHT" spacing="12.0">
+                    <children>
+                        <Button mnemonicParsing="false" onAction="#handleProfileCancel" styleClass="btn-secondary" text="Hủy thay đổi" />
+                        <Button mnemonicParsing="false" onAction="#handleProfileSave" styleClass="btn-primary" text="💾  Lưu hồ sơ" />
+                    </children>
+                </HBox>
+            </children>
+        </VBox>
+    </content>
+</ScrollPane>

@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<ScrollPane fx:id="panelGeneral" fitToWidth="true" hbarPolicy="NEVER" styleClass="scroll-pane" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.rentalcar.controller.settings.GeneralPanelController">
+    <content>
+        <VBox spacing="20.0" styleClass="settings-content">
+            <padding><Insets bottom="30.0" left="30.0" right="30.0" top="28.0" /></padding>
+            <children>
+                <VBox spacing="4.0">
+                    <children>
+                        <Label styleClass="settings-section-title" text="Cài đặt chung" />
+                        <Label styleClass="settings-section-desc" text="Tùy chỉnh giao diện và ngôn ngữ hệ thống" />
+                    </children>
+                </VBox>
+                <Separator />
+                <VBox spacing="14.0" styleClass="setting-group-card">
+                    <padding><Insets bottom="20.0" left="20.0" right="20.0" top="20.0" /></padding>
+                    <children>
+                        <Label styleClass="setting-group-title" text="🎨  Giao diện" />
+                        <HBox alignment="CENTER_LEFT" spacing="15.0" styleClass="setting-row">
+                            <children>
+                                <VBox spacing="3.0" HBox.hgrow="ALWAYS">
+                                    <children>
+                                        <Label styleClass="setting-label" text="Ngôn ngữ hệ thống" />
+                                        <Label styleClass="setting-sublabel" text="Chọn ngôn ngữ hiển thị" />
+                                    </children>
+                                </VBox>
+                                <ComboBox fx:id="cbLanguage" prefWidth="180.0" styleClass="modern-combo" />
+                            </children>
+                        </HBox>
+                        <HBox alignment="CENTER_LEFT" spacing="15.0" styleClass="setting-row">
+                            <children>
+                                <VBox spacing="3.0" HBox.hgrow="ALWAYS">
+                                    <children>
+                                        <Label styleClass="setting-label" text="Định dạng ngày tháng" />
+                                        <Label styleClass="setting-sublabel" text="Định dạng hiển thị ngày giờ" />
+                                    </children>
+                                </VBox>
+                                <ComboBox fx:id="cbDateFormat" prefWidth="200.0" styleClass="modern-combo" />
+                            </children>
+                        </HBox>
+                        <HBox alignment="CENTER_LEFT" spacing="15.0" styleClass="setting-row">
+                            <children>
+                                <VBox spacing="3.0" HBox.hgrow="ALWAYS">
+                                    <children>
+                                        <Label styleClass="setting-label" text="Đơn vị tiền tệ" />
+                                        <Label styleClass="setting-sublabel" text="Hiển thị giá trong hệ thống" />
+                                    </children>
+                                </VBox>
+                                <ComboBox fx:id="cbCurrency" prefWidth="180.0" styleClass="modern-combo" />
+                            </children>
+                        </HBox>
+                        <HBox alignment="CENTER_LEFT" spacing="15.0" styleClass="setting-row">
+                            <children>
+                                <VBox spacing="3.0" HBox.hgrow="ALWAYS">
+                                    <children>
+                                        <Label styleClass="setting-label" text="Số hàng mỗi trang bảng" />
+                                        <Label styleClass="setting-sublabel" text="Số bản ghi hiển thị tối đa" />
+                                    </children>
+                                </VBox>
+                                <ComboBox fx:id="cbPageSize" prefWidth="140.0" styleClass="modern-combo" />
+                            </children>
+                        </HBox>
+                    </children>
+                </VBox>
+                <VBox spacing="12.0" styleClass="setting-group-card">
+                    <padding><Insets bottom="20.0" left="20.0" right="20.0" top="20.0" /></padding>
+                    <children>
+                        <Label styleClass="setting-group-title" text="⚙️  Tính năng hệ thống" />
+                        <HBox alignment="CENTER_LEFT" spacing="15.0" styleClass="setting-row">
+                            <children>
+                                <VBox spacing="3.0" HBox.hgrow="ALWAYS">
+                                    <children>
+                                        <Label styleClass="setting-label" text="Tự động cập nhật trạng thái quá hạn" />
+                                        <Label styleClass="setting-sublabel" text="Tự động đánh dấu hợp đồng quá hạn khi mở app" />
+                                    </children>
+                                </VBox>
+                                <Button fx:id="toggleAutoOverdue" onAction="#handleToggleAutoOverdue" styleClass="toggle-btn-on" text="BẬT" />
+                            </children>
+                        </HBox>
+                        <HBox alignment="CENTER_LEFT" spacing="15.0" styleClass="setting-row">
+                            <children>
+                                <VBox spacing="3.0" HBox.hgrow="ALWAYS">
+                                    <children>
+                                        <Label styleClass="setting-label" text="Cảnh báo xe cần bảo dưỡng" />
+                                        <Label styleClass="setting-sublabel" text="Hiện cảnh báo khi xe đạt mốc km bảo dưỡng" />
+                                    </children>
+                                </VBox>
+                                <Button fx:id="toggleMaintWarn" onAction="#handleToggleMaintWarn" styleClass="toggle-btn-on" text="BẬT" />
+                            </children>
+                        </HBox>
+                        <HBox alignment="CENTER_LEFT" spacing="15.0" styleClass="setting-row">
+                            <children>
+                                <VBox spacing="3.0" HBox.hgrow="ALWAYS">
+                                    <children>
+                                        <Label styleClass="setting-label" text="Xác nhận trước khi xóa" />
+                                        <Label styleClass="setting-sublabel" text="Hiện hộp thoại xác nhận khi xóa dữ liệu" />
+                                    </children>
+                                </VBox>
+                                <Button fx:id="toggleConfirmDelete" onAction="#handleToggleConfirmDelete" styleClass="toggle-btn-on" text="BẬT" />
+                            </children>
+                        </HBox>
+                    </children>
+                </VBox>
+                <HBox alignment="CENTER_RIGHT" spacing="12.0">
+                    <children>
+                        <Button mnemonicParsing="false" onAction="#handleRestoreDefaults" styleClass="btn-secondary" text="Khôi phục mặc định" />
+                        <Button mnemonicParsing="false" onAction="#handleGeneralSave" styleClass="btn-primary" text="💾  Lưu cài đặt" />
+                    </children>
+                </HBox>
+            </children>
+        </VBox>
+    </content>
+</ScrollPane>

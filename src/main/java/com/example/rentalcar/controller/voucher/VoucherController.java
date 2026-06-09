@@ -34,12 +34,10 @@ public class VoucherController implements Initializable {
     @FXML private Label lblExpiringVouchers, lblExpiredVouchers;
     @FXML private Label lblCount;
 
-    //search
     @FXML private TextField txtSearch;
     @FXML private ComboBox<String> cbTypeFilter, cbStatusFilter;
 
-    // dữ liêu
-    @FXML private TableView<Vouchers>          tableVouchers;
+    @FXML private TableView<Vouchers> tableVouchers;
     @FXML private TableColumn<Vouchers, String> colCode;
     @FXML private TableColumn<Vouchers, String> colDesc;
     @FXML private TableColumn<Vouchers, String> colType;
@@ -49,7 +47,6 @@ public class VoucherController implements Initializable {
     @FXML private TableColumn<Vouchers, String> colStatus;
     @FXML private TableColumn<Vouchers, Void>   colAction;
 
-    //sau này gọi BLL ở đây
     private final VoucherBLL voucherBLL = new VoucherBLL();
     private ObservableList<Vouchers> masterList;
 
@@ -306,7 +303,7 @@ public class VoucherController implements Initializable {
         LocalDate today = LocalDate.now();
         LocalDate soon  = today.plusDays(7);
 
-        long active   = list.stream().filter(v -> v.isIs_active()
+        long active = list.stream().filter(v -> v.isIs_active()
                 && v.getValid_to_date() != null
                 && !v.getValid_to_date().toLocalDate().isBefore(today)
                 && v.getUsage_count() < v.getUsage_limit()).count();

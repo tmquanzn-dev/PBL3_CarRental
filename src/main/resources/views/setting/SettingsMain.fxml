@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
+
+<HBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="1176.0" prefWidth="1100.0" spacing="20.0" stylesheets="@../../css/settingview/settingstyle.css" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.rentalcar.controller.settings.SettingsController">
+    <padding>
+        <Insets bottom="30.0" left="30.0" right="30.0" top="28.0" />
+    </padding>
+    <children>
+        <VBox spacing="4.0" styleClass="settings-sidebar">
+            <padding><Insets bottom="20.0" left="15.0" right="15.0" top="20.0" /></padding>
+            <children>
+                <VBox spacing="4.0">
+                    <padding><Insets bottom="14.0" /></padding>
+                    <children>
+                        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Cài đặt hệ thống"><font><Font name="System Bold" size="18.0" /></font></Text>
+                        <Label style="-fx-text-fill: #94a3b8; -fx-font-size: 12px;" text="Quản lý cấu hình" />
+                    </children>
+                </VBox>
+                <Separator />
+                <Label styleClass="nav-section-label" text="TÀI KHOẢN" />
+                <Button fx:id="btnNavProfile" mnemonicParsing="false" onAction="#handleNavProfile" styleClass="settings-nav-btn, settings-nav-active" text="  👤  Hồ sơ cá nhân" />
+                <Button fx:id="btnNavSecurity" mnemonicParsing="false" onAction="#handleNavSecurity" styleClass="settings-nav-btn" text="  🔒  Bảo mật &amp; Mật khẩu" />
+                <Label styleClass="nav-section-label" text="HỆ THỐNG" />
+                <Button fx:id="btnNavGeneral" mnemonicParsing="false" onAction="#handleNavGeneral" styleClass="settings-nav-btn" text="  ⚙️  Cài đặt chung" />
+                <Button fx:id="btnNavPricing" mnemonicParsing="false" onAction="#handleNavPricing" styleClass="settings-nav-btn" text="  💰  Cấu hình giá &amp; Phạt" />
+                <Button fx:id="btnNavNotification" mnemonicParsing="false" onAction="#handleNavNotification" styleClass="settings-nav-btn" text="  🔔  Thông báo" />
+                <Label styleClass="nav-section-label" text="DỮ LIỆU" />
+                <Button fx:id="btnNavDatabase" mnemonicParsing="false" onAction="#handleNavDatabase" styleClass="settings-nav-btn" text="  🗄️  Cơ sở dữ liệu" />
+                <Button fx:id="btnNavAbout" mnemonicParsing="false" onAction="#handleNavAbout" styleClass="settings-nav-btn" text="  ℹ️  Về hệ thống" />
+                <Region VBox.vgrow="ALWAYS" />
+                <VBox alignment="CENTER" spacing="3.0" style="-fx-background-color: #f8fafc; -fx-background-radius: 8; -fx-padding: 10;">
+                    <children>
+                        <Label style="-fx-font-weight: bold; -fx-text-fill: #475569; -fx-font-size: 12px;" text="VehicleRent Pro" />
+                        <Label style="-fx-text-fill: #94a3b8; -fx-font-size: 11px;" text="Phiên bản 1.0.0" />
+                    </children>
+                </VBox>
+            </children>
+        </VBox>
+
+        <StackPane HBox.hgrow="ALWAYS">
+            <children>
+                <fx:include fx:id="panelProfile" source="panels/ProfilePanel.fxml" visible="true" />
+                <fx:include fx:id="panelSecurity" source="panels/SecurityPanel.fxml" visible="false" />
+                <fx:include fx:id="panelGeneral" source="panels/GeneralPanel.fxml" visible="false" />
+                <fx:include fx:id="panelPricing" source="panels/PricingPanel.fxml" visible="false" />
+                <fx:include fx:id="panelNotification" source="panels/NotificationPanel.fxml" visible="false" />
+                <fx:include fx:id="panelDatabase" source="panels/DatabasePanel.fxml" visible="false" />
+                <fx:include fx:id="panelAbout" source="panels/AboutPanel.fxml" visible="false" />
+            </children> </StackPane>
+    </children>
+</HBox>

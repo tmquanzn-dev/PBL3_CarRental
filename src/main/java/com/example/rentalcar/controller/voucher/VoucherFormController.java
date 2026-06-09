@@ -78,7 +78,6 @@ public class VoucherFormController implements Initializable {
     @FXML
     void handleSave() {
         try {
-            // 1. Controller chỉ làm nhiệm vụ lấy dữ liệu thô từ Giao diện
             String code = txtCode.getText().trim().toUpperCase();
             double discountValue = Double.parseDouble(txtDiscountValue.getText().trim());
             int usageLimit = Integer.parseInt(txtUsageLimit.getText().trim());
@@ -87,17 +86,15 @@ public class VoucherFormController implements Initializable {
             boolean isActive = "Đang hoạt động".equals(cbStatus.getValue());
             DiscountType dt = cbDiscountType.getValue().contains("Cố định") ? DiscountType.CO_DINH : DiscountType.PHAN_TRAM;
 
-            // Xử lý null ngày tháng trước khi parse sang SQL Date
             if (fromDate == null || toDate == null) {
                 showMsg("❌  Vui lòng chọn đầy đủ ngày bắt đầu và kết thúc!", false);
                 return;
             }
 
-            // 2. Gom vào Object và quăng cho BLL xử lý phần còn lại
             if (editingVoucher == null) {
                 Vouchers newV = new Vouchers(0, code, txtDescription.getText().trim(), dt, discountValue, usageLimit, 0, Date.valueOf(fromDate), Date.valueOf(toDate), isActive);
 
-                voucherBLL.createVoucher(newV); // BLL sẽ tự check logic (âm/dương, ngày tháng)
+                voucherBLL.createVoucher(newV);
                 showMsg("✅  Tạo voucher thành công!", true);
                 autoClose();
             } else {

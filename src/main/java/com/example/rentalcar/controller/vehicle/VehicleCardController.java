@@ -23,9 +23,9 @@ import java.util.Locale;
 public class VehicleCardController {
 
     @FXML private ImageView imgVehicle;
-    @FXML private Label     lblPlate, lblStatus, lblName, lblPrice;
-    @FXML private Button    btnEdit;
-    @FXML private Button    btnDelete;
+    @FXML private Label lblPlate, lblStatus, lblName, lblPrice;
+    @FXML private Button btnEdit;
+    @FXML private Button btnDelete;
 
     private Vehicles currentVehicle;
     private Runnable onRefresh;
@@ -155,12 +155,12 @@ public class VehicleCardController {
     // Xóa / Khôi phục / Hoàn thành bảo dưỡng
     @FXML
     void handleDelete() {
-        if (!AppSession.isAdmin() || currentVehicle == null) return;
+        if (!AppSession.isAdmin() || currentVehicle == null)
+            return;
 
         StatusVehicle st = currentVehicle.getStatus();
 
         if (st == StatusVehicle.MAINTENANCE) {
-            // ── HOÀN THÀNH BẢO DƯỠNG ──
             Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
             confirm.setTitle("Hoàn thành bảo dưỡng");
             confirm.setHeaderText("🔧  " + currentVehicle.getCode_vehicle()

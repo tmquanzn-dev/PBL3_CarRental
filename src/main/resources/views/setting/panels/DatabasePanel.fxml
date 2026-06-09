@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<ScrollPane fx:id="panelDatabase" fitToWidth="true" hbarPolicy="NEVER" styleClass="scroll-pane" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.rentalcar.controller.settings.DatabasePanelController">
+    <content>
+        <VBox spacing="20.0" styleClass="settings-content">
+            <padding><Insets bottom="30.0" left="30.0" right="30.0" top="28.0" /></padding>
+            <children>
+                <VBox spacing="4.0">
+                    <children>
+                        <Label styleClass="settings-section-title" text="Cơ sở dữ liệu" />
+                        <Label styleClass="settings-section-desc" text="Kiểm tra kết nối và sao lưu dữ liệu hệ thống" />
+                    </children>
+                </VBox>
+                <Separator />
+                <VBox spacing="14.0" styleClass="setting-group-card">
+                    <padding><Insets bottom="20.0" left="20.0" right="20.0" top="20.0" /></padding>
+                    <children>
+                        <Label styleClass="setting-group-title" text="🔌  Thông tin kết nối" />
+                        <HBox alignment="CENTER_LEFT" spacing="15.0" styleClass="setting-row">
+                            <children>
+                                <VBox spacing="3.0" HBox.hgrow="ALWAYS">
+                                    <children>
+                                        <Label styleClass="setting-label" text="Máy chủ Database" />
+                                        <Label styleClass="setting-sublabel" text="Host và Port kết nối MySQL" />
+                                    </children>
+                                </VBox>
+                                <TextField fx:id="txtDbHost" prefWidth="220.0" promptText="localhost:3306" styleClass="modern-input" />
+                            </children>
+                        </HBox>
+                        <HBox alignment="CENTER_LEFT" spacing="15.0" styleClass="setting-row">
+                            <children>
+                                <VBox spacing="3.0" HBox.hgrow="ALWAYS">
+                                    <children>
+                                        <Label styleClass="setting-label" text="Tên cơ sở dữ liệu" />
+                                        <Label styleClass="setting-sublabel" text="Database name trong MySQL" />
+                                    </children>
+                                </VBox>
+                                <TextField fx:id="txtDbName" prefWidth="220.0" promptText="CarRentalDB" styleClass="modern-input" />
+                            </children>
+                        </HBox>
+                        <HBox alignment="CENTER_LEFT" spacing="12.0">
+                            <children>
+                                <Button mnemonicParsing="false" onAction="#handleTestConnection" styleClass="btn-success" text="🔗  Kiểm tra kết nối" />
+                                <Label fx:id="lblConnectionStatus" style="-fx-font-size: 13px; -fx-font-weight: bold;" />
+                            </children>
+                        </HBox>
+                    </children>
+                </VBox>
+                <VBox spacing="12.0" styleClass="setting-group-card">
+                    <padding><Insets bottom="20.0" left="20.0" right="20.0" top="20.0" /></padding>
+                    <children>
+                        <Label styleClass="setting-group-title" text="💾  Sao lưu &amp; Phục hồi" />
+                        <HBox alignment="CENTER_LEFT" spacing="15.0" styleClass="setting-row">
+                            <children>
+                                <VBox spacing="3.0" HBox.hgrow="ALWAYS">
+                                    <children>
+                                        <Label styleClass="setting-label" text="Xuất toàn bộ dữ liệu" />
+                                        <Label styleClass="setting-sublabel" text="Backup dữ liệu ra file .sql hoặc .csv" />
+                                    </children>
+                                </VBox>
+                                <Button mnemonicParsing="false" onAction="#handleExportData" styleClass="btn-secondary" text="📤  Xuất dữ liệu" />
+                            </children>
+                        </HBox>
+                        <HBox alignment="CENTER_LEFT" spacing="15.0" styleClass="setting-row">
+                            <children>
+                                <VBox spacing="3.0" HBox.hgrow="ALWAYS">
+                                    <children>
+                                        <Label styleClass="setting-label" text="Nhập dữ liệu từ file" />
+                                        <Label styleClass="setting-sublabel" text="Khôi phục dữ liệu từ file backup" />
+                                    </children>
+                                </VBox>
+                                <Button mnemonicParsing="false" onAction="#handleImportData" styleClass="btn-warning" text="📥  Nhập dữ liệu" />
+                            </children>
+                        </HBox>
+                        <HBox alignment="CENTER_LEFT" spacing="15.0" styleClass="setting-row">
+                            <children>
+                                <VBox spacing="3.0" HBox.hgrow="ALWAYS">
+                                    <children>
+                                        <Label styleClass="setting-label" text="Xóa cache hệ thống" />
+                                        <Label styleClass="setting-sublabel" text="Làm sạch dữ liệu tạm, log cũ" />
+                                    </children>
+                                </VBox>
+                                <Button mnemonicParsing="false" onAction="#handleClearCache" styleClass="btn-danger" text="🗑️  Xóa cache" />
+                            </children>
+                        </HBox>
+                    </children>
+                </VBox>
+            </children>
+        </VBox>
+    </content>
+</ScrollPane>
