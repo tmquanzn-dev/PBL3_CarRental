@@ -8,8 +8,10 @@ import com.example.rentalcar.utils.ReportPrinter;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
+import javafx.scene.Parent;
 import javafx.scene.chart.*;
 import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
@@ -310,112 +312,54 @@ public class ReportController implements Initializable {
         if (vboxTopVehicles == null)
             return;
         vboxTopVehicles.getChildren().clear();
+
         if (list == null || list.isEmpty()) {
             if (lblNoVehicles != null) {
                 lblNoVehicles.setVisible(true);
-                lblNoVehicles.setManaged(true);
-            }
+                lblNoVehicles.setManaged(true); }
             return;
         }
         if (lblNoVehicles != null) {
             lblNoVehicles.setVisible(false);
-            lblNoVehicles.setManaged(false);
-        }
+            lblNoVehicles.setManaged(false); }
+
         for (VehicleReportRow row : list) {
-            HBox hbox = new HBox();
-            hbox.setAlignment(javafx.geometry.Pos.CENTER_LEFT);
-            hbox.setMinHeight(48); hbox.setPrefHeight(48);
-            hbox.setStyle(row.getRank() % 2 == 0
-                    ? "-fx-background-color:#f8fafc;-fx-padding:0 10;-fx-border-color:transparent transparent #f1f5f9 transparent;-fx-border-width:1;"
-                    : "-fx-background-color:white;-fx-padding:0 10;-fx-border-color:transparent transparent #f1f5f9 transparent;-fx-border-width:1;");
+            try {
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("/views/report/VehicleReportRow.fxml"));
+                Parent rowUi = loader.load();
 
-            // Rank badge
-            Label rank = new Label(String.valueOf(row.getRank()));
-            rank.setPrefWidth(40); rank.setMinHeight(48);
-            rank.setAlignment(javafx.geometry.Pos.CENTER);
-            rank.setStyle(rankBadgeStyle(row.getRank()));
+                VehicleRowController ctrl = loader.getController();
+                ctrl.setRowData(row);
 
-            // Tên xe
-            Label name = new Label(row.getVehicleName());
-            name.setStyle("-fx-font-size:13px;-fx-font-weight:bold;-fx-text-fill:#1e293b;");
-            HBox.setHgrow(name, javafx.scene.layout.Priority.ALWAYS);
-            name.setMaxWidth(Double.MAX_VALUE);
-
-            // Biển số
-            Label plate = new Label(row.getPlateNumber());
-            plate.setPrefWidth(95);
-            plate.setStyle("-fx-background-color:#f1f5f9;-fx-text-fill:#475569;" +
-                    "-fx-padding:3 7;-fx-background-radius:6;-fx-font-size:11px;-fx-font-weight:bold;");
-
-            // Lượt
-            Label count = new Label(row.getRentalCount() + " lượt");
-            count.setPrefWidth(55);
-            count.setAlignment(javafx.geometry.Pos.CENTER);
-            count.setStyle("-fx-font-size:12px;-fx-font-weight:bold;-fx-text-fill:#2563eb;");
-
-            // Doanh thu
-            Label rev = new Label(ReportBLL.formatMoneyFull(row.getRevenue()));
-            rev.setPrefWidth(115);
-            rev.setAlignment(javafx.geometry.Pos.CENTER_RIGHT);
-            rev.setStyle("-fx-font-size:12px;-fx-font-weight:bold;-fx-text-fill:#dc2626;");
-
-            hbox.getChildren().addAll(rank, name, plate, count, rev);
-            vboxTopVehicles.getChildren().add(hbox);
+                vboxTopVehicles.getChildren().add(rowUi);
+            } catch (Exception e) {
+                System.err.println("Lỗi nạp FXML dòng xe báo cáo: " + e.getMessage());
+            }
         }
     }
 
     private void renderStaffRows(List<StaffReportRow> list) {
         if (vboxTopStaff == null) return;
         vboxTopStaff.getChildren().clear();
+
         if (list == null || list.isEmpty()) {
             if (lblNoStaff != null) { lblNoStaff.setVisible(true); lblNoStaff.setManaged(true); }
             return;
         }
         if (lblNoStaff != null) { lblNoStaff.setVisible(false); lblNoStaff.setManaged(false); }
+
         for (StaffReportRow row : list) {
-            HBox hbox = new HBox();
-            hbox.setAlignment(javafx.geometry.Pos.CENTER_LEFT);
-            hbox.setMinHeight(48); hbox.setPrefHeight(48);
-            hbox.setStyle(row.getRank() % 2 == 0
-                    ? "-fx-background-color:#f8fafc;-fx-padding:0 10;-fx-border-color:transparent transparent #f1f5f9 transparent;-fx-border-width:1;"
-                    : "-fx-background-color:white;-fx-padding:0 10;-fx-border-color:transparent transparent #f1f5f9 transparent;-fx-border-width:1;");
+            try {
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("/views/report/StaffReportRow.fxml"));
+                Parent rowUi = loader.load();
 
-            // Rank badge
-            Label rank = new Label(String.valueOf(row.getRank()));
-            rank.setPrefWidth(40); rank.setMinHeight(48);
-            rank.setAlignment(javafx.geometry.Pos.CENTER);
-            rank.setStyle(rankBadgeStyle(row.getRank()));
+                StaffRowController ctrl = loader.getController();
+                ctrl.setRowData(row);
 
-            // Avatar + Tên
-            String name = row.getFullName() != null ? row.getFullName() : "?";
-            String initial = name.isEmpty() ? "?" : name.substring(0, 1).toUpperCase();
-            Label avatar = new Label(initial);
-            avatar.setPrefSize(28, 28); avatar.setMinSize(28, 28);
-            avatar.setAlignment(javafx.geometry.Pos.CENTER);
-            avatar.setStyle("-fx-background-color:#4f46e5;-fx-text-fill:white;" +
-                    "-fx-background-radius:50%;-fx-font-weight:bold;-fx-font-size:12px;");
-
-            Label nameLabel = new Label(name);
-            nameLabel.setStyle("-fx-font-size:13px;-fx-font-weight:bold;-fx-text-fill:#1e293b;-fx-padding:0 0 0 8;");
-            HBox nameBox = new HBox(avatar, nameLabel);
-            nameBox.setAlignment(javafx.geometry.Pos.CENTER_LEFT);
-            HBox.setHgrow(nameBox, javafx.scene.layout.Priority.ALWAYS);
-            nameBox.setMaxWidth(Double.MAX_VALUE);
-
-            // Số HĐ
-            Label contracts = new Label(row.getContractCount() + " HĐ");
-            contracts.setPrefWidth(65);
-            contracts.setAlignment(javafx.geometry.Pos.CENTER);
-            contracts.setStyle("-fx-font-size:12px;-fx-font-weight:bold;-fx-text-fill:#2563eb;");
-
-            // Doanh thu
-            Label rev = new Label(ReportBLL.formatMoneyFull(row.getRevenue()));
-            rev.setPrefWidth(115);
-            rev.setAlignment(javafx.geometry.Pos.CENTER_RIGHT);
-            rev.setStyle("-fx-font-size:12px;-fx-font-weight:bold;-fx-text-fill:#dc2626;");
-
-            hbox.getChildren().addAll(rank, nameBox, contracts, rev);
-            vboxTopStaff.getChildren().add(hbox);
+                vboxTopStaff.getChildren().add(rowUi);
+            } catch (Exception e) {
+                System.err.println("Lỗi nạp FXML dòng nhân viên báo cáo: " + e.getMessage());
+            }
         }
     }
 
@@ -429,27 +373,25 @@ public class ReportController implements Initializable {
         };
     }
 
-    // ─────────────────────────────────────────────────────
-    //  TỔNG KẾT THÁNG HIỆN TẠI
-    // ─────────────────────────────────────────────────────
+
     private void refreshMonthSummary() {
         try {
             int displayMonth = selectedMonth > 0 ? selectedMonth : LocalDate.now().getMonthValue();
-            int displayYear  = selectedYear;
+            int displayYear = selectedYear;
 
             setLabel(lblCurrentMonthLabel, "T" + displayMonth + "/" + displayYear);
 
             double rev = reportBLL.getRevenueByMonth(displayYear, displayMonth);
-            int contracts   = reportBLL.getContractsByMonth(displayYear, displayMonth);
-            int customers   = reportBLL.getCustomersByMonth(displayYear, displayMonth);
-            double prevRev  = reportBLL.getPrevMonthRevenue(displayYear, displayMonth);
+            int contracts = reportBLL.getContractsByMonth(displayYear, displayMonth);
+            int customers = reportBLL.getCustomersByMonth(displayYear, displayMonth);
+            double prevRev = reportBLL.getPrevMonthRevenue(displayYear, displayMonth);
             int prevContracts = reportBLL.getPrevMonthContracts(displayYear, displayMonth);
-            double growthPct  = reportBLL.getMonthGrowthPercent(displayYear, displayMonth);
+            double growthPct = reportBLL.getMonthGrowthPercent(displayYear, displayMonth);
 
-            setLabel(lblMonthRevenue,       ReportBLL.formatMoneySmart(rev));
-            setLabel(lblMonthContracts,     String.valueOf(contracts));
-            setLabel(lblMonthCustomers,     String.valueOf(customers));
-            setLabel(lblPrevMonthRevenue,   ReportBLL.formatMoneySmart(prevRev));
+            setLabel(lblMonthRevenue, ReportBLL.formatMoneySmart(rev));
+            setLabel(lblMonthContracts, String.valueOf(contracts));
+            setLabel(lblMonthCustomers, String.valueOf(customers));
+            setLabel(lblPrevMonthRevenue, ReportBLL.formatMoneySmart(prevRev));
             setLabel(lblPrevMonthContracts, String.valueOf(prevContracts));
 
             if (lblGrowthBadge != null) {
@@ -464,9 +406,7 @@ public class ReportController implements Initializable {
         }
     }
 
-    // ─────────────────────────────────────────────────────
-    //  IN BÁO CÁO PDF
-    // ─────────────────────────────────────────────────────
+
     @FXML
     void handleExportPdf(ActionEvent event) {
         try {
@@ -478,25 +418,25 @@ public class ReportController implements Initializable {
             int displayMonth = selectedMonth > 0 ? selectedMonth : 0;
 
             ReportPrinter.PrintData data = new ReportPrinter.PrintData();
-            data.year        = selectedYear;
-            data.month       = displayMonth;
-            data.totalRev    = reportBLL.getTotalRevenue(selectedYear);
-            data.growthPct   = reportBLL.getRevenueGrowthPercent(selectedYear);
+            data.year = selectedYear;
+            data.month  = displayMonth;
+            data.totalRev = reportBLL.getTotalRevenue(selectedYear);
+            data.growthPct = reportBLL.getRevenueGrowthPercent(selectedYear);
             data.totalContracts = reportBLL.getTotalContracts(selectedYear);
             data.totalCustomers = reportBLL.getTotalCustomers(selectedYear);
-            data.avgMonthly  = reportBLL.getAvgMonthlyRevenue(selectedYear);
+            data.avgMonthly = reportBLL.getAvgMonthlyRevenue(selectedYear);
             data.monthlyRevMap = reportBLL.getMonthlyRevenue(selectedYear);
             data.vehStatus   = reportBLL.getVehicleStatusCount();
 
             if (displayMonth > 0) {
                 data.topVehicles = reportBLL.getTopVehiclesByMonth(selectedYear, displayMonth);
-                data.topStaff    = reportBLL.getTopStaffByMonth(selectedYear, displayMonth);
-                data.monthRev    = reportBLL.getRevenueByMonth(selectedYear, displayMonth);
+                data.topStaff = reportBLL.getTopStaffByMonth(selectedYear, displayMonth);
+                data.monthRev = reportBLL.getRevenueByMonth(selectedYear, displayMonth);
                 data.monthContracts = reportBLL.getContractsByMonth(selectedYear, displayMonth);
             } else {
                 data.topVehicles = reportBLL.getTopVehiclesByYear(selectedYear);
-                data.topStaff    = reportBLL.getTopStaffByYear(selectedYear);
-                data.monthRev    = 0;
+                data.topStaff = reportBLL.getTopStaffByYear(selectedYear);
+                data.monthRev = 0;
                 data.monthContracts = 0;
             }
 
@@ -523,9 +463,7 @@ public class ReportController implements Initializable {
     }
 
 
-    // ─────────────────────────────────────────────────────
-    //  HELPERS
-    // ─────────────────────────────────────────────────────
+
     private String rankStyle(int rank) {
         return switch (rank) {
             case 1 -> "-fx-background-color:#fef3c7;-fx-text-fill:#b45309;";

@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.text.Font?>
+
+<HBox fx:id="rowContainer" alignment="CENTER_LEFT" minHeight="48.0" prefHeight="48.0" prefWidth="650.0" style="-fx-background-color: white; -fx-border-color: transparent transparent #f1f5f9 transparent; -fx-border-width: 1;" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://fxml.com/fx/1" fx:controller="com.example.rentalcar.controller.report.RecentContractRowController">
+    <children>
+        <Label fx:id="lblCodeContract" prefWidth="140.0" style="-fx-text-fill: #146dff;" text="HD-2026-0001">
+            <font>
+                <Font name="System Bold" size="13.0" />
+            </font>
+        </Label>
+
+        <Label fx:id="lblCustomerName" maxWidth="1.7976931348623157E308" style="-fx-text-fill: #1e293b;" text="Nguyễn Văn A" HBox.hgrow="ALWAYS">
+            <font>
+                <Font size="13.0" />
+            </font>
+        </Label>
+
+        <Label fx:id="lblVehicleInfo" prefWidth="160.0" style="-fx-text-fill: #64748b;" text="Honda Vision · 43C1-1234">
+            <font>
+                <Font size="12.0" />
+            </font>
+            <HBox.margin>
+                <Insets right="10.0" />
+            </HBox.margin>
+        </Label>
+
+        <Label fx:id="lblStatus" alignment="CENTER" prefWidth="90.0" style="-fx-background-color: #dcfce7; -fx-text-fill: #15803d; -fx-background-radius: 6;" text="Hoàn thành">
+            <font>
+                <Font name="System Bold" size="11.0" />
+            </font>
+            <padding>
+                <Insets bottom="3.0" left="8.0" right="8.0" top="3.0" />
+            </padding>
+            <HBox.margin>
+                <Insets right="10.0" />
+            </HBox.margin>
+        </Label>
+
+        <Label fx:id="lblTotalPrice" alignment="CENTER_RIGHT" prefWidth="110.0" style="-fx-text-fill: #dc2626;" text="1.500.000 đ">
+            <font>
+                <Font name="System Bold" size="12.0" />
+            </font>
+        </Label>
+    </children>
+    <padding>
+        <Insets left="10.0" right="10.0" />
+    </padding>
+</HBox>

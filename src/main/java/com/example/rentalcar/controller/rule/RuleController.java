@@ -18,38 +18,26 @@ import java.util.List;
 import java.util.ResourceBundle;
 import java.util.stream.Collectors;
 
-/**
- * Controller quản lý danh sách Quy luật tính giá.
- * Tương thích 100% với RuleManagement.fxml
- */
-public class RuleController implements Initializable {
 
-    // ─── Các ID khai báo trong FXML ───
-    @FXML private Label lblTotalRules;       // Card tổng số luật
-    @FXML private Label lblActiveRules;      // Card luật đang bật
-    @FXML private Label lblApplicableToday; // Card luật áp dụng hôm nay
-    @FXML private TextField txtSearch;       // Ô tìm kiếm
-    @FXML private FlowPane ruleContainer;    // Nơi chứa các Card quy luật
+public class RuleController implements Initializable {
+    @FXML private Label lblTotalRules;
+    @FXML private Label lblActiveRules;
+    @FXML private Label lblApplicableToday;
+    @FXML private TextField txtSearch;
+    @FXML private FlowPane ruleContainer;
 
     private final RuleBLL ruleBLL = new RuleBLL();
     private List<Rules> masterList; // Lưu danh sách gốc để tìm kiếm nhanh
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        // Vừa mở màn hình là nạp dữ liệu và thống kê ngay
         loadData();
     }
 
-    // ================================================================
-    // NẠP DỮ LIỆU & CẬP NHẬT GIAO DIỆN
-    // ================================================================
     public void loadData() {
         try {
-            // 1. Lấy dữ liệu mới nhất từ BLL
             masterList = ruleBLL.getAllRules();
 
-            // 2. Cập nhật các con số thống kê trên các Card Header
-            // Đảm bảo RuleBLL của em đã có các hàm count này
             if (lblTotalRules != null)
                 lblTotalRules.setText(String.valueOf(masterList.size()));
 
@@ -59,7 +47,6 @@ public class RuleController implements Initializable {
             if (lblApplicableToday != null)
                 lblApplicableToday.setText(String.valueOf(ruleBLL.getApplicableTodayCount()));
 
-            // 3. Hiển thị danh sách các thẻ luật
             renderRuleCards(masterList);
 
         } catch (Exception e) {
@@ -69,16 +56,12 @@ public class RuleController implements Initializable {
 
     private void renderRuleCards(List<Rules> list) {
         ruleContainer.getChildren().clear();
-
         if (list == null || list.isEmpty()) return;
 
         for (Rules rule : list) {
             try {
-                // Nạp file giao diện cho từng thẻ con
                 FXMLLoader loader = new FXMLLoader(getClass().getResource("/views/rule/RuleCard.fxml"));
                 Parent card = loader.load();
-
-                // Đổ dữ liệu vào thẻ và thiết lập hàm callback để refresh khi xóa/sửa
                 RuleCardController cardCtrl = loader.getController();
                 cardCtrl.setData(rule, this::loadData);
 
@@ -89,16 +72,11 @@ public class RuleController implements Initializable {
         }
     }
 
-    // ================================================================
-    // XỬ LÝ SỰ KIỆN TỪ FXML
-    // ================================================================
 
-    /**
-     * Xử lý khi nhấn nút Tìm kiếm
-     */
     @FXML
     void handleSearch() {
-        if (masterList == null) return;
+        if (masterList == null)
+            return;
 
         String keyword = txtSearch.getText().trim().toLowerCase();
 
@@ -116,18 +94,12 @@ public class RuleController implements Initializable {
         renderRuleCards(filtered);
     }
 
-    /**
-     * Xử lý khi nhấn nút Làm mới (🔄)
-     */
     @FXML
     void handleReload() {
         if (txtSearch != null) txtSearch.clear();
         loadData();
     }
 
-    /**
-     * Mở modal thêm quy luật mới
-     */
     @FXML
     void handleAddNewRule() {
         try {
@@ -135,7 +107,7 @@ public class RuleController implements Initializable {
             Parent root = loader.load();
 
             RuleFormController ctrl = loader.getController();
-            ctrl.setMode(null); // Chế độ Thêm mới (ADD)
+            ctrl.setMode(null);
             ctrl.setOnSaved(this::loadData); // Callback để load lại bảng sau khi lưu thành công
 
             Stage stage = new Stage();

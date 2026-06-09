@@ -6,6 +6,7 @@ import com.example.rentalcar.utils.AppSession;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
 import javafx.scene.chart.BarChart;
@@ -24,8 +25,6 @@ import java.util.Map;
 import java.util.ResourceBundle;
 
 public class StaffReportController implements Initializable {
-
-    // ── KPI Cards ─────────────────────────────────────────
     @FXML private Label lblStaffName;
     @FXML private Label lblYearRevenue;
     @FXML private Label lblYearContracts;
@@ -33,18 +32,15 @@ public class StaffReportController implements Initializable {
     @FXML private Label lblTotalPenalties;
     @FXML private Label lblRankBadge;
 
-    // ── Header ────────────────────────────────────────────
     @FXML private Label lblYear;
     @FXML private ComboBox<String> cbMonth;
 
-    // ── Bar Chart ─────────────────────────────────────────
     @FXML private BarChart<String, Number> barChartRevenue;
     @FXML private CategoryAxis xAxis;
     @FXML private NumberAxis yAxis;
     @FXML private Label lblChartSubtitle;
     @FXML private Label lblPeakMonth;
 
-    // ── Tổng kết tháng ────────────────────────────────────
     @FXML private Label lblCurrentMonthLabel;
     @FXML private Label lblMonthRevenue;
     @FXML private Label lblMonthContracts;
@@ -52,11 +48,9 @@ public class StaffReportController implements Initializable {
     @FXML private Label lblPrevMonthRevenue;
     @FXML private Label lblPrevMonthContracts;
 
-    // ── Đơn gần đây ───────────────────────────────────────
     @FXML private VBox vboxRecentContracts;
     @FXML private Label lblNoContracts;
 
-    // ── BLL ───────────────────────────────────────────────
     private final StaffReportBLL staffReportBLL = new StaffReportBLL();
 
     private int selectedYear  = LocalDate.now().getYear();
@@ -83,9 +77,7 @@ public class StaffReportController implements Initializable {
         loadAllData();
     }
 
-    // ─────────────────────────────────────────────────────
-    //  SETUP
-    // ─────────────────────────────────────────────────────
+
     private void setupMonthCombo() {
         if (cbMonth == null) return;
         cbMonth.getItems().add("Cả năm");
@@ -106,11 +98,14 @@ public class StaffReportController implements Initializable {
         if (yAxis != null) yAxis.setLabel("(tr.đ)");
     }
 
-    // ─────────────────────────────────────────────────────
-    //  ĐIỀU HƯỚNG NĂM
-    // ─────────────────────────────────────────────────────
-    @FXML void handlePrevYear(ActionEvent e) { selectedYear--; loadAllData(); }
-    @FXML void handleNextYear(ActionEvent e) { selectedYear++; loadAllData(); }
+
+    @FXML void handlePrevYear(ActionEvent e) {
+        selectedYear--;
+        loadAllData();
+    }
+    @FXML void handleNextYear(ActionEvent e) {
+        selectedYear++;
+        loadAllData(); }
 
     @FXML void handleRefresh(ActionEvent e) {
         selectedYear  = LocalDate.now().getYear();
@@ -119,9 +114,6 @@ public class StaffReportController implements Initializable {
         loadAllData();
     }
 
-    // ─────────────────────────────────────────────────────
-    //  LOAD TẤT CẢ
-    // ─────────────────────────────────────────────────────
     private void loadAllData() {
         if (currentUserId <= 0) return;
         setLabel(lblYear, String.valueOf(selectedYear));
@@ -138,9 +130,6 @@ public class StaffReportController implements Initializable {
         refreshMonthSummary();
     }
 
-    // ─────────────────────────────────────────────────────
-    //  KPI CARDS
-    // ─────────────────────────────────────────────────────
     private void loadKpiCards() {
         try {
             double totalRev = staffReportBLL.getTotalRevenue(currentUserId, selectedYear);
@@ -160,9 +149,7 @@ public class StaffReportController implements Initializable {
         }
     }
 
-    // ─────────────────────────────────────────────────────
-    //  XẾP HẠNG
-    // ─────────────────────────────────────────────────────
+
     private void loadRankBadge() {
         try {
             int rank = staffReportBLL.getRankThisMonth(currentUserId);
@@ -187,9 +174,7 @@ public class StaffReportController implements Initializable {
         }
     }
 
-    // ─────────────────────────────────────────────────────
-    //  BAR CHART
-    // ─────────────────────────────────────────────────────
+
     private void loadBarChart() {
         if (barChartRevenue == null) return;
         try {
@@ -240,9 +225,6 @@ public class StaffReportController implements Initializable {
         }
     }
 
-    // ─────────────────────────────────────────────────────
-    //  TỔNG KẾT THÁNG
-    // ─────────────────────────────────────────────────────
     private void refreshMonthSummary() {
         try {
             int displayMonth = selectedMonth > 0 ? selectedMonth : LocalDate.now().getMonthValue();
@@ -254,15 +236,15 @@ public class StaffReportController implements Initializable {
             int contracts   = staffReportBLL.getContractsByMonth(currentUserId, displayYear, displayMonth);
 
             // Tháng trước
-            int prevYear  = displayMonth == 1 ? displayYear - 1 : displayYear;
+            int prevYear = displayMonth == 1 ? displayYear - 1 : displayYear;
             int prevMonth = displayMonth == 1 ? 12 : displayMonth - 1;
-            double prevRev      = staffReportBLL.getRevenueByMonth(currentUserId, prevYear, prevMonth);
-            int prevContracts   = staffReportBLL.getContractsByMonth(currentUserId, prevYear, prevMonth);
-            double growthPct    = staffReportBLL.getGrowthPercent(currentUserId, displayYear, displayMonth);
+            double prevRev = staffReportBLL.getRevenueByMonth(currentUserId, prevYear, prevMonth);
+            int prevContracts = staffReportBLL.getContractsByMonth(currentUserId, prevYear, prevMonth);
+            double growthPct = staffReportBLL.getGrowthPercent(currentUserId, displayYear, displayMonth);
 
-            setLabel(lblMonthRevenue,       StaffReportBLL.formatMoney(rev));
-            setLabel(lblMonthContracts,     String.valueOf(contracts));
-            setLabel(lblPrevMonthRevenue,   StaffReportBLL.formatMoney(prevRev));
+            setLabel(lblMonthRevenue, StaffReportBLL.formatMoney(rev));
+            setLabel(lblMonthContracts, String.valueOf(contracts));
+            setLabel(lblPrevMonthRevenue, StaffReportBLL.formatMoney(prevRev));
             setLabel(lblPrevMonthContracts, String.valueOf(prevContracts));
 
             if (lblGrowthBadge != null) {
@@ -276,9 +258,6 @@ public class StaffReportController implements Initializable {
         }
     }
 
-    // ─────────────────────────────────────────────────────
-    //  ĐƠN GẦN ĐÂY
-    // ─────────────────────────────────────────────────────
     private void loadRecentContracts() {
         if (vboxRecentContracts == null) return;
         vboxRecentContracts.getChildren().clear();
@@ -300,45 +279,16 @@ public class StaffReportController implements Initializable {
             }
 
             for (Map<String, Object> row : list) {
-                HBox hbox = new HBox();
-                hbox.setAlignment(Pos.CENTER_LEFT);
-                hbox.setMinHeight(48); hbox.setPrefHeight(48);
-                hbox.setStyle("-fx-background-color:white;-fx-padding:0 10;" +
-                        "-fx-border-color:transparent transparent #f1f5f9 transparent;" +
-                        "-fx-border-width:1;");
+                try {
+                    FXMLLoader loader = new FXMLLoader(getClass().getResource("/views/report/RecentContractRow.fxml"));
+                    javafx.scene.Parent rowUi = loader.load();
 
-                // Mã HĐ
-                Label code = new Label(String.valueOf(row.get("code_contract")));
-                code.setPrefWidth(140);
-                code.setStyle("-fx-font-weight:bold;-fx-text-fill:#146dff;-fx-font-size:13px;");
-
-                // Khách hàng
-                Label customer = new Label(String.valueOf(row.get("customer_name")));
-                customer.setStyle("-fx-font-size:13px;-fx-text-fill:#1e293b;");
-                HBox.setHgrow(customer, javafx.scene.layout.Priority.ALWAYS);
-                customer.setMaxWidth(Double.MAX_VALUE);
-
-                // Xe
-                Label vehicle = new Label(row.get("vehicle") + " · " + row.get("code_vehicle"));
-                vehicle.setPrefWidth(160);
-                vehicle.setStyle("-fx-font-size:12px;-fx-text-fill:#64748b;");
-
-                // Trạng thái
-                String statusStr = String.valueOf(row.get("status"));
-                Label status = new Label(mapStatus(statusStr));
-                status.setPrefWidth(90);
-                status.setStyle(mapStatusStyle(statusStr) + "-fx-font-size:11px;-fx-font-weight:bold;" +
-                        "-fx-padding:3 8;-fx-background-radius:6;");
-
-                // Tiền
-                double price = (double) row.get("total_price");
-                Label money = new Label(StaffReportBLL.formatMoneyFull(price));
-                money.setPrefWidth(110);
-                money.setAlignment(Pos.CENTER_RIGHT);
-                money.setStyle("-fx-font-weight:bold;-fx-text-fill:#dc2626;-fx-font-size:12px;");
-
-                hbox.getChildren().addAll(code, customer, vehicle, status, money);
-                vboxRecentContracts.getChildren().add(hbox);
+                    RecentContractRowController ctrl = loader.getController();
+                    ctrl.setRowData(row);
+                    vboxRecentContracts.getChildren().add(rowUi);
+                } catch (Exception e) {
+                    System.err.println("Lỗi nạp FXML dòng đơn hàng gần đây: " + e.getMessage());
+                }
             }
 
         } catch (Exception ex) {
@@ -346,9 +296,7 @@ public class StaffReportController implements Initializable {
         }
     }
 
-    // ─────────────────────────────────────────────────────
     //  HELPERS
-    // ─────────────────────────────────────────────────────
     private String mapStatus(String s) {
         if (s == null) return "--";
         return switch (s.replace(" ", "_")) {

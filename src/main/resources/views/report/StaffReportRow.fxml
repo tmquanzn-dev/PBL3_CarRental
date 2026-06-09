@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.text.Font?>
+
+<HBox fx:id="rowContainer" alignment="CENTER_LEFT" minHeight="48.0" prefHeight="48.0" prefWidth="500.0" style="-fx-border-color: transparent transparent #f1f5f9 transparent; -fx-border-width: 1;" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://fxml.com/fx/1" fx:controller="com.example.rentalcar.controller.report.StaffRowController">
+    <children>
+        <Label fx:id="lblRank" alignment="CENTER" prefWidth="40.0" text="1" textAlignment="CENTER">
+            <font>
+                <Font name="System Bold" size="13.0" />
+            </font>
+        </Label>
+
+        <HBox fx:id="nameBox" alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS">
+            <children>
+                <Label fx:id="lblAvatar" alignment="CENTER" maxHeight="28.0" maxWidth="28.0" minHeight="28.0" minWidth="28.0" prefHeight="28.0" prefWidth="28.0" style="-fx-background-color: #4f46e5; -fx-text-fill: white; -fx-background-radius: 50%;" text="Q" textAlignment="CENTER">
+                    <font>
+                        <Font name="System Bold" size="12.0" />
+                    </font>
+                </Label>
+
+                <Label fx:id="lblStaffName" text="Ngô Lê Anh Quân">
+                    <font>
+                        <Font name="System Bold" size="13.0" />
+                    </font>
+                    <padding>
+                        <Insets left="8.0" />
+                    </padding>
+                </Label>
+            </children>
+            <HBox.margin>
+                <Insets left="5.0" />
+            </HBox.margin>
+        </HBox>
+
+        <Label fx:id="lblContractCount" alignment="CENTER" prefWidth="65.0" style="-fx-text-fill: #2563eb;" text="28 HĐ">
+            <font>
+                <Font name="System Bold" size="12.0" />
+            </font>
+            <HBox.margin>
+                <Insets right="10.0" />
+            </HBox.margin>
+        </Label>
+
+        <Label fx:id="lblRevenue" alignment="CENTER_RIGHT" prefWidth="115.0" style="-fx-text-fill: #dc2626;" text="24.850.000 đ">
+            <font>
+                <Font name="System Bold" size="12.0" />
+            </font>
+            <HBox.margin>
+                <Insets right="10.0" />
+            </HBox.margin>
+        </Label>
+    </children>
+    <padding>
+        <Insets left="10.0" right="10.0" />
+    </padding>
+</HBox>

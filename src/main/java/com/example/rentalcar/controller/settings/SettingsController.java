@@ -26,52 +26,41 @@ import java.time.format.DateTimeFormatter;
 import java.util.ResourceBundle;
 
 public class SettingsController implements Initializable {
-
-    // ── SIDEBAR NAV ──────────────────────────────────────────────────────
     @FXML private Button btnNavProfile, btnNavSecurity, btnNavGeneral;
     @FXML private Button btnNavPricing, btnNavNotification;
     @FXML private Button btnNavDatabase, btnNavAbout;
 
-    // ── PANELS ───────────────────────────────────────────────────────────
     @FXML private ScrollPane panelProfile, panelSecurity, panelGeneral;
     @FXML private ScrollPane panelPricing, panelNotification;
     @FXML private ScrollPane panelDatabase, panelAbout;
 
-    // ── PANEL PROFILE ────────────────────────────────────────────────────
-    @FXML private Label     lblAvatarInitial;
+    @FXML private Label lblAvatarInitial;
     @FXML private ImageView imgAvatar;
     @FXML private StackPane avatarStack;
-    @FXML private Label     lblProfileName, lblProfileRole, lblProfileStatus, lblProfileUsername;
+    @FXML private Label lblProfileName, lblProfileRole, lblProfileStatus, lblProfileUsername;
     @FXML private TextField txtFullName, txtUsername, txtPhone, txtEmail, txtCccd, txtAddress;
-    @FXML private Label     lblProfileMsg;
+    @FXML private Label lblProfileMsg;
 
-    // ── PANEL SECURITY ───────────────────────────────────────────────────
     @FXML private PasswordField txtOldPassword, txtNewPassword, txtConfirmPassword;
-    @FXML private AnchorPane    strengthBar1, strengthBar2, strengthBar3, strengthBar4;
-    @FXML private Label         lblStrength, lblSecurityMsg, lblSessionInfo;
+    @FXML private AnchorPane strengthBar1, strengthBar2, strengthBar3, strengthBar4;
+    @FXML private Label lblStrength, lblSecurityMsg, lblSessionInfo;
 
-    // ── PANEL GENERAL ────────────────────────────────────────────────────
     @FXML private ComboBox<String> cbLanguage, cbDateFormat, cbCurrency, cbPageSize;
     @FXML private Button toggleAutoOverdue, toggleMaintWarn, toggleConfirmDelete;
 
-    // ── PANEL PRICING ────────────────────────────────────────────────────
-    @FXML private TextField        txtLatePenalty, txtFuelPrice;
+    @FXML private TextField txtLatePenalty, txtFuelPrice;
     @FXML private ComboBox<String> cbLateCalcMode, cbFuelMultiplier;
-    @FXML private Label            lblPreviewLate, lblPreviewFuel;
+    @FXML private Label lblPreviewLate, lblPreviewFuel;
 
-    // ── PANEL NOTIFICATION ───────────────────────────────────────────────
     @FXML private Button toggleNotiNewContract, toggleNotiOverdue;
     @FXML private Button toggleNotiMaint, toggleNotiVoucher;
 
-    // ── PANEL DATABASE ───────────────────────────────────────────────────
     @FXML private TextField txtDbHost, txtDbName;
-    @FXML private Label     lblConnectionStatus;
+    @FXML private Label lblConnectionStatus;
 
-    // ── PANEL ABOUT ──────────────────────────────────────────────────────
     @FXML private Label lblJavaVersion, lblOS, lblDbStatus;
 
-    // ── STATE ────────────────────────────────────────────────────────────
-    private final UserBLL          userBLL    = new UserBLL();
+    private final UserBLL userBLL  = new UserBLL();
     private final SystemSettingBLL settingBLL = new SystemSettingBLL();   // ← THÊM MỚI
     private Users currentUser;
 

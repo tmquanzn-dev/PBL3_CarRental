@@ -11,6 +11,7 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
@@ -18,63 +19,50 @@ import java.time.format.DateTimeFormatter;
 
 public class RuleCardController {
 
-    @FXML private Label       lblType;
-    @FXML private Label       lblMulti;
-    @FXML private Label       lblName;
-    @FXML private Label       lblDate;
-    @FXML private Label       lblStatusBadge;
-    @FXML private AnchorPane  accentBar;  // thanh màu đầu card
+    @FXML private VBox cardContainer;
+    @FXML private Label lblType;
+    @FXML private Label lblMulti;
+    @FXML private Label lblName;
+    @FXML private Label lblDate;
+    @FXML private Label lblStatusBadge;
+    @FXML private AnchorPane accentBar;
 
-    private Rules    currentRule;
+    private Rules currentRule;
     private Runnable onRefresh;
 
     private final RuleBLL ruleBLL = new RuleBLL();
     private static final DateTimeFormatter DATE_FMT = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
-    // ================================================================
-    // NHẬN DỮ LIỆU
-    // ================================================================
     public void setData(Rules rule, Runnable onRefresh) {
         this.currentRule = rule;
         this.onRefresh   = onRefresh;
         if (rule == null) return;
 
-        // ── Tên luật ─────────────────────────────────────────────
         if (lblName != null) lblName.setText(rule.getRule_name());
+        if (lblMulti != null) lblMulti.setText(RuleBLL.formatMultiplier(rule.getMulti()));
 
-        // ── Hệ số nhân ───────────────────────────────────────────
-        if (lblMulti != null)
-            lblMulti.setText(RuleBLL.formatMultiplier(rule.getMulti()));
+        RuleType rt = rule.getRule_type() != null ? rule.getRule_type() : RuleType.KHAC;
+        String typeText;
 
-        // ── Màu accent bar + badge loại ──────────────────────────
-        RuleType rt = rule.getRule_type();
-        String accentColor, badgeBg, badgeFg, typeText;
-        if (rt == RuleType.CUOI_TUAN) {
-            accentColor = "#146dff"; badgeBg = "#dbeafe"; badgeFg = "#1d4ed8";
-            typeText = "CUỐI TUẦN";
-        } else if (rt == RuleType.NGAY_LE) {
-            accentColor = "#be185d"; badgeBg = "#fce7f3"; badgeFg = "#be185d";
-            typeText = "NGÀY LỄ";
-        } else {
-            accentColor = "#64748b"; badgeBg = "#f1f5f9"; badgeFg = "#475569";
-            typeText = "KHÁC";
+        if (cardContainer != null) {
+            cardContainer.getStyleClass().removeAll("rule-cuoi-tuan", "rule-ngay-le", "rule-khac");
         }
-
-        if (accentBar != null)
-            accentBar.setStyle("-fx-background-color: " + accentColor
-                    + "; -fx-background-radius: 12 12 0 0;");
-
-        if (lblType != null)
-            lblType.setStyle("-fx-background-color: " + badgeBg + "; -fx-text-fill: " + badgeFg
-                    + "; -fx-padding: 3 10; -fx-background-radius: 20;"
-                    + " -fx-font-weight: bold; -fx-font-size: 10px;");
+        switch (rt) {
+            case CUOI_TUAN -> {
+                if (cardContainer != null) cardContainer.getStyleClass().add("rule-cuoi-tuan");
+                typeText = "CUỐI TUẦN";
+            }
+            case NGAY_LE -> {
+                if (cardContainer != null) cardContainer.getStyleClass().add("rule-ngay-le");
+                typeText = "NGÀY LỄ";
+            }
+            default -> {
+                if (cardContainer != null) cardContainer.getStyleClass().add("rule-khac");
+                typeText = "KHÁC";
+            }
+        }
         if (lblType != null) lblType.setText(typeText);
 
-        // Màu hệ số nhân đồng bộ với accent
-        if (lblMulti != null)
-            lblMulti.setStyle("-fx-font-size: 36px; -fx-font-weight: bold; -fx-text-fill: " + accentColor + ";");
-
-        // ── Ngày áp dụng ─────────────────────────────────────────
         if (lblDate != null) {
             String start = rule.getStart_date() != null
                     ? rule.getStart_date().toLocalDate().format(DATE_FMT) : "--";
@@ -83,7 +71,6 @@ public class RuleCardController {
             lblDate.setText("📅  " + start + "  →  " + end);
         }
 
-        // ── Trạng thái ───────────────────────────────────────────
         if (lblStatusBadge != null) {
             if (rule.isIs_active()) {
                 lblStatusBadge.setText("● Bật");
@@ -99,15 +86,12 @@ public class RuleCardController {
         }
     }
 
-    // ================================================================
-    // SỬA
-    // ================================================================
+
     @FXML
     void handleEdit() {
         if (currentRule == null) return;
         try {
-            FXMLLoader loader = new FXMLLoader(
-                    getClass().getResource("/views/rule/RuleFormModal.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/views/rule/RuleFormModal.fxml"));
             Parent root = loader.load();
             RuleFormController ctrl = loader.getController();
             ctrl.setMode(currentRule);
@@ -125,9 +109,6 @@ public class RuleCardController {
         }
     }
 
-    // ================================================================
-    // XÓA
-    // ================================================================
     @FXML
     void handleDelete() {
         if (currentRule == null) return;
@@ -145,9 +126,6 @@ public class RuleCardController {
         });
     }
 
-    // ================================================================
-    // BẬT / TẮT
-    // ================================================================
     @FXML
     void handleToggle() {
         if (currentRule == null) return;

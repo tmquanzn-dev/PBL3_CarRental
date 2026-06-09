@@ -137,3 +137,24 @@
     -fx-background-color: #fecdd3;
     -fx-background-insets: 0;
 }
+
+/* --- Khối màu độc quyền cho luật CUỐI TUẦN --- */
+.rule-cuoi-tuan {
+    -fx-accent-color: #146dff;
+    -fx-badge-bg: #dbeafe;
+    -fx-badge-fg: #1d4ed8;
+}
+
+/* --- Khối màu độc quyền cho luật NGÀY LỄ --- */
+.rule-ngay-le {
+    -fx-accent-color: #be185d;
+    -fx-badge-bg: #fce7f3;
+    -fx-badge-fg: #be185d;
+}
+
+/* --- Khối màu độc quyền cho luật KHÁC --- */
+.rule-khac {
+    -fx-accent-color: #64748b;
+    -fx-badge-bg: #f1f5f9;
+    -fx-badge-fg: #475569;
+}

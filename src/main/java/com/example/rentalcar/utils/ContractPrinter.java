@@ -1,5 +1,8 @@
 package com.example.rentalcar.utils;
 
+import com.example.rentalcar.bll.CustomerBLL;
+import com.example.rentalcar.bll.PenaltyBLL;
+import com.example.rentalcar.bll.VehicleBLL;
 import com.example.rentalcar.dao.CustomerDAO;
 import com.example.rentalcar.dao.PenaltyDAO;
 import com.example.rentalcar.dao.VehicleDAO;
@@ -27,36 +30,25 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
-/**
- * ContractPrinter – Tạo file PDF hợp đồng thuê xe.
- *
- * ĐÃ SỬA: Ưu tiên hiển thị đúng nhân viên đã lập hợp đồng gốc từ trước.
- * ĐÃ FIX: Chống lỗi văng IllegalArgumentException từ iText 7 khi gặp chuỗi null.
- */
+
 public class ContractPrinter {
 
-    // ─── Màu thương hiệu ────────────────────────────────────
-    private static final DeviceRgb COLOR_PRIMARY    = new DeviceRgb(20, 109, 255);   // #146dff
-    private static final DeviceRgb COLOR_DARK       = new DeviceRgb(30, 41, 59);     // #1e293b
-    private static final DeviceRgb COLOR_GRAY       = new DeviceRgb(100, 116, 139);  // #64748b
-    private static final DeviceRgb COLOR_LIGHT_BG   = new DeviceRgb(248, 250, 252);  // #f8fafc
-    private static final DeviceRgb COLOR_GREEN      = new DeviceRgb(16, 185, 129);   // #10b981
-    private static final DeviceRgb COLOR_RED        = new DeviceRgb(239, 68, 68);    // #ef4444
-    private static final DeviceRgb COLOR_YELLOW_BG  = new DeviceRgb(254, 243, 199);  // #fef3c7
-    private static final DeviceRgb COLOR_YELLOW_FG  = new DeviceRgb(180, 83, 9);    // #b45309
-    private static final DeviceRgb COLOR_BORDER     = new DeviceRgb(226, 232, 240);  // #e2e8f0
+    private static final DeviceRgb COLOR_PRIMARY    = new DeviceRgb(20, 109, 255);
+    private static final DeviceRgb COLOR_DARK       = new DeviceRgb(30, 41, 59);
+    private static final DeviceRgb COLOR_GRAY       = new DeviceRgb(100, 116, 139);
+    private static final DeviceRgb COLOR_LIGHT_BG   = new DeviceRgb(248, 250, 252);
+    private static final DeviceRgb COLOR_GREEN      = new DeviceRgb(16, 185, 129);
+    private static final DeviceRgb COLOR_RED        = new DeviceRgb(239, 68, 68);
+    private static final DeviceRgb COLOR_YELLOW_BG  = new DeviceRgb(254, 243, 199);
+    private static final DeviceRgb COLOR_YELLOW_FG  = new DeviceRgb(180, 83, 9);
+    private static final DeviceRgb COLOR_BORDER     = new DeviceRgb(226, 232, 240);
 
     private static final DateTimeFormatter FMT = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
     private static final DateTimeFormatter DATE_FMT = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
-    // ─── DAO ────────────────────────────────────────────────
-    private static final CustomerDAO customerDAO = new CustomerDAO();
-    private static final VehicleDAO  vehicleDAO  = new VehicleDAO();
-    private static final PenaltyDAO  penaltyDAO  = new PenaltyDAO();
-
-    // =========================================================
-    //  PUBLIC API
-    // =========================================================
+    private static final CustomerBLL customerBLL = new CustomerBLL();
+    private static final VehicleBLL vehicleBLL  = new VehicleBLL();
+    private static final PenaltyBLL penaltyBLL  = new PenaltyBLL();
 
     public static String print(Contracts contract, Window owner) {
         if (contract == null) return null;
@@ -84,17 +76,13 @@ public class ContractPrinter {
         generatePdf(contract, outputPath);
     }
 
-    // =========================================================
-    //  CORE PDF GENERATION
-    // =========================================================
-
     private static void generatePdf(Contracts contract, String outputPath) throws Exception {
         // Load dữ liệu liên quan
         Customers customer = contract.getId_customer() != null
-                ? customerDAO.findById(contract.getId_customer().getId_customer()) : null;
+                ? customerBLL.findById(contract.getId_customer().getId_customer()) : null;
         Vehicles vehicle = contract.getId_vehicle() != null
-                ? vehicleDAO.findById(contract.getId_vehicle().getId_vehicle()) : null;
-        List<Penalties> penalties = penaltyDAO.findByContractId(contract.getId_contract());
+                ? vehicleBLL.getVehicleById(contract.getId_vehicle().getId_vehicle()) : null;
+        List<Penalties> penalties = penaltyBLL.getByContractId(contract.getId_contract());
 
         // Khởi tạo document
         PdfWriter writer   = new PdfWriter(outputPath);
@@ -105,41 +93,29 @@ public class ContractPrinter {
         PdfFont fontRegular = loadFont(false);
         PdfFont fontBold    = loadFont(true);
 
-        // ── 1. HEADER ────────────────────────────────────────
         addHeader(doc, contract, fontRegular, fontBold);
 
-        // ── 2. THÔNG TIN 2 BÊN ──────────────────────────────
         addPartyInfo(doc, contract, customer, fontRegular, fontBold);
 
-        // ── 3. THÔNG TIN XE ──────────────────────────────────
         addVehicleSection(doc, vehicle, contract, fontRegular, fontBold);
 
-        // ── 4. THỜI GIAN & GIÁ ──────────────────────────────
         addPricingSection(doc, contract, fontRegular, fontBold);
 
-        // ── 5. PHẠT (nếu có) ─────────────────────────────────
         if (penalties != null && !penalties.isEmpty()) {
             addPenaltySection(doc, penalties, fontRegular, fontBold);
         }
 
-        // ── 6. TỔNG THANH TOÁN ──────────────────────────────
         addTotalSection(doc, contract, fontRegular, fontBold);
 
-        // ── 7. ĐIỀU KHOẢN ────────────────────────────────────
         addTermsSection(doc, fontRegular, fontBold);
 
-        // ── 8. KÝ TÊN ────────────────────────────────────────
         addSignatureSection(doc, contract, customer, fontRegular, fontBold);
 
-        // ── 9. FOOTER ────────────────────────────────────────
         addFooter(doc, fontRegular);
-
         doc.close();
     }
 
-    // =========================================================
     //  1. HEADER
-    // =========================================================
     private static void addHeader(Document doc, Contracts contract,
                                   PdfFont regular, PdfFont bold) {
         Paragraph company = new Paragraph("VEHICLERENT PRO")
@@ -434,7 +410,7 @@ public class ContractPrinter {
                     regular, bold, false);
         }
 
-        List<Penalties> penalties = penaltyDAO.findByContractId(contract.getId_contract());
+        List<Penalties> penalties = penaltyBLL.getByContractId(contract.getId_contract());
         if (penalties != null) {
             double totalPenalty = penalties.stream().mapToDouble(Penalties::getAmount).sum();
             if (totalPenalty > 0) {

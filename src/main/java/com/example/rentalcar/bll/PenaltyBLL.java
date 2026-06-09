@@ -14,11 +14,17 @@ public class PenaltyBLL {
     // 1. NHÓM HÀM TRUY VẤN
     // ==========================================================
     public List<Penalties> getAllPenalties() {
+
         return penaltyDAO.findAll();
     }
 
     public Penalties getPenaltyById(int id) {
+
         return penaltyDAO.findById(id);
+    }
+
+    public List<Penalties> getByContractId(int contractId) {
+        return penaltyDAO.findByContractId(contractId);
     }
 
     // ==========================================================

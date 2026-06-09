@@ -16,14 +16,8 @@ import java.net.URL;
 import java.sql.Date;
 import java.time.LocalDate;
 import java.util.ResourceBundle;
-
-/**
- * RuleFormController – Controller cho modal Thêm / Sửa luật tính giá.
- * Gọi setMode(null) để thêm mới, setMode(rule) để sửa.
- */
 public class RuleFormController implements Initializable {
 
-    // ── FXML ─────────────────────────────────────────────────────────
     @FXML private Label         lblTitle, lblSubtitle;
     @FXML private TextField     txtRuleName;
     @FXML private ComboBox<String> cbRuleType;
@@ -34,14 +28,10 @@ public class RuleFormController implements Initializable {
     @FXML private Label         lblMsg;
     @FXML private Button        btnSave;
 
-    // ── STATE ─────────────────────────────────────────────────────────
     private final RuleBLL ruleBLL = new RuleBLL();
-    private Rules editingRule = null;   // null = ADD mode
-    private Runnable onSaved;           // callback reload danh sách
+    private Rules editingRule = null;
+    private Runnable onSaved;
 
-    // ================================================================
-    // INITIALIZE
-    // ================================================================
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         cbRuleType.setItems(FXCollections.observableArrayList(
@@ -53,13 +43,9 @@ public class RuleFormController implements Initializable {
 
         chkActive.setSelected(true);
 
-        // Live preview hệ số nhân
         txtMulti.textProperty().addListener((obs, old, val) -> updatePreview(val));
     }
 
-    // ================================================================
-    // SET MODE: ADD hoặc EDIT
-    // ================================================================
     public void setMode(Rules rule) {
         this.editingRule = rule;
 
@@ -84,11 +70,10 @@ public class RuleFormController implements Initializable {
         }
     }
 
-    public void setOnSaved(Runnable callback) { this.onSaved = callback; }
+    public void setOnSaved(Runnable callback) {
+        this.onSaved = callback;
+    }
 
-    // ================================================================
-    // LƯU
-    // ================================================================
     @FXML
     void handleSave() {
         String name = txtRuleName.getText().trim();
@@ -107,7 +92,8 @@ public class RuleFormController implements Initializable {
         double multi;
         try {
             multi = Double.parseDouble(txtMulti.getText().trim().replace(",", "."));
-            if (multi <= 0 || multi > 10) throw new NumberFormatException();
+            if (multi <= 0 || multi > 10)
+                throw new NumberFormatException();
         } catch (NumberFormatException e) {
             showMsg("❌  Hệ số nhân phải là số > 0 và ≤ 10 (VD: 1.5)", false);
             txtMulti.requestFocus();
@@ -150,30 +136,26 @@ public class RuleFormController implements Initializable {
                 else    { showMsg("❌  Cập nhật thất bại!", false); }
             }
         } catch (IllegalStateException | IllegalArgumentException ex) {
-            // Gom cả 2 lỗi nghiệp vụ và bảo mật để hiện thông báo đỏ
             showMsg("❌ " + ex.getMessage(), false);
         } catch (Exception ex) {
             showMsg("❌ Lỗi hệ thống: " + ex.getMessage(), false);
         }
     }
 
-    // ================================================================
-    // CLOSE
-    // ================================================================
     @FXML
-    void handleClose() { getStage().close(); }
+    void handleClose() {
+        getStage().close();
+    }
 
-    // ================================================================
-    // HELPERS
-    // ================================================================
 
     private void setHeader(String title, String subtitle) {
-        if (lblTitle    != null) lblTitle.setText(title);
+        if (lblTitle != null) lblTitle.setText(title);
         if (lblSubtitle != null) lblSubtitle.setText(subtitle);
     }
 
     private void updatePreview(String val) {
-        if (lblMultiPreview == null) return;
+        if (lblMultiPreview == null)
+            return;
         try {
             double v = Double.parseDouble(val.replace(",", "."));
             if (v <= 0) throw new NumberFormatException();

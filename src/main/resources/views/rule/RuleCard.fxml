@@ -9,11 +9,11 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox minHeight="-Infinity" minWidth="-Infinity"
+<VBox fx:id="cardContainer" minHeight="-Infinity" minWidth="-Infinity"
       prefHeight="220.0" prefWidth="320.0"
       spacing="0.0"
       xmlns="http://javafx.com/javafx/8.0.171"
-      xmlns:fx="http://javafx.com/fxml/1"
+      xmlns:fx="http://fxml.com/fx/1"
       fx:controller="com.example.rentalcar.controller.rule.RuleCardController"
       style="-fx-background-color: white;
              -fx-background-radius: 14;
@@ -23,14 +23,15 @@
              -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.08), 14, 0, 0, 4);">
     <children>
         <AnchorPane fx:id="accentBar" prefHeight="6.0"
-                    style="-fx-background-color: #146dff; -fx-background-radius: 12 12 0 0;" />
+                    style="-fx-background-color: -fx-accent-color; -fx-background-radius: 12 12 0 0;" />
+
         <VBox spacing="10.0" VBox.vgrow="ALWAYS">
             <padding><Insets bottom="16.0" left="18.0" right="18.0" top="14.0" /></padding>
             <children>
                 <HBox alignment="CENTER_LEFT" spacing="8.0">
                     <children>
                         <Label fx:id="lblType"
-                               style="-fx-background-color: #dbeafe; -fx-text-fill: #1d4ed8;
+                               style="-fx-background-color: -fx-badge-bg; -fx-text-fill: -fx-badge-fg;
                                       -fx-padding: 3 10; -fx-background-radius: 20;
                                       -fx-font-weight: bold; -fx-font-size: 10px;"
                                text="CUỐI TUẦN" />
@@ -42,19 +43,24 @@
                                text="● Bật" />
                     </children>
                 </HBox>
+
                 <Label fx:id="lblMulti"
-                       style="-fx-font-size: 36px; -fx-font-weight: bold; -fx-text-fill: #10b981;"
+                       style="-fx-font-size: 36px; -fx-font-weight: bold; -fx-text-fill: -fx-accent-color;"
                        text="x1.20">
                     <font><Font name="System Bold" size="36.0" /></font>
                 </Label>
+
                 <Label fx:id="lblName"
                        style="-fx-font-size: 15px; -fx-font-weight: bold; -fx-text-fill: #1e293b;"
                        text="Tên luật" wrapText="true" />
+
                 <Label fx:id="lblDate"
                        style="-fx-font-size: 12px; -fx-text-fill: #64748b;"
                        text="📅  01/01/2026  →  31/12/2026" />
+
                 <Region VBox.vgrow="ALWAYS" />
                 <Region prefHeight="1.0" style="-fx-background-color: #f1f5f9;" />
+
                 <HBox alignment="CENTER_RIGHT" spacing="8.0">
                     <children>
                         <Button onAction="#handleToggle" prefHeight="32.0"
