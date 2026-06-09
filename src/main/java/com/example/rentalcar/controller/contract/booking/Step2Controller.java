@@ -21,30 +21,22 @@ import java.text.NumberFormat;
 import java.util.List;
 import java.util.Locale;
 import java.util.stream.Collectors;
-
-/**
- * Step2Controller – Bước 2: Chọn xe thuê.
- * FIX: load ảnh xe đúng cách (classpath vs filesystem path)
- */
 public class Step2Controller {
 
-    @FXML private FlowPane         flowPaneVehicles;
+    @FXML private FlowPane flowPaneVehicles;
     @FXML private ComboBox<String> cbBrand;
     @FXML private ComboBox<String> cbType;
-    @FXML private TextField        txtSearch;
-    @FXML private Label            lblSelectedVehicle;
+    @FXML private TextField txtSearch;
+    @FXML private Label lblSelectedVehicle;
 
-    private ContractDraft  draft;
-    private Vehicles       selectedVehicle;
+    private ContractDraft draft;
+    private Vehicles selectedVehicle;
     private List<Vehicles> allAvailable;
-    private VBox           selectedCard;
+    private VBox selectedCard;
 
-    private final VehicleBLL  vehicleBLL = new VehicleBLL();
-    private final NumberFormat fmt        = NumberFormat.getInstance(new Locale("vi", "VN"));
+    private final VehicleBLL vehicleBLL = new VehicleBLL();
+    private final NumberFormat fmt = NumberFormat.getInstance(new Locale("vi", "VN"));
 
-    // =========================================================
-    //  NHẬN DRAFT
-    // =========================================================
     public void setDraft(ContractDraft draft) {
         this.draft = draft;
         if (draft.getSelectedVehicle() != null) {
@@ -54,9 +46,6 @@ public class Step2Controller {
         setupFilters();
     }
 
-    // =========================================================
-    //  LOAD XE AVAILABLE
-    // =========================================================
     private void loadAvailableVehicles() {
         allAvailable = vehicleBLL.getAllVehicles().stream()
                 .filter(v -> v.getStatus() == StatusVehicle.AVAILABLE)
@@ -88,9 +77,7 @@ public class Step2Controller {
         }
     }
 
-    // =========================================================
-    //  BUILD CARD
-    // =========================================================
+    // build card
     private VBox buildVehicleCard(Vehicles v) {
         VBox card = new VBox(8);
         card.setPrefWidth(220);
@@ -105,7 +92,7 @@ public class Step2Controller {
                         "-fx-cursor: hand;"
         );
 
-        // ── Ảnh xe (FIX Bug 1) ──────────────────────────────
+        // ── Ảnh xe ──────────────────────────────
         ImageView img = new ImageView();
         img.setFitWidth(192);
         img.setFitHeight(110);
@@ -165,9 +152,10 @@ public class Step2Controller {
 
         // Click
         card.setOnMouseClicked(e -> {
-            if (selectedCard != null) removeSelectedStyle(selectedCard);
+            if (selectedCard != null)
+                removeSelectedStyle(selectedCard);
             applySelectedStyle(card);
-            selectedCard    = card;
+            selectedCard = card;
             selectedVehicle = v;
             updateSelectedLabel(v);
         });
@@ -185,12 +173,6 @@ public class Step2Controller {
         return card;
     }
 
-    /**
-     * FIX BUG 1: Load ảnh xe đúng cách.
-     * DB lưu 2 kiểu:
-     *   /image/dashboardform/card-moto.png  → classpath (trong jar/resources)
-     *   uploads/vehicles/xxx.jpg            → file hệ thống (user.home/VehicleRent/)
-     */
     private void loadVehicleImage(ImageView img, Vehicles v) {
         String imgUrl = (v.getImage_url() != null && !v.getImage_url().isBlank())
                 ? v.getImage_url().trim()
@@ -198,7 +180,6 @@ public class Step2Controller {
 
         try {
             if (imgUrl.startsWith("/")) {
-                // Classpath resource
                 var url = getClass().getResource(imgUrl);
                 if (url != null) {
                     img.setImage(new Image(url.toExternalForm(), true));
@@ -231,9 +212,6 @@ public class Step2Controller {
         } catch (Exception ignored) {}
     }
 
-    // =========================================================
-    //  STYLE HELPERS
-    // =========================================================
     private void applySelectedStyle(VBox card) {
         card.setStyle(card.getStyle()
                 .replace("-fx-border-color: #e2e8f0;",
@@ -262,9 +240,7 @@ public class Step2Controller {
         }
     }
 
-    // =========================================================
     //  FILTER
-    // =========================================================
     private void setupFilters() {
         if (cbBrand == null || cbType == null || allAvailable == null) return;
 
@@ -286,8 +262,8 @@ public class Step2Controller {
     void handleFilter() {
         if (allAvailable == null) return;
 
-        String brand   = cbBrand   != null ? cbBrand.getValue()              : "Tất cả";
-        String type    = cbType    != null ? cbType.getValue()               : "Tất cả";
+        String brand = cbBrand != null ? cbBrand.getValue() : "Tất cả";
+        String type = cbType != null ? cbType.getValue() : "Tất cả";
         String keyword = txtSearch != null ? txtSearch.getText().trim().toLowerCase() : "";
 
         List<Vehicles> filtered = allAvailable.stream()
@@ -304,9 +280,6 @@ public class Step2Controller {
         renderCards(filtered);
     }
 
-    // =========================================================
-    //  VALIDATE & LƯU
-    // =========================================================
     public boolean validateAndSave() {
         if (selectedVehicle == null) {
             Alert alert = new Alert(Alert.AlertType.WARNING);

@@ -14,8 +14,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 
 public class EditEmployeeController {
-
-    @FXML private Label     lblTitle;
+    @FXML private Label lblTitle;
     @FXML private TextField txtFullName;
     @FXML private TextField txtPhone;
     @FXML private TextField txtEmail;
@@ -24,8 +23,8 @@ public class EditEmployeeController {
     @FXML private TextField txtBirthDate;   // dd/MM/yyyy
     @FXML private ComboBox<String> cbRole;
     @FXML private ComboBox<String> cbGender;
-    @FXML private Label     lblMsg;
-    @FXML private Button    btnSave;
+    @FXML private Label lblMsg;
+    @FXML private Button btnSave;
 
     private final UserBLL userBLL = new UserBLL();
     private Users   currentUser;
@@ -37,42 +36,48 @@ public class EditEmployeeController {
         cbGender.getItems().addAll("Nam", "Nữ");
     }
 
-    // ── Nhận dữ liệu từ EmployeeCardController ───────────────
     public void setEmployee(Users user) {
         this.currentUser = user;
-        if (user == null) return;
+        if (user == null)
+            return;
 
         if (lblTitle != null)
             lblTitle.setText("Sửa thông tin: " + user.getFull_name());
 
-        if (txtFullName != null) txtFullName.setText(nvl(user.getFull_name()));
-        if (txtPhone    != null) txtPhone.setText(nvl(user.getPhone()));
-        if (txtEmail    != null) txtEmail.setText(nvl(user.getEmail()));
-        if (txtCccd     != null) txtCccd.setText(nvl(user.getCccd()));
-        if (txtAddress  != null) txtAddress.setText(nvl(user.getAddress()));
+        if (txtFullName != null)
+            txtFullName.setText(nvl(user.getFull_name()));
+        if (txtPhone != null)
+            txtPhone.setText(nvl(user.getPhone()));
+        if (txtEmail != null)
+            txtEmail.setText(nvl(user.getEmail()));
+        if (txtCccd != null)
+            txtCccd.setText(nvl(user.getCccd()));
+        if (txtAddress != null)
+            txtAddress.setText(nvl(user.getAddress()));
 
         if (txtBirthDate != null && user.getBirth_date() != null) {
             SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
             txtBirthDate.setText(sdf.format(user.getBirth_date()));
         }
 
-        if (cbRole   != null) cbRole.setValue(user.getRole_id() == 1 ? "Admin" : "Staff");
-        if (cbGender != null) cbGender.setValue(user.isGender() ? "Nam" : "Nữ");
+        if (cbRole != null)
+            cbRole.setValue(user.getRole_id() == 1 ? "Admin" : "Staff");
+        if (cbGender != null)
+            cbGender.setValue(user.isGender() ? "Nam" : "Nữ");
     }
 
     public void setOnSaved(Runnable callback) {
         this.onSaved = callback;
     }
 
-    // ── Lưu thay đổi ─────────────────────────────────────────
     @FXML
     void handleSave(ActionEvent event) {
         String fullName = txtFullName != null ? txtFullName.getText().trim() : "";
-        String phone    = txtPhone    != null ? txtPhone.getText().trim()    : "";
-        String email    = txtEmail    != null ? txtEmail.getText().trim()    : "";
-        String cccd     = txtCccd     != null ? txtCccd.getText().trim()     : "";
-        String address  = txtAddress  != null ? txtAddress.getText().trim()  : "";
-        String birth    = txtBirthDate != null ? txtBirthDate.getText().trim() : "";
+        String phone = txtPhone != null ? txtPhone.getText().trim()    : "";
+        String email = txtEmail != null ? txtEmail.getText().trim()    : "";
+        String cccd = txtCccd != null ? txtCccd.getText().trim()     : "";
+        String address = txtAddress  != null ? txtAddress.getText().trim()  : "";
+        String birth = txtBirthDate != null ? txtBirthDate.getText().trim() : "";
 
         if (fullName.isEmpty()) {
             showMsg("❌  Họ tên không được để trống!", false);
@@ -118,7 +123,9 @@ public class EditEmployeeController {
     }
 
     // ── Helpers ───────────────────────────────────────────────
-    private String nvl(String s) { return s != null ? s : ""; }
+    private String nvl(String s) {
+        return s != null ? s : "";
+    }
 
     private void showMsg(String text, boolean success) {
         if (lblMsg == null) return;

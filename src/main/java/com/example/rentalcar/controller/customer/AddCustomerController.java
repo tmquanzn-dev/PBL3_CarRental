@@ -12,33 +12,21 @@ import javafx.scene.image.ImageView;
 import javafx.stage.Stage;
 
 import java.util.function.Consumer;
-
-/**
- * AddCustomerController
- * FIX BUG 2: Thêm callback onSaved(String cccd) để Step1Controller
- *            biết chính xác CCCD nào vừa được lưu → tự điền form.
- */
 public class AddCustomerController {
 
-    @FXML private Button    btnClose, btnCancel, btnSave;
+    @FXML private Button btnClose, btnCancel, btnSave;
     @FXML private TextField txtName, txtPhone, txtCccd, txtAddress, txtEmail;
     @FXML private ImageView imgFront, imgBack;
-    @FXML private Label     lblFrontStatus, lblBackStatus;
+    @FXML private Label lblFrontStatus, lblBackStatus;
 
     private final CustomerBLL customerBLL = new CustomerBLL();
 
-    private String           pathFront  = null;
-    private String           pathBack   = null;
+    private String pathFront = null;
+    private String pathBack = null;
 
-    /**
-     * FIX BUG 2: Callback nhận CCCD của khách vừa lưu thành công.
-     * Step1Controller truyền vào qua setOnSaved().
-     */
     private Consumer<String> onSaved = null;
 
-    // =========================================================
     //  KHỞI TẠO
-    // =========================================================
     @FXML
     public void initialize() {
         btnClose.setOnAction(e  -> closeModal());
@@ -48,20 +36,15 @@ public class AddCustomerController {
 
     /** Điền sẵn CCCD khi mở từ Step1 */
     public void setPreFillCccd(String cccd) {
-        if (txtCccd != null) txtCccd.setText(cccd);
+        if (txtCccd != null)
+            txtCccd.setText(cccd);
     }
 
-    /**
-     * FIX BUG 2: Step1Controller gọi hàm này để nhận callback
-     * khi khách được lưu thành công.
-     */
     public void setOnSaved(Consumer<String> callback) {
         this.onSaved = callback;
     }
 
-    // =========================================================
     //  UPLOAD ẢNH CCCD
-    // =========================================================
     @FXML
     void handleUploadFront() {
         Stage stage = (Stage) btnSave.getScene().getWindow();
@@ -84,16 +67,14 @@ public class AddCustomerController {
         }
     }
 
-    // =========================================================
     //  LƯU KHÁCH HÀNG
-    // =========================================================
     private void saveCustomerToDB() {
         try {
-            String name    = txtName.getText().trim();
-            String phone   = txtPhone.getText().trim();
-            String cccd    = txtCccd.getText().trim();
+            String name = txtName.getText().trim();
+            String phone = txtPhone.getText().trim();
+            String cccd = txtCccd.getText().trim();
             String address = txtAddress != null ? txtAddress.getText().trim() : "";
-            String email   = txtEmail   != null ? txtEmail.getText().trim()   : "";
+            String email = txtEmail   != null ? txtEmail.getText().trim()   : "";
 
             if (name.isEmpty() || phone.isEmpty() || cccd.isEmpty()) {
                 showAlert(Alert.AlertType.WARNING, "Cảnh báo",
@@ -111,13 +92,12 @@ public class AddCustomerController {
 
             if (pathFront != null || pathBack != null) {
                 String front = pathFront != null ? pathFront : "";
-                String back  = pathBack  != null ? pathBack  : "";
+                String back = pathBack  != null ? pathBack  : "";
                 c.setCccd_images(front + "|" + back);
             }
 
             boolean isSuccess = customerBLL.addCustomer(c);
             if (isSuccess) {
-                // FIX BUG 2: gọi callback với CCCD thực tế đã lưu
                 if (onSaved != null) {
                     onSaved.accept(cccd);
                 }
@@ -131,9 +111,7 @@ public class AddCustomerController {
         }
     }
 
-    // =========================================================
     //  HELPERS
-    // =========================================================
     private void setStatus(Label lbl, String msg, boolean ok) {
         if (lbl == null) return;
         lbl.setText(msg);

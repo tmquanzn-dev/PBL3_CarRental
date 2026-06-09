@@ -26,7 +26,6 @@ public class VoucherFormController implements Initializable {
     @FXML private Label lblPreviewValue, lblMsg;
     @FXML private Button btnSave;
 
-    // SỬA Ở ĐÂY: Dùng BLL thay vì DAO
     private final VoucherBLL voucherBLL = new VoucherBLL();
     private Vouchers editingVoucher = null;
 
@@ -116,10 +115,8 @@ public class VoucherFormController implements Initializable {
             }
 
         } catch (NumberFormatException e) {
-        // Bắt lỗi rỗng hoặc nhập chữ vào ô số
         showMsg("❌  Giá trị giảm giá và Giới hạn phải là số hợp lệ!", false);
         } catch (IllegalArgumentException e) {
-        // Bắt lỗi nghiệp vụ từ BLL ném ra (VD: Vượt quá 100%, mã trùng...)
         showMsg("❌  " + e.getMessage(), false);
      }
     }

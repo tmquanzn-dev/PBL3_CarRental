@@ -28,7 +28,8 @@ public class CustomerEditController {
 
     //  NHẬN DỮ LIỆU KHÁCH HÀNG + LOAD ẢNH CŨ
     public void setCustomerData(Customers customer) {
-        if (customer == null) return;
+        if (customer == null)
+            return;
         this.customers = customer;
 
         lblCustomerId.setText("ID: " + customer.getId_customer());
@@ -38,13 +39,9 @@ public class CustomerEditController {
         txtEmail.setText(customer.getEmail() != null ? customer.getEmail() : "");
         txtAddress.setText(customer.getAddress() != null ? customer.getAddress() : "");
 
-        // Load ảnh CCCD cũ nếu có
         loadExistingImages(customer.getCccd_images());
     }
 
-    /**
-     * Phân tích chuỗi "front|back" lưu trong DB và load vào ImageView.
-     */
     private void loadExistingImages(String cccdImages) {
         if (cccdImages == null || cccdImages.isBlank()) return;
 
@@ -85,7 +82,6 @@ public class CustomerEditController {
         }
     }
 
-    //  LƯU THAY ĐỔI
     @FXML
     void handleSave(ActionEvent event) {
         customers.setFull_name(txtName.getText().trim());
@@ -94,15 +90,16 @@ public class CustomerEditController {
         customers.setEmail(txtEmail.getText().trim());
         customers.setAddress(txtAddress.getText().trim());
 
-        // Cập nhật ảnh CCCD: chỉ thay phần nào người dùng upload lại
         String existingImages = customers.getCccd_images() != null
                 ? customers.getCccd_images() : "|";
         String[] parts = existingImages.split("\\|", -1);
         String front = parts.length > 0 ? parts[0].trim() : "";
         String back  = parts.length > 1 ? parts[1].trim() : "";
 
-        if (newPathFront != null) front = newPathFront;
-        if (newPathBack  != null) back  = newPathBack;
+        if (newPathFront != null)
+            front = newPathFront;
+        if (newPathBack  != null)
+            back  = newPathBack;
 
         customers.setCccd_images(front + "|" + back);
 

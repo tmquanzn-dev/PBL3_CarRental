@@ -20,8 +20,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ReturnVehicleController {
-
-    // ── Thông tin hợp đồng ──
     @FXML private Label lblContractCode;
     @FXML private Label lblCustomerName;
     @FXML private Label lblVehicleInfo;
@@ -45,7 +43,7 @@ public class ReturnVehicleController {
     @FXML private Label lblFinalTotal;
 
     // ── Cảnh báo trễ ──
-    @FXML private HBox  boxLateWarning;
+    @FXML private HBox boxLateWarning;
     @FXML private Label lblLateMsg;
 
     // ── Thanh toán ──
@@ -53,35 +51,30 @@ public class ReturnVehicleController {
 
     // ── Phần hư hỏng ──
     @FXML private CheckBox chkDamage;
-    @FXML private VBox     boxDamageDetails;
-    @FXML private Label    lblDamageTotal;
+    @FXML private VBox boxDamageDetails;
+    @FXML private Label lblDamageTotal;
 
-    // ── BLL & DAO ──
-    private final ContractBLL   contractBLL   = new ContractBLL();
+    private final ContractBLL contractBLL = new ContractBLL();
     private final InspectionBLL inspectionBLL = new InspectionBLL();
-    private final PenaltyBLL    penaltyBLL    = new PenaltyBLL();
-    private final PartPriceBLL  partPriceBLL  = new PartPriceBLL();
-    private final PriceBLL      priceBLL      = new PriceBLL();
-    private final CustomerDAO   customerDAO   = new CustomerDAO();
-    private final VehicleDAO    vehicleDAO    = new VehicleDAO();
+    private final PenaltyBLL penaltyBLL = new PenaltyBLL();
+    private final PartPriceBLL partPriceBLL = new PartPriceBLL();
+    private final PriceBLL priceBLL      = new PriceBLL();
+    private final CustomerDAO customerDAO = new CustomerDAO();
+    private final VehicleDAO vehicleDAO = new VehicleDAO();
     private final SystemSettingBLL systemSettingBLL = new SystemSettingBLL();
 
-    // ── State ──
-    private Contracts  contract;
-    private Customers  fullCustomer;
-    private Vehicles   fullVehicle;
-    private Runnable   onCompleted;
+    private Contracts contract;
+    private Customers fullCustomer;
+    private Vehicles fullVehicle;
+    private Runnable onCompleted;
 
-    private final List<PartPrices>  allParts         = new ArrayList<>();
-    private final List<CheckBox>    damageCheckBoxes = new ArrayList<>();
+    private final List<PartPrices> allParts = new ArrayList<>();
+    private final List<CheckBox> damageCheckBoxes = new ArrayList<>();
 
     private static final DateTimeFormatter FMT = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
 
-    // =========================================================
-    // NHẬN DỮ LIỆU
-    // =========================================================
     public void setContract(Contracts contract, Runnable onCompleted) {
-        this.contract    = contract;
+        this.contract = contract;
         this.onCompleted = onCompleted;
 
         if (contract.getId_customer() != null)
@@ -95,9 +88,7 @@ public class ReturnVehicleController {
         recalculate();
     }
 
-    // =========================================================
     // SETUP UI
-    // =========================================================
     private void setupUI() {
         spinReturnHour.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(
                 0, 23, LocalDateTime.now().getHour()));
@@ -113,10 +104,12 @@ public class ReturnVehicleController {
         sliderFuel.setMax(100);
         sliderFuel.setValue(fuelStart);
         sliderFuel.valueProperty().addListener((obs, o, n) -> {
-            if (lblFuelPercent != null) lblFuelPercent.setText((int) sliderFuel.getValue() + "%");
+            if (lblFuelPercent != null)
+                lblFuelPercent.setText((int) sliderFuel.getValue() + "%");
             recalculate();
         });
-        if (lblFuelPercent != null) lblFuelPercent.setText(fuelStart + "%");
+        if (lblFuelPercent != null)
+            lblFuelPercent.setText(fuelStart + "%");
         if (txtKmEnd != null && contract != null)
             txtKmEnd.setText(String.valueOf(contract.getKm_start()));
 
@@ -138,7 +131,8 @@ public class ReturnVehicleController {
     }
 
     private void fillContractInfo() {
-        if (contract == null) return;
+        if (contract == null)
+            return;
         setLabel(lblContractCode, contract.getCode_contract());
         setLabel(lblCustomerName,
                 fullCustomer != null ? fullCustomer.getFull_name() : "Không tìm thấy");
@@ -149,11 +143,10 @@ public class ReturnVehicleController {
             setLabel(lblPlannedReturn, contract.getEnd_datetime().format(FMT));
     }
 
-    // =========================================================
     // SETUP SECTION HƯ HỎNG
-    // =========================================================
     private void setupDamageSection() {
-        if (chkDamage == null) return;
+        if (chkDamage == null)
+            return;
 
         if (boxDamageDetails != null) {
             boxDamageDetails.setVisible(false);
@@ -250,21 +243,16 @@ public class ReturnVehicleController {
                     + String.format("%,.0f đ", total).replace(",", "."));
     }
 
-    // =========================================================
-    // TÍNH TIỀN (chỉ dùng để hiển thị UI)
-    // =========================================================
-    // =========================================================
-    // TÍNH TIỀN (chỉ dùng để hiển thị UI LIVE PREVIEW)
-    // =========================================================
     private void recalculate() {
-        if (contract == null) return;
+        if (contract == null)
+            return;
         LocalDateTime returnDt = buildReturnDatetime();
-        if (returnDt == null) return;
+        if (returnDt == null)
+            return;
 
-        // 1. TÍNH LẠI GIÁ GỐC NẾU TRẢ SỚM (Hiển thị preview tính phí 20%)
+        // 1. Tính tền nếu trả sớm
         double currentBasePrice = contract.getBase_price();
         if (returnDt.isBefore(contract.getEnd_datetime()) && fullVehicle != null) {
-            // Khách trả trước hạn -> Tính lại tiền ngay trên màn hình
             currentBasePrice = priceBLL.calculateEarlyReturnPrice(
                     contract.getStart_datetime(),
                     contract.getEnd_datetime(),
@@ -274,7 +262,7 @@ public class ReturnVehicleController {
             );
         }
 
-        // 2. TÍNH PHẠT TRỄ
+        // 2. Tính phạt trễ
         double latePenalty = 0;
         boolean isLate = returnDt.isAfter(contract.getEnd_datetime());
         if (isLate) {
@@ -284,19 +272,19 @@ public class ReturnVehicleController {
             hideLateWarning();
         }
 
-        // 3. TÍNH PHẠT XĂNG
+        // 3. Tính phạt xăng
         int fuelEnd  = (int) sliderFuel.getValue();
         int capacity = (fullVehicle != null) ? fullVehicle.getFuel_capacity() : 0;
         double fuelPenalty = calculateFuelPenaltyAmount(contract.getFuel_start(), fuelEnd, capacity);
 
-        // 4. TÍNH PHẠT HƯ HỎNG
+        // 4. tính phạt hư hỏng
         double damagePenalty = 0;
         if (chkDamage != null && chkDamage.isSelected()) {
             damagePenalty = getSelectedDamageParts().stream()
                     .mapToDouble(PartPrices::getPrice).sum();
         }
 
-        // 5. CHỐT TỔNG TIỀN (Có chặn giảm giá không vượt quá giá gốc)
+        // 5. Giảm giá
         double currentDiscount = contract.getDiscount_amount();
         if (currentDiscount > currentBasePrice) {
             currentDiscount = currentBasePrice;
@@ -305,12 +293,11 @@ public class ReturnVehicleController {
         double base  = currentBasePrice - currentDiscount;
         double total = base + latePenalty + fuelPenalty + damagePenalty;
 
-        // 6. CẬP NHẬT LÊN GIAO DIỆN
-        setLabel(lblBasePrice,     fmt(base));
-        setLabel(lblLatePenalty,   latePenalty   > 0 ? "+ " + fmt(latePenalty)   : "0 đ");
-        setLabel(lblFuelPenalty,   fuelPenalty   > 0 ? "+ " + fmt(fuelPenalty)   : "0 đ");
+        setLabel(lblBasePrice, fmt(base));
+        setLabel(lblLatePenalty, latePenalty   > 0 ? "+ " + fmt(latePenalty)   : "0 đ");
+        setLabel(lblFuelPenalty, fuelPenalty   > 0 ? "+ " + fmt(fuelPenalty)   : "0 đ");
         setLabel(lblDamagePenalty, damagePenalty > 0 ? "+ " + fmt(damagePenalty) : "0 đ");
-        setLabel(lblFinalTotal,    fmt(total));
+        setLabel(lblFinalTotal, fmt(total));
 
         // Màu mè UI
         if (lblLatePenalty != null)
@@ -324,12 +311,6 @@ public class ReturnVehicleController {
                     ? "-fx-text-fill: #7c3aed; -fx-font-weight: bold;" : "-fx-text-fill: #64748b;");
     }
 
-    // =========================================================
-    // XÁC NHẬN TRẢ XE — ĐÃ FIX: lưu phạt trễ và xăng vào DB
-    // =========================================================
-    // =========================================================
-    // XÁC NHẬN TRẢ XE — ĐÃ FIX LỖI LƯU TIỀN TRẢ SỚM VÀ THÊM POP-UP UX
-    // =========================================================
     @FXML
     void handleConfirm() {
         LocalDateTime returnDt = buildReturnDatetime();
@@ -354,7 +335,6 @@ public class ReturnVehicleController {
                 ? getSelectedDamageParts() : new ArrayList<>();
 
         try {
-            // ── 1. ĐỒNG BỘ THÔNG SỐ XE & THỜI GIAN TRẢ LÊN OBJECT ──────────────────
             contract.setReturn_datetime(returnDt);
             int fuelEnd = (int) sliderFuel.getValue();
             contract.setFuel_end(fuelEnd);
@@ -364,11 +344,9 @@ public class ReturnVehicleController {
             double finalBasePrice = contract.getBase_price();
             boolean isEarlyReturn = returnDt.isBefore(contract.getEnd_datetime());
 
-            // Biến bóc tách riêng để hiển thị thông số gốc trên Popup
             double actualUsedPricePreview = finalBasePrice;
             double penaltyFee30Preview = 0.0;
 
-            // ── 2. LOGIC TÍNH TIỀN THUÊ ĐIỀU CHỈNH KHI TRẢ SỚM ──────────────────
             if (isEarlyReturn && fullVehicle != null) {
                 double priceDay = fullVehicle.getPrice_day();
                 double priceHour = fullVehicle.getPrice_hour() <= 0 ? (priceDay / 24.0) : fullVehicle.getPrice_hour();
@@ -382,7 +360,6 @@ public class ReturnVehicleController {
                         priceHour
                 );
 
-                // Nạp thông số cho Popup live preview
                 actualUsedPricePreview = priceBLL.calculateBasePrice(contract.getStart_datetime(), returnDt, priceDay, priceHour);
                 penaltyFee30Preview = actualUsedPricePreview * 0.30;
             }
@@ -390,7 +367,6 @@ public class ReturnVehicleController {
             // Gán luôn giá thuê cơ bản điều chỉnh vào contract
             contract.setBase_price(finalBasePrice);
 
-            // ── 3. ĐẢO KHỐI TÍNH TỔNG TIỀN LÊN TRƯỚC (ĐỂ TRUYỀN VÀO POPUP) ──────────────────
             int capacity = (fullVehicle != null) ? fullVehicle.getFuel_capacity() : 0;
             double latePenaltyAmount = calculateLatePenaltyAmount(contract.getEnd_datetime(), returnDt);
             double fuelPenaltyAmount = calculateFuelPenaltyAmount(contract.getFuel_start(), fuelEnd, capacity);
@@ -403,11 +379,9 @@ public class ReturnVehicleController {
                 contract.setDiscount_amount(currentDiscount);
             }
 
-            // ĐÂY RỒI: Khai báo biến tổng tiền tất toán cuối cùng (đã gộp cả phạt hư hỏng)
             double finalTotalPrice = (finalBasePrice - currentDiscount) + latePenaltyAmount + fuelPenaltyAmount + damagePenaltyAmount;
             contract.setTotal_price(finalTotalPrice);
 
-            // ── 4. XỬ LÝ QUY TRÌNH HIỂN THỊ POP-UP UX XÁC NHẬN TRẢ SỚM ──────────────────
             if (isEarlyReturn) {
                 long totalHoursUnused = java.time.Duration.between(returnDt, contract.getEnd_datetime()).toHours();
                 long daysUnused = totalHoursUnused / 24;
@@ -419,8 +393,6 @@ public class ReturnVehicleController {
                     javafx.scene.Parent root = loader.load();
 
                     EarlyReturnModalController modalController = loader.getController();
-
-                    // CHUẨN BÀI: Truyền finalTotalPrice xuống tham số cuối, Popup sẽ hiện 367.160 đ chuẩn đét!
                     modalController.setData(timeUnusedStr, actualUsedPricePreview, penaltyFee30Preview, finalTotalPrice);
 
                     Stage stage = new Stage();
@@ -429,7 +401,6 @@ public class ReturnVehicleController {
                     stage.setScene(new javafx.scene.Scene(root));
                     stage.showAndWait();
 
-                    // Nếu bấm hủy bỏ trên Popup -> Thoát luồng, không lưu gì hết
                     if (!modalController.isConfirmed()) {
                         return;
                     }
@@ -438,7 +409,6 @@ public class ReturnVehicleController {
                 }
             }
 
-            // ── 5. LƯU TOÀN BỘ PHỤ PHÍ VÀO BẢNG PENALTIES TRƯỚC KHI TẤT TOÁN ──────────────────
             if (latePenaltyAmount > 0) {
                 Penalties latePenalty = new Penalties();
                 latePenalty.setId_contract(contract);
@@ -463,14 +433,14 @@ public class ReturnVehicleController {
                 penaltyBLL.createPenalty(damagePenalty);
             }
 
-            // ── 6. GỌI BLL ĐẨY DỮ LIỆU SẠCH XUỐNG MYSQL ──────────────────
+            // Cập nhật HĐ
             boolean ok = contractBLL.returnVehicle(contract);
             if (!ok) {
                 showAlert(Alert.AlertType.ERROR, "Không thể cập nhật hợp đồng vào cơ sở dữ liệu!");
                 return;
             }
 
-            // ── 7. CẬP NHẬT TRẠNG THÁI PHƯƠNG TIỆN VÀ TẠO BIÊN BẢN ──────────────────
+            // Cập nhật xe
             if (fullVehicle != null) {
                 fullVehicle.setStatus(!damagedParts.isEmpty() ? StatusVehicle.MAINTENANCE : StatusVehicle.AVAILABLE);
                 fullVehicle.setCurrent_km(kmEnd);
@@ -483,7 +453,6 @@ public class ReturnVehicleController {
             inspection.setInspection_type(InspectionType.TRA_XE);
             inspectionBLL.createInspection(inspection);
 
-            // ── 8. THÔNG BÁO THÀNH CÔNG ──────────────────
             StringBuilder msg = new StringBuilder();
             msg.append("✅ Hợp đồng ").append(contract.getCode_contract()).append(" đã hoàn thành!\n\n");
             msg.append("💰 Tổng chi phí tất toán thực tế: ").append(fmt(contract.getTotal_price())).append("\n");
@@ -504,35 +473,22 @@ public class ReturnVehicleController {
     }
     @FXML void handleCancel() { closeStage(); }
 
-    // =========================================================
-    // HELPERS TÍNH TIỀN — dùng cùng 1 default value (100.000đ)
-    // =========================================================
-
-    /**
-     * Tính tiền phạt trễ giờ.
-     * Default 100.000đ/giờ — đồng nhất với PriceBLL.
-     */
+    //Phạt trễ giờ
     private double calculateLatePenaltyAmount(LocalDateTime expected, LocalDateTime actual) {
         if (actual == null || !actual.isAfter(expected)) return 0;
         long hours = (java.time.Duration.between(expected, actual).toMinutes() + 59) / 60;
-        // FIX: default 100.000 thay vì 20.000
         return hours * systemSettingBLL.getDoubleSetting("Phi_Tre_Gio", 100000.0);
     }
 
-    /**
-     * Tính tiền phạt thiếu xăng.
-     * Default 25.000đ/lít — đồng nhất với PriceBLL.
-     */
+  // Phạt xăng
     private double calculateFuelPenaltyAmount(int fuelStart, int fuelEnd, int capacity) {
         if (fuelEnd >= fuelStart || capacity <= 0) return 0;
         double lostLiters = ((fuelStart - fuelEnd) * capacity) / 100.0;
-        // FIX: default 25.000 thay vì 20.000
         return lostLiters * systemSettingBLL.getDoubleSetting("Gia_Xang_Litre", 25000.0);
     }
 
-    // =========================================================
+
     // HELPERS KHÁC
-    // =========================================================
     private LocalDateTime buildReturnDatetime() {
         if (dpReturnDate.getValue() == null) return null;
         int h = spinReturnHour.getValue() != null ? spinReturnHour.getValue() : 8;

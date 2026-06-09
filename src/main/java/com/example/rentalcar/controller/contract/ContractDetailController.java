@@ -13,12 +13,6 @@ import javafx.stage.Stage;
 
 import java.time.format.DateTimeFormatter;
 import java.util.List;
-
-/**
- * ContractDetailController – Phiên bản nâng cấp.
- * Thêm: hiển thị danh sách penalties của hợp đồng.
- * Cả Admin và Staff đều xem được (Staff chỉ thấy đơn của mình).
- */
 public class ContractDetailController {
 
     @FXML private Label label_contract_code;
@@ -119,9 +113,6 @@ public class ContractDetailController {
         loadPenalties(contract.getId_contract());
     }
 
-    // ─────────────────────────────────────────────────────
-    //  LOAD PENALTIES
-    // ─────────────────────────────────────────────────────
     private void loadPenalties(int contractId) {
         if (vboxPenalties == null) return;
         vboxPenalties.getChildren().clear();
@@ -134,7 +125,8 @@ public class ContractDetailController {
                     lblNoPenalties.setVisible(true);
                     lblNoPenalties.setManaged(true);
                 }
-                if (lblTotalPenalty != null) lblTotalPenalty.setText("0 đ");
+                if (lblTotalPenalty != null)
+                    lblTotalPenalty.setText("0 đ");
                 return;
             }
 

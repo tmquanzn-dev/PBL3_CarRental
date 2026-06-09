@@ -14,7 +14,6 @@ public class DBConnection
     private final String USER = "root";
     private final String PASSWORD = "anhyeuem123";
 
-    // 2. Private Constructor: Ngăn không cho class khác dùng từ khóa 'new DBConnection()'
     private DBConnection()
     {
         try
@@ -29,7 +28,6 @@ public class DBConnection
         }
     }
 
-    // 3. Phương thức public static để lấy instance duy nhất (Thread-safe)
     public static synchronized DBConnection getInstance()
     {
         try

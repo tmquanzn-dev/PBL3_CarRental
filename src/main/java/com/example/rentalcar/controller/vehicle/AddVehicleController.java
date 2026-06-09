@@ -21,12 +21,11 @@ public class AddVehicleController {
     @FXML private ComboBox<String> cbType;
 
     @FXML private ImageView imgVehiclePreview;
-    @FXML private Label     lblImagePath;
-    @FXML private Button    btnUploadImage;
+    @FXML private Label lblImagePath;
+    @FXML private Button btnUploadImage;
 
     private final VehicleBLL vehicleBLL = new VehicleBLL();
 
-    // ⭐ Lưu đường dẫn ABSOLUTE để hiển thị, và RELATIVE để lưu DB
     private String savedImagePathAbsolute = null;
     private String savedImagePathRelative = null;
 
@@ -37,9 +36,7 @@ public class AddVehicleController {
         ImageHelper.loadDefault(imgVehiclePreview, "/icon/dashboardform/card-moto.png");
     }
 
-    // =========================================================
     //  UPLOAD ẢNH XE
-    // =========================================================
     @FXML
     void handleUploadVehicleImage() {
         Stage stage = (Stage) btnUploadImage.getScene().getWindow();
@@ -64,9 +61,7 @@ public class AddVehicleController {
         }
     }
 
-    // =========================================================
     //  LƯU XE
-    // =========================================================
     @FXML
     void handleSave() {
         try {
@@ -130,9 +125,7 @@ public class AddVehicleController {
         stage.close();
     }
 
-    // =========================================================
     //  HELPERS
-    // =========================================================
     private int parseIntegerSafe(String text) {
         if (text == null || text.trim().isEmpty()) return 0;
         try { return Integer.parseInt(text.trim().replace(",", "").replace(".", "")); }

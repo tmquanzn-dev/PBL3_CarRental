@@ -22,7 +22,7 @@ public class EmployeeController {
 
     @FXML private FlowPane employeeContainer;
     @FXML private TextField txtSearch;
-    @FXML private Button    btnAddEmployee;
+    @FXML private Button btnAddEmployee;
 
     @FXML private Label lblTotalStaff;
     @FXML private Label lblActiveStaff;
@@ -30,7 +30,7 @@ public class EmployeeController {
     @FXML private Label lblCount;
 
     private final UserBLL userBLL = new UserBLL();
-    private List<Users>   masterList;
+    private List<Users> masterList;
 
     @FXML
     public void initialize() {
@@ -49,7 +49,6 @@ public class EmployeeController {
         employeeContainer.getChildren().clear();
         try {
             masterList = userBLL.getAllUsers();
-
             List<Users> filtered = (keyword == null || keyword.isBlank())
                     ? masterList
                     : masterList.stream().filter(u ->
@@ -88,9 +87,12 @@ public class EmployeeController {
         long active = list.stream().filter(Users::isIs_active).count();
         long locked = total - active;
 
-        if (lblTotalStaff  != null) lblTotalStaff.setText(String.valueOf(total));
-        if (lblActiveStaff != null) lblActiveStaff.setText(String.valueOf(active));
-        if (lblLockedStaff != null) lblLockedStaff.setText(String.valueOf(locked));
+        if (lblTotalStaff  != null)
+            lblTotalStaff.setText(String.valueOf(total));
+        if (lblActiveStaff != null)
+            lblActiveStaff.setText(String.valueOf(active));
+        if (lblLockedStaff != null)
+            lblLockedStaff.setText(String.valueOf(locked));
     }
 
     @FXML
@@ -101,7 +103,8 @@ public class EmployeeController {
 
     @FXML
     void handleReload(ActionEvent event) {
-        if (txtSearch != null) txtSearch.clear();
+        if (txtSearch != null)
+            txtSearch.clear();
         loadEmployeeCards();
     }
 

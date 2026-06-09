@@ -9,16 +9,15 @@ import javafx.stage.Stage;
 import java.util.function.Consumer;
 
 public class BlacklistModalController {
-
-    @FXML private Label    lblCustomerName;
-    @FXML private Label    lblCustomerCccd;
+    @FXML private Label lblCustomerName;
+    @FXML private Label lblCustomerCccd;
     @FXML private TextArea txtReason;
-    @FXML private Button   btnConfirm;
-    @FXML private Button   btnCancel;
-    @FXML private Label    lblMsg;
+    @FXML private Button btnConfirm;
+    @FXML private Button btnCancel;
+    @FXML private Label lblMsg;
 
     private final CustomerBLL customerBLL = new CustomerBLL();
-    private Customers   customer;
+    private Customers customer;
     private Consumer<Boolean> callback;
 
     public void setCustomer(Customers customer, Consumer<Boolean> callback) {
@@ -42,7 +41,8 @@ public class BlacklistModalController {
         try {
             boolean ok = customerBLL.addToBlacklist(customer.getId_customer(), reason);
             if (ok) {
-                if (callback != null) callback.accept(true);
+                if (callback != null)
+                    callback.accept(true);
                 closeStage();
             } else {
                 showMsg("Thao tác thất bại, vui lòng thử lại!", false);

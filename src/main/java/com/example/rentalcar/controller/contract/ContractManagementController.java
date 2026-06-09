@@ -40,8 +40,6 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 public class ContractManagementController implements Initializable {
-
-    // ======= CARDS =======
     @FXML private Label lblTotalContracts;
     @FXML private Label lblActiveContracts;
     @FXML private Label lblOverdueContracts;
@@ -49,13 +47,10 @@ public class ContractManagementController implements Initializable {
     @FXML private Label lblSubtitle;
     @FXML private Label lblCount;
 
-    // ======= FILTER =======
     @FXML private ComboBox<String> cbStatusFilter;
 
-    // ======= SEARCH =======
     @FXML private TextField txtSearch;
 
-    // ======= TABLE =======
     @FXML private TableView<Contracts>            tableContracts;
     @FXML private TableColumn<Contracts, String>  colCode;
     @FXML private TableColumn<Contracts, String>  colCustomer;
@@ -86,7 +81,6 @@ public class ContractManagementController implements Initializable {
 
     private void setupTableColumns() {
 
-        // ÉP CỐ ĐỊNH ĐỘ RỘNG CỘT HÀNH ĐỘNG - KHÔNG CHO PHÉP BỊ BÓP NGHẸT LAYOUT
         colAction.setMinWidth(190);
         colAction.setMaxWidth(220);
         colAction.setPrefWidth(195);
@@ -134,7 +128,8 @@ public class ContractManagementController implements Initializable {
 
         // Xe thuê
         colVehicle.setCellValueFactory(cell -> {
-            if (cell.getValue().getId_vehicle() == null) return new SimpleStringProperty("--");
+            if (cell.getValue().getId_vehicle() == null)
+                return new SimpleStringProperty("--");
             Vehicles v = vehicleBLL.getVehicleById(cell.getValue().getId_vehicle().getId_vehicle());
             if (v == null) return new SimpleStringProperty("--");
             return new SimpleStringProperty(v.getBrand() + " " + v.getModel() + "\n" + v.getCode_vehicle());
@@ -264,12 +259,7 @@ public class ContractManagementController implements Initializable {
                 btnReturn.setStyle("-fx-background-color: #dcfce7; -fx-background-radius: 6; -fx-cursor: hand; -fx-padding: 5;");
                 btnPayment.setStyle("-fx-background-color: #dbeafe; -fx-background-radius: 6; -fx-cursor: hand; -fx-padding: 5;");
 
-                // Đặt Tooltip giải nghĩa chuyên nghiệp khi người dùng di chuột vào nút bấm
-                btnView.setTooltip(new Tooltip("Xem chi tiết hợp đồng"));
-                btnPrint.setTooltip(new Tooltip("Xuất dữ liệu / In PDF hợp đồng"));
-                btnReturn.setTooltip(new Tooltip("Bàn giao xe / Trả xe và kết thúc hợp đồng"));
-                btnPayment.setTooltip(new Tooltip("Thực hiện thu tiền / Thanh toán hợp đồng"));
-                btnCancel.setTooltip(new Tooltip("Hủy bỏ hợp đồng"));
+
 
                 // Nạp đồ họa biểu tượng hình ảnh an toàn vào ứng dụng
                 loadIcon(btnView, "/icon/dashboardform/view.png");
@@ -318,29 +308,36 @@ public class ContractManagementController implements Initializable {
             @Override
             protected void updateItem(Void item, boolean empty) {
                 super.updateItem(item, empty);
-                if (empty) { setGraphic(null); return; }
+                if (empty) {
+                    setGraphic(null);
+                    return;
+                }
 
                 Contracts c = getTableView().getItems().get(getIndex());
-                boolean canAct = false;
+                boolean canReturnOrPay = false;
+                boolean canCancel = false;
 
                 if (c.getStatus() == StatusContracts.DANG_THUE
                         || c.getStatus() == StatusContracts.QUA_HAN) {
                     if (AppSession.isAdmin()) {
-                        canAct = true;
-                    } else if (AppSession.isStaff() && c.getId_user() != null
-                            && AppSession.getCurrentUser() != null
-                            && c.getId_user().getId_user() == AppSession.getCurrentUser().getId_user()) {
-                        canAct = true;
+                        canReturnOrPay = true;
+                        canCancel = true;
+                    } else if (AppSession.isStaff()) {
+                        canReturnOrPay = true;
+                        if (c.getId_user() != null && AppSession.getCurrentUser() != null
+                                && c.getId_user().getId_user() == AppSession.getCurrentUser().getId_user()) {
+                            canCancel = true;
+                        }
                     }
                 }
 
-                btnReturn.setVisible(canAct);
-                btnReturn.setManaged(canAct);
-                btnCancel.setVisible(canAct);
-                btnCancel.setManaged(canAct);
+                btnReturn.setVisible(canReturnOrPay);
+                btnReturn.setManaged(canReturnOrPay);
+                btnCancel.setVisible(canCancel);
+                btnCancel.setManaged(canCancel);
 
                 // Kiểm tra bộ lọc hiển thị nút Thanh toán: Chỉ hiện với HĐ Đang thuê/Quá hạn và Chưa trả hết tiền
-                boolean canPay = canAct
+                boolean canPay = canReturnOrPay
                         && c.getPayment_status() != null
                         && c.getPayment_status() != com.example.rentalcar.models.PaymentStatus.DA_THANH_TOAN;
                 btnPayment.setVisible(canPay);
@@ -351,7 +348,6 @@ public class ContractManagementController implements Initializable {
         });
     }
 
-    // ======= IN HỢP ĐỒNG PDF =======
     private void handlePrintContract(Contracts contract) {
         try {
             Window window = tableContracts.getScene().getWindow();
@@ -383,7 +379,6 @@ public class ContractManagementController implements Initializable {
         }
     }
 
-    // ======= LOAD DATA =======
     private void loadData() {
         try {
             List<Contracts> list = contractBLL.getAllContracts();
@@ -413,18 +408,27 @@ public class ContractManagementController implements Initializable {
 
     @FXML
     void handleSearch(ActionEvent event) {
-        if (masterList == null) return;
-        String keyword       = txtSearch.getText().trim().toLowerCase();
+        if (masterList == null)
+            return;
+        String keyword = txtSearch.getText().trim().toLowerCase();
         String selectedStatus = cbStatusFilter.getValue();
 
         ObservableList<Contracts> filtered = masterList.filtered(c -> {
             boolean matchStatus = false;
             if (selectedStatus == null || selectedStatus.equals("Tất cả")) {
                 matchStatus = true;
-            } else if (selectedStatus.equals("Đang thuê")  && c.getStatus() == StatusContracts.DANG_THUE)  { matchStatus = true; }
-            else if (selectedStatus.equals("Quá hạn")    && c.getStatus() == StatusContracts.QUA_HAN)    { matchStatus = true; }
-            else if (selectedStatus.equals("Hoàn thành") && c.getStatus() == StatusContracts.HOAN_THANH) { matchStatus = true; }
-            else if (selectedStatus.equals("Đã hủy")     && c.getStatus() == StatusContracts.DA_HUY)     { matchStatus = true; }
+            } else if (selectedStatus.equals("Đang thuê")  && c.getStatus() == StatusContracts.DANG_THUE)  {
+                matchStatus = true;
+            }
+            else if (selectedStatus.equals("Quá hạn")    && c.getStatus() == StatusContracts.QUA_HAN)    {
+                matchStatus = true;
+            }
+            else if (selectedStatus.equals("Hoàn thành") && c.getStatus() == StatusContracts.HOAN_THANH) {
+                matchStatus = true;
+            }
+            else if (selectedStatus.equals("Đã hủy")     && c.getStatus() == StatusContracts.DA_HUY)     {
+                matchStatus = true;
+            }
 
             boolean matchKeyword = keyword.isEmpty()
                     || (c.getCode_contract() != null && c.getCode_contract().toLowerCase().contains(keyword))

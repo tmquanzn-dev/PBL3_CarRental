@@ -34,20 +34,17 @@ import java.util.List;
 
 public class DashboardController {
 
-    // ===== CARDS =====
     @FXML private Label label_today_revenue;
     @FXML private Label label_monthly_revenue;
     @FXML private Label label_active_contracts;
     @FXML private Label label_status;
     @FXML private Label label_status_available;
 
-    // ===== ALERTS =====
     @FXML private Label label_overdue_count;
     @FXML private Label label_maintenance_count;
     @FXML private Label label_voucher_warning;
     @FXML private Label label_recent_count;
 
-    // ===== TABLE =====
     @FXML private TableView<Contracts>            tableContracts;
     @FXML private TableColumn<Contracts, String>  colCode;
     @FXML private TableColumn<Contracts, String>  colCustomer;
@@ -64,10 +61,8 @@ public class DashboardController {
 
     @FXML
     public void initialize() {
-        // ── FIX: Chạy 2 tác vụ tự động khi mở Dashboard ─────────────
-        // 1. Cập nhật QUA_HAN trước (phải chạy trước loadCards)
         checkAndMarkOverdue();
-        // 2. Kiểm tra xe cần bảo dưỡng
+        // Kiểm tra xe cần bảo dưỡng
         checkMaintenanceOnStartup();
 
         loadCards();
@@ -75,9 +70,6 @@ public class DashboardController {
         loadRecentContracts();
     }
 
-    // =========================================================
-    // FIX: Tự động cập nhật trạng thái QUA_HAN
-    // =========================================================
     private void checkAndMarkOverdue() {
         try {
             int count = contractBLL.markOverdueContracts();
@@ -89,9 +81,6 @@ public class DashboardController {
         }
     }
 
-    // =========================================================
-    // KIỂM TRA BẢO DƯỠNG KHI MỞ APP
-    // =========================================================
     private void checkMaintenanceOnStartup() {
         try {
             List<Vehicles> justMarked = vehicleBLL.checkAndMarkMaintenance();
@@ -120,9 +109,6 @@ public class DashboardController {
         }
     }
 
-    // =========================================================
-    // LOAD CARDS
-    // =========================================================
     private void loadCards() {
         try {
             double todayRev = contractBLL.getTodayRevenue();
@@ -176,9 +162,7 @@ public class DashboardController {
         }
     }
 
-    // =========================================================
-    // SETUP TABLE COLUMNS
-    // =========================================================
+
     private void setupTable() {
         colCode.setCellValueFactory(new PropertyValueFactory<>("code_contract"));
         colCode.setCellFactory(col -> new TableCell<>() {
@@ -296,9 +280,7 @@ public class DashboardController {
         });
     }
 
-    // =========================================================
     // LOAD DỮ LIỆU BẢNG
-    // =========================================================
     private void loadRecentContracts() {
         try {
             List<Contracts> list = contractBLL.getRecentContracts(5);
@@ -311,9 +293,6 @@ public class DashboardController {
         }
     }
 
-    // =========================================================
-    // POPUP CHI TIẾT HĐ
-    // =========================================================
     private void showDetailPopup(Contracts contract) {
         try {
             FXMLLoader loader = new FXMLLoader(
@@ -331,9 +310,7 @@ public class DashboardController {
         }
     }
 
-    // =========================================================
-    // MỞ TẠO HĐ
-    // =========================================================
+
     @FXML
     void showCreateContractModal(ActionEvent event) {
         try {
@@ -356,10 +333,8 @@ public class DashboardController {
         }
     }
 
-    // =========================================================
-    // HELPER
-    // =========================================================
     private String formatMoney(double amount) {
+
         return String.format("%,.0f đ", amount).replace(",", ".");
     }
 }

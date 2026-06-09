@@ -36,10 +36,10 @@ public class PartPriceController implements Initializable {
 
     @FXML private TableView<PartPrices> tablePartPrices;
     @FXML private TableColumn<PartPrices, Integer> colId;
-    @FXML private TableColumn<PartPrices, String>  colName;
-    @FXML private TableColumn<PartPrices, String>  colType;
-    @FXML private TableColumn<PartPrices, Double>  colPrice;
-    @FXML private TableColumn<PartPrices, Void>    colAction;
+    @FXML private TableColumn<PartPrices, String> colName;
+    @FXML private TableColumn<PartPrices, String> colType;
+    @FXML private TableColumn<PartPrices, Double> colPrice;
+    @FXML private TableColumn<PartPrices, Void> colAction;
 
     private final PartPriceBLL bll = new PartPriceBLL();
     private ObservableList<PartPrices> masterList;
@@ -50,9 +50,6 @@ public class PartPriceController implements Initializable {
         loadData();
     }
 
-    // ============================================================
-    // SETUP BẢNG
-    // ============================================================
     private void setupTableColumns() {
         // STT tự động
         colId.setCellFactory(col -> new TableCell<>() {
@@ -75,7 +72,7 @@ public class PartPriceController implements Initializable {
             }
         });
 
-        // Loại xe - badge tím
+        // Loại xe
         colType.setCellValueFactory(new PropertyValueFactory<>("vehicle"));
         colType.setCellFactory(col -> new TableCell<>() {
             @Override protected void updateItem(String type, boolean empty) {
@@ -91,7 +88,7 @@ public class PartPriceController implements Initializable {
             }
         });
 
-        // Giá tiền - đỏ đậm
+        // Giá tiền
         colPrice.setCellValueFactory(new PropertyValueFactory<>("price"));
         colPrice.setCellFactory(col -> new TableCell<>() {
             @Override protected void updateItem(Double price, boolean empty) {
@@ -103,7 +100,7 @@ public class PartPriceController implements Initializable {
             }
         });
 
-        // Thao tác - Edit + Delete
+        // Thao tác
         colAction.setCellFactory(col -> new TableCell<>() {
             private final Button btnEdit   = new Button();
             private final Button btnDelete = new Button();
@@ -144,9 +141,6 @@ public class PartPriceController implements Initializable {
         });
     }
 
-    // ============================================================
-    // LOAD DỮ LIỆU
-    // ============================================================
     private void loadData() {
         try {
             List<PartPrices> list = bll.getAllPartPrices();
@@ -163,7 +157,8 @@ public class PartPriceController implements Initializable {
     }
 
     private void updateStats(List<PartPrices> list) {
-        if (lblTotalParts != null) lblTotalParts.setText(String.valueOf(list.size()));
+        if (lblTotalParts != null)
+            lblTotalParts.setText(String.valueOf(list.size()));
 
         if (lblAvgPrice != null) {
             double avg = list.stream().mapToDouble(PartPrices::getPrice).average().orElse(0);
@@ -180,7 +175,8 @@ public class PartPriceController implements Initializable {
     }
 
     private void populateVehicleFilter(List<PartPrices> list) {
-        if (cbVehicleType == null) return;
+        if (cbVehicleType == null)
+            return;
         List<String> types = list.stream()
                 .map(PartPrices::getVehicle)
                 .filter(v -> v != null && !v.isBlank())
@@ -190,17 +186,19 @@ public class PartPriceController implements Initializable {
         cbVehicleType.getSelectionModel().selectFirst();
     }
 
-    // ============================================================
-    // TÌM KIẾM & LỌC
-    // ============================================================
-    @FXML void handleSearch(ActionEvent event)  { applyFilter(); }
-    @FXML void handleFilter(ActionEvent event)  { applyFilter(); }
+    @FXML void handleSearch(ActionEvent event)  {
+        applyFilter();
+    }
+    @FXML void handleFilter(ActionEvent event)  {
+        applyFilter();
+    }
     @FXML void handleSearchLive()               { applyFilter(); }
 
     private void applyFilter() {
-        if (masterList == null) return;
+        if (masterList == null)
+            return;
         String keyword = txtSearch != null ? txtSearch.getText().trim().toLowerCase() : "";
-        String type    = cbVehicleType != null ? cbVehicleType.getValue() : "Tất cả";
+        String type = cbVehicleType != null ? cbVehicleType.getValue() : "Tất cả";
 
         ObservableList<PartPrices> filtered = masterList.filtered(p -> {
             boolean matchKey  = keyword.isEmpty() ||
@@ -215,21 +213,18 @@ public class PartPriceController implements Initializable {
     }
 
     @FXML void handleReload(ActionEvent event) {
-        if (txtSearch != null)    txtSearch.clear();
-        if (cbVehicleType != null) cbVehicleType.getSelectionModel().selectFirst();
+        if (txtSearch != null)
+            txtSearch.clear();
+        if (cbVehicleType != null)
+            cbVehicleType.getSelectionModel().selectFirst();
         loadData();
     }
 
-    // ============================================================
-    // MỞ FORM THÊM MỚI
-    // ============================================================
     @FXML void handleAddNewPart(ActionEvent event) {
+
         openForm(null); // ADD mode
     }
 
-    // ============================================================
-    // FORM THÊM / SỬA (dùng chung)
-    // ============================================================
     private void openForm(PartPrices part) {
         try {
             FXMLLoader loader = new FXMLLoader(
@@ -253,9 +248,7 @@ public class PartPriceController implements Initializable {
         }
     }
 
-    // ============================================================
-    // XÁC NHẬN XÓA
-    // ============================================================
+
     private void confirmDelete(PartPrices part) {
         Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
         confirm.setTitle("Xác nhận xóa");

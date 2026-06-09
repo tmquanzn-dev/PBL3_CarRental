@@ -47,8 +47,10 @@ public class CustomerDetailController {
         String front = parts.length > 0 ? parts[0].trim() : "";
         String back  = parts.length > 1 ? parts[1].trim() : "";
 
-        if (!front.isEmpty()) ImageHelper.loadInto(imgFront, front);
-        if (!back.isEmpty())  ImageHelper.loadInto(imgBack,  back);
+        if (!front.isEmpty())
+            ImageHelper.loadInto(imgFront, front);
+        if (!back.isEmpty())
+            ImageHelper.loadInto(imgBack,  back);
     }
 
     @FXML

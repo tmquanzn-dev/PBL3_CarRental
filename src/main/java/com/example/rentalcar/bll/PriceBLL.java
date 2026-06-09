@@ -121,8 +121,6 @@ public class PriceBLL
         {
             throw new IllegalArgumentException("Thời gian trả xe không hợp lệ (nhỏ hơn cả thời gian bắt đầu)!");
         }
-
-        // BẪY LỖI: Nếu giá giờ truyền vào bằng 0, ép quy đổi từ giá ngày ra để tính toán
         if (pricePerHour <= 0) {
             pricePerHour = pricePerDay / 24.0;
         }
@@ -130,13 +128,8 @@ public class PriceBLL
         // 1. TÍNH SỐ TIỀN THỰC TẾ KHÁCH ĐÃ ĐI
         double actualUsedPrice = calculateBasePrice(startDate, actualReturnDate, pricePerDay, pricePerHour);
 
-        // 2. TÍNH PHÍ PHẠT HỦY NGANG: Bằng 30% trên chính số tiền đã dùng đó
         double penaltyFee = actualUsedPrice * 0.30;
-
-        // 3. TỔNG TIỀN THUÊ MỚI = Tiền thực tế đã đi + 30% Phí phạt bồi thường
         double totalEarlyReturnPrice = actualUsedPrice + penaltyFee;
-
-        // 4. CHỐNG VƯỢT BIÊN: Đảm bảo tổng tiền sau khi phạt không bao giờ vượt quá số tiền của gói đặt gốc ban đầu
         double originalContractPrice = calculateBasePrice(startDate, expectedEndDate, pricePerDay, pricePerHour);
         if (totalEarlyReturnPrice > originalContractPrice) {
             return originalContractPrice;

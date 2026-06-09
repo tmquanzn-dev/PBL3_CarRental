@@ -28,10 +28,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.ResourceBundle;
 
-/**
- * Controller màn hình Quản lý Voucher.
- * Hiển thị danh sách, tìm kiếm/lọc, tạo mới, sửa, tắt voucher.
- */
 public class VoucherController implements Initializable {
 
     @FXML private Label lblTotalVouchers, lblActiveVouchers;

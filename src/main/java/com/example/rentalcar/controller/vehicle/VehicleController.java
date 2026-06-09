@@ -20,12 +20,12 @@ import java.util.List;
 
 public class VehicleController {
 
-    @FXML private TilePane         vehicleContainer;
-    @FXML private TextField        txtSearch;
+    @FXML private TilePane vehicleContainer;
+    @FXML private TextField txtSearch;
     @FXML private ComboBox<String> cbBrand;
     @FXML private ComboBox<String> cbStatus;
-    @FXML private Button           btnAddNewVehicle;
-    @FXML private Label            lblVehicleCount;
+    @FXML private Button btnAddNewVehicle;
+    @FXML private Label lblVehicleCount;
 
     private final VehicleBLL vehicleBLL = new VehicleBLL();
 

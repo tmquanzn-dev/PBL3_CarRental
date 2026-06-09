@@ -31,17 +31,13 @@ import java.util.Optional;
 import java.util.ResourceBundle;
 
 public class CustomerController implements Initializable {
-
-    // ── Cards ────────────────────────────────────────────
     @FXML private Label lblTotalCustomers;
     @FXML private Label lblNewCustomers;
     @FXML private Label lblBlacklist;
 
-    // ── Search ────────────────────────────────────────────
     @FXML private TextField        txtSearch;
     @FXML private ComboBox<String> cbFilter;
 
-    // ── Table ─────────────────────────────────────────────
     @FXML private TableView<Customers>            tableCustomers;
     @FXML private TableColumn<Customers, String>  colCccd;
     @FXML private TableColumn<Customers, String>  colName;
@@ -53,7 +49,6 @@ public class CustomerController implements Initializable {
     private final CustomerBLL customerBLL = new CustomerBLL();
     private ObservableList<Customers> masterList;
 
-    //
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         setupFilter();
@@ -62,7 +57,6 @@ public class CustomerController implements Initializable {
         tableCustomers.setFixedCellSize(60.0);
     }
 
-    //Filter ComboBox
     private void setupFilter() {
         if (cbFilter != null) {
             cbFilter.getItems().addAll("Tất cả", "Bình thường", "Blacklist");
@@ -121,7 +115,7 @@ public class CustomerController implements Initializable {
             protected void updateItem(Boolean isBlacklist, boolean empty) {
                 super.updateItem(isBlacklist, empty);
                 if (empty || isBlacklist == null) { setGraphic(null); return; }
-                Label pill = new Label(isBlacklist ? "⛔ Blacklist" : "✅ Bình thường");
+                Label pill = new Label(isBlacklist ? "Blacklist" : "Bình thường");
                 pill.getStyleClass().add("status-pill");
                 pill.getStyleClass().add(isBlacklist ? "status-yellow" : "status-green");
                 HBox box = new HBox(pill);
@@ -131,10 +125,10 @@ public class CustomerController implements Initializable {
         });
 
         colAction.setCellFactory(col -> new TableCell<>() {
-            private final Button btnView      = new Button();
-            private final Button btnEdit      = new Button();
+            private final Button btnView = new Button();
+            private final Button btnEdit = new Button();
             private final Button btnBlacklist = new Button();
-            private final HBox   pane         = new HBox(10, btnView, btnEdit, btnBlacklist);
+            private final HBox pane = new HBox(10, btnView, btnEdit, btnBlacklist);
 
             {
                 pane.setAlignment(Pos.CENTER_LEFT);
@@ -225,8 +219,9 @@ public class CustomerController implements Initializable {
     }
 
     private void applyFilter() {
-        if (masterList == null) return;
-        String keyword   = txtSearch != null ? txtSearch.getText().trim().toLowerCase() : "";
+        if (masterList == null)
+            return;
+        String keyword = txtSearch != null ? txtSearch.getText().trim().toLowerCase() : "";
         String filterVal = cbFilter  != null ? cbFilter.getValue() : "Tất cả";
 
         ObservableList<Customers> filtered = masterList.filtered(c -> {
@@ -247,7 +242,8 @@ public class CustomerController implements Initializable {
 
     // Blacklist Toggle
     private void handleBlacklistToggle(Customers customer) {
-        if (customer == null) return;
+        if (customer == null)
+            return;
 
         if (customer.isIs_blacklist()) {
             // Gỡ khỏi blacklist

@@ -87,7 +87,7 @@ public class SettingsController implements Initializable {
         applyRoleRestrictions();
 
         setupGeneralCombos();
-        setupPricingCombos();       // ← Bây giờ đọc từ DB
+        setupPricingCombos();
         loadUserProfile();
         loadAboutInfo();
         loadSessionInfo();
@@ -392,13 +392,7 @@ public class SettingsController implements Initializable {
 
     @FXML void handleGeneralSave() { showAlert("✅  Đã lưu cài đặt hệ thống thành công!", Alert.AlertType.INFORMATION); }
 
-    // =========================================================
-    //  PRICING SETTINGS – ĐỌC & GHI DB THẬT SỰ
-    // =========================================================
-
-    /**
-     * Khởi tạo ComboBox và đọc giá trị hiện tại từ DB.
-     */
+    //  PRICING SETTINGS – ĐỌC & GHI DB THẬT Su
     private void setupPricingCombos() {
         Platform.runLater(() -> {
             if (cbLateCalcMode != null) {
@@ -525,9 +519,7 @@ public class SettingsController implements Initializable {
         loadPricingFromDB();
     }
 
-    // =========================================================
     //  NOTIFICATION (Admin only)
-    // =========================================================
     @FXML void handleToggleNotiNewContract() { notiNew     = !notiNew;     updateToggle(toggleNotiNewContract, notiNew); }
     @FXML void handleToggleNotiOverdue()     { notiOverdue = !notiOverdue; updateToggle(toggleNotiOverdue, notiOverdue); }
     @FXML void handleToggleNotiMaint()       { notiMaint   = !notiMaint;   updateToggle(toggleNotiMaint, notiMaint); }
@@ -582,9 +574,7 @@ public class SettingsController implements Initializable {
                 .ifPresent(r -> showAlert("✅  Đã xóa cache thành công!", Alert.AlertType.INFORMATION));
     }
 
-    // =========================================================
     //  ABOUT
-    // =========================================================
     private void loadAboutInfo() {
         Platform.runLater(() -> {
             if (lblJavaVersion != null) lblJavaVersion.setText(System.getProperty("java.version"));

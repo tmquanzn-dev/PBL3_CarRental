@@ -7,40 +7,18 @@ import com.example.rentalcar.models.Vouchers;
 
 import java.time.LocalDateTime;
 
-/**
- * ContractDraft – Object tạm thời lưu dữ liệu xuyên suốt 4 bước tạo hợp đồng.
- *
- * Chỉ tồn tại trong RAM, KHÔNG lưu xuống DB.
- * Khi Step 4 xác nhận → INSERT 1 lần duy nhất vào bảng contracts.
- * Nếu hủy giữa chừng → object bị GC, DB không bị ảnh hưởng.
- *
- * Đường dẫn: src/main/java/com/example/rentalcar/controller/contract/booking/ContractDraft.java
- */
 public class ContractDraft {
 
-    // =========================================================
-    //  STEP 1 – Khách hàng
-    // =========================================================
     private Customers selectedCustomer;
-
-    // =========================================================
-    //  STEP 2 – Xe thuê
-    // =========================================================
     private Vehicles selectedVehicle;
 
-    // =========================================================
-    //  STEP 3 – Thời gian & Đặt cọc
-    // =========================================================
     private LocalDateTime startDatetime;
     private LocalDateTime endDatetime;
-    private DepositType   depositType;
-    private double        depositAmount;
-    private int           fuelStart   = 100; // % xăng lúc giao xe, mặc định 100%
-    private int           kmStart     = 0;   // KM lúc giao xe
+    private DepositType depositType;
+    private double depositAmount;
+    private int fuelStart = 100;
+    private int kmStart = 0;
 
-    // =========================================================
-    //  STEP 3 – Voucher (tùy chọn)
-    // =========================================================
     private Vouchers appliedVoucher;   // null nếu không dùng voucher
     private double   discountAmount = 0;
 
@@ -50,69 +28,125 @@ public class ContractDraft {
     private double basePrice  = 0;
     private double totalPrice = 0;
 
-    // =========================================================
-    //  STEP 4 – Ghi chú
-    // =========================================================
     private String note = "";
 
-    // =========================================================
-    //  GETTERS & SETTERS
-    // =========================================================
+    public Customers getSelectedCustomer() {
+        return selectedCustomer;
+    }
 
-    public Customers getSelectedCustomer()              { return selectedCustomer; }
-    public void setSelectedCustomer(Customers c)        { this.selectedCustomer = c; }
+    public void setSelectedCustomer(Customers selectedCustomer) {
+        this.selectedCustomer = selectedCustomer;
+    }
 
-    public Vehicles getSelectedVehicle()                { return selectedVehicle; }
-    public void setSelectedVehicle(Vehicles v)          { this.selectedVehicle = v; }
+    public Vehicles getSelectedVehicle() {
+        return selectedVehicle;
+    }
 
-    public LocalDateTime getStartDatetime()             { return startDatetime; }
-    public void setStartDatetime(LocalDateTime dt)      { this.startDatetime = dt; }
+    public void setSelectedVehicle(Vehicles selectedVehicle) {
+        this.selectedVehicle = selectedVehicle;
+    }
 
-    public LocalDateTime getEndDatetime()               { return endDatetime; }
-    public void setEndDatetime(LocalDateTime dt)        { this.endDatetime = dt; }
+    public LocalDateTime getStartDatetime() {
+        return startDatetime;
+    }
 
-    public DepositType getDepositType()                 { return depositType; }
-    public void setDepositType(DepositType t)           { this.depositType = t; }
+    public void setStartDatetime(LocalDateTime startDatetime) {
+        this.startDatetime = startDatetime;
+    }
 
-    public double getDepositAmount()                    { return depositAmount; }
-    public void setDepositAmount(double a)              { this.depositAmount = a; }
+    public LocalDateTime getEndDatetime() {
+        return endDatetime;
+    }
 
-    public int getFuelStart()                           { return fuelStart; }
-    public void setFuelStart(int f)                     { this.fuelStart = f; }
+    public void setEndDatetime(LocalDateTime endDatetime) {
+        this.endDatetime = endDatetime;
+    }
 
-    public int getKmStart()                             { return kmStart; }
-    public void setKmStart(int km)                      { this.kmStart = km; }
+    public DepositType getDepositType() {
+        return depositType;
+    }
 
-    public Vouchers getAppliedVoucher()                 { return appliedVoucher; }
-    public void setAppliedVoucher(Vouchers v)           { this.appliedVoucher = v; }
+    public void setDepositType(DepositType depositType) {
+        this.depositType = depositType;
+    }
 
-    public double getDiscountAmount()                   { return discountAmount; }
-    public void setDiscountAmount(double d)             { this.discountAmount = d; }
+    public double getDepositAmount() {
+        return depositAmount;
+    }
 
-    public double getBasePrice()                        { return basePrice; }
-    public void setBasePrice(double p)                  { this.basePrice = p; }
+    public void setDepositAmount(double depositAmount) {
+        this.depositAmount = depositAmount;
+    }
 
-    public double getTotalPrice()                       { return totalPrice; }
-    public void setTotalPrice(double p)                 { this.totalPrice = p; }
+    public int getFuelStart() {
+        return fuelStart;
+    }
 
-    public String getNote()                             { return note; }
-    public void setNote(String n)                       { this.note = n; }
+    public void setFuelStart(int fuelStart) {
+        this.fuelStart = fuelStart;
+    }
 
-    // =========================================================
+    public int getKmStart() {
+        return kmStart;
+    }
+
+    public void setKmStart(int kmStart) {
+        this.kmStart = kmStart;
+    }
+
+    public Vouchers getAppliedVoucher() {
+        return appliedVoucher;
+    }
+
+    public void setAppliedVoucher(Vouchers appliedVoucher) {
+        this.appliedVoucher = appliedVoucher;
+    }
+
+    public double getDiscountAmount() {
+        return discountAmount;
+    }
+
+    public void setDiscountAmount(double discountAmount) {
+        this.discountAmount = discountAmount;
+    }
+
+    public double getBasePrice() {
+        return basePrice;
+    }
+
+    public void setBasePrice(double basePrice) {
+        this.basePrice = basePrice;
+    }
+
+    public double getTotalPrice() {
+        return totalPrice;
+    }
+
+    public void setTotalPrice(double totalPrice) {
+        this.totalPrice = totalPrice;
+    }
+
+    public String getNote() {
+        return note;
+    }
+
+    public void setNote(String note) {
+        this.note = note;
+    }
+
+
     //  HELPER – Kiểm tra từng bước đã đủ dữ liệu chưa
-    // =========================================================
-
-    /** Step 1 hợp lệ khi đã chọn khách hàng */
+    //Step 1 hợp lệ khi đã chọn khách hàng
     public boolean isStep1Valid() {
         return selectedCustomer != null;
     }
 
-    /** Step 2 hợp lệ khi đã chọn xe */
+    //Step 2 hợp lệ khi đã chọn xe
     public boolean isStep2Valid() {
         return selectedVehicle != null;
     }
 
-    /** Step 3 hợp lệ khi đã chọn đủ thời gian và hình thức cọc */
+    //Step 3 hợp lệ khi đã chọn đủ thời gian và hình thức cọc
     public boolean isStep3Valid() {
         return startDatetime != null
                 && endDatetime != null
@@ -120,7 +154,7 @@ public class ContractDraft {
                 && depositType != null;
     }
 
-    /** Tạo mã hợp đồng tự động dạng HD-xxx dựa theo số lượng HĐ hiện tại */
+    //Tạo mã hợp đồng tự động dạng HD-xxx dựa theo số lượng HĐ hiện tại
     public static String generateContractCode(int currentCount) {
         return String.format("HD-%03d", currentCount + 1);
     }

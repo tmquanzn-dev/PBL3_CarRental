@@ -16,15 +16,10 @@ import javafx.stage.Stage;
 import java.io.IOException;
 
 public class CreateContractController {
-
-    // =========================================================
-    //  FXML
-    // =========================================================
     @FXML private StackPane contentArea;
-    @FXML private Button    btnBack;
-    @FXML private Button    btnNext;
+    @FXML private Button btnBack;
+    @FXML private Button btnNext;
 
-    // Stepper boxes
     @FXML private VBox step1Box;
     @FXML private VBox step2Box;
     @FXML private VBox step3Box;
@@ -33,25 +28,20 @@ public class CreateContractController {
     // =========================================================
     //  STATE
     // =========================================================
-    private int           currentStep = 1;
-    private ContractDraft draft       = new ContractDraft();
+    private int currentStep = 1;
+    private ContractDraft draft = new ContractDraft();
 
     private Step1Controller step1Ctrl;
     private Step2Controller step2Ctrl;
     private Step3Controller step3Ctrl;
     private Step4Controller step4Ctrl;
 
-    // =========================================================
-    //  INITIALIZE
-    // =========================================================
     @FXML
     public void initialize() {
         loadStep(1);
     }
 
-    // =========================================================
     //  ĐIỀU HƯỚNG
-    // =========================================================
     @FXML
     void handleNext(ActionEvent event) {
         if (!validateAndSaveCurrentStep()) return;
@@ -76,9 +66,6 @@ public class CreateContractController {
         stage.close();
     }
 
-    // =========================================================
-    //  LOAD STEP
-    // =========================================================
     private void loadStep(int step) {
         try {
             String path = "/views/create_contract/Step" + step + "_Content.fxml";
@@ -105,9 +92,7 @@ public class CreateContractController {
         }
     }
 
-    // =========================================================
     //  VALIDATE & LƯU
-    // =========================================================
     private boolean validateAndSaveCurrentStep() {
         return switch (currentStep) {
             case 1 -> step1Ctrl != null && step1Ctrl.validateAndSave();
@@ -121,9 +106,7 @@ public class CreateContractController {
         };
     }
 
-    // =========================================================
     //  CẬP NHẬT STEPPER UI
-    // =========================================================
     private void updateStepperUI() {
         // Nút Back: ẩn ở bước 1
         if (btnBack != null) {
@@ -148,7 +131,6 @@ public class CreateContractController {
             }
         }
 
-        // Cập nhật màu từng step box
         updateStepBox(step1Box, 1);
         updateStepBox(step2Box, 2);
         updateStepBox(step3Box, 3);
@@ -157,8 +139,6 @@ public class CreateContractController {
 
     private void updateStepBox(VBox box, int stepNum) {
         if (box == null) return;
-
-        // Lấy Label số step (phần tử đầu trong HBox con đầu tiên)
         try {
             HBox innerHBox = (HBox) box.getChildren().get(0);
             Label circleLabel = (Label) innerHBox.getChildren().get(0);
@@ -187,7 +167,6 @@ public class CreateContractController {
                 textLabel.setStyle("-fx-font-size: 13px; -fx-text-fill: #9ca3af;");
             }
         } catch (Exception ignored) {
-            // Bỏ qua nếu cấu trúc không khớp
         }
     }
 

@@ -15,29 +15,20 @@ import javafx.scene.layout.HBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
-/**
- * Step1Controller – Bước 1: Tìm kiếm & xác nhận thông tin khách hàng.
- *
- * FIX BUG 2: Sau khi thêm khách mới, dùng callback nhận đúng CCCD
- *            đã lưu → tự động tìm lại và điền form.
- */
 public class Step1Controller {
 
     @FXML private TextField txtSearchCCCD;
     @FXML private TextField txtName;
     @FXML private TextField txtPhone;
     @FXML private TextField txtAddress;
-    @FXML private HBox      boxBlacklistWarning;
-    @FXML private Label     lblBlacklistReason;
+    @FXML private HBox boxBlacklistWarning;
+    @FXML private Label lblBlacklistReason;
 
     private ContractDraft draft;
-    private Customers     foundCustomer;
+    private Customers foundCustomer;
 
     private final CustomerBLL customerBLL = new CustomerBLL();
 
-    // =========================================================
-    //  NHẬN DRAFT
-    // =========================================================
     public void setDraft(ContractDraft draft) {
         this.draft = draft;
         if (draft.getSelectedCustomer() != null) {
@@ -46,9 +37,6 @@ public class Step1Controller {
         }
     }
 
-    // =========================================================
-    //  TÌM KIẾM THEO CCCD
-    // =========================================================
     @FXML
     void handleSearchCCCD() {
         String cccd = txtSearchCCCD.getText().trim();
@@ -57,7 +45,6 @@ public class Step1Controller {
                     "Vui lòng nhập số CCCD để tìm kiếm!");
             return;
         }
-
         hideBlacklistWarning();
 
         try {
@@ -92,9 +79,48 @@ public class Step1Controller {
         }
     }
 
-    // =========================================================
-    //  VALIDATE & LƯU VÀO DRAFT
-    // =========================================================
+    private void openAddCustomerModal(String cccd) {
+        try {
+            FXMLLoader loader = new FXMLLoader(
+                    getClass().getResource("/views/customer/AddCustomerModal.fxml"));
+            Parent root = loader.load();
+
+            AddCustomerController ctrl = loader.getController();
+            ctrl.setPreFillCccd(cccd);
+
+            // nhận lại CCCD thực tế đã lưu qua callback
+            ctrl.setOnSaved(savedCccd -> {
+                try {
+                    Customers newCus = customerBLL.findByCccd(savedCccd);
+                    if (newCus != null && !newCus.isIs_blacklist()) {
+                        fillForm(newCus);
+                        foundCustomer = newCus;
+                        // Cập nhật ô tìm kiếm cho khớp
+                        if (txtSearchCCCD != null) {
+                            txtSearchCCCD.setText(savedCccd);
+                        }
+                        hideBlacklistWarning();
+                    }
+                } catch (Exception e) {
+                    showAlert(Alert.AlertType.ERROR, "Lỗi",
+                            "Không thể tải thông tin khách: " + e.getMessage());
+                }
+            });
+
+            Stage stage = new Stage();
+            stage.setScene(new Scene(root));
+            stage.setTitle("Thêm khách hàng mới");
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.showAndWait();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            showAlert(Alert.AlertType.ERROR, "Lỗi hệ thống",
+                    "Không thể mở form thêm khách hàng!");
+        }
+    }
+
+
     public boolean validateAndSave() {
         if (foundCustomer == null) {
             showAlert(Alert.AlertType.WARNING, "Thiếu thông tin",
@@ -109,9 +135,7 @@ public class Step1Controller {
         return true;
     }
 
-    // =========================================================
     //  HELPERS
-    // =========================================================
     private void fillForm(Customers cus) {
         txtName.setText(cus.getFull_name() != null ? cus.getFull_name() : "");
         txtPhone.setText(cus.getPhone()   != null ? cus.getPhone()    : "");
@@ -153,51 +177,7 @@ public class Step1Controller {
         }
     }
 
-    /**
-     * FIX BUG 2: Mở modal thêm khách mới.
-     * Dùng callback setOnSaved() thay vì tìm lại theo CCCD gốc
-     * → đảm bảo luôn lấy đúng CCCD đã lưu vào DB.
-     */
-    private void openAddCustomerModal(String cccd) {
-        try {
-            FXMLLoader loader = new FXMLLoader(
-                    getClass().getResource("/views/customer/AddCustomerModal.fxml"));
-            Parent root = loader.load();
 
-            AddCustomerController ctrl = loader.getController();
-            ctrl.setPreFillCccd(cccd);
-
-            // FIX BUG 2: nhận lại CCCD thực tế đã lưu qua callback
-            ctrl.setOnSaved(savedCccd -> {
-                try {
-                    Customers newCus = customerBLL.findByCccd(savedCccd);
-                    if (newCus != null && !newCus.isIs_blacklist()) {
-                        fillForm(newCus);
-                        foundCustomer = newCus;
-                        // Cập nhật ô tìm kiếm cho khớp
-                        if (txtSearchCCCD != null) {
-                            txtSearchCCCD.setText(savedCccd);
-                        }
-                        hideBlacklistWarning();
-                    }
-                } catch (Exception e) {
-                    showAlert(Alert.AlertType.ERROR, "Lỗi",
-                            "Không thể tải thông tin khách: " + e.getMessage());
-                }
-            });
-
-            Stage stage = new Stage();
-            stage.setScene(new Scene(root));
-            stage.setTitle("Thêm khách hàng mới");
-            stage.initModality(Modality.APPLICATION_MODAL);
-            stage.showAndWait();
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            showAlert(Alert.AlertType.ERROR, "Lỗi hệ thống",
-                    "Không thể mở form thêm khách hàng!");
-        }
-    }
 
     private void showAlert(Alert.AlertType type, String title, String content) {
         Alert alert = new Alert(type);

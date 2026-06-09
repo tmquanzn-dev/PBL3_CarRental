@@ -15,19 +15,19 @@ import java.text.SimpleDateFormat;
 
 public class AddEmployeeController {
 
-    @FXML private TextField     txtFullName;
-    @FXML private TextField     txtUsername;
+    @FXML private TextField txtFullName;
+    @FXML private TextField txtUsername;
     @FXML private PasswordField txtPassword;
     @FXML private PasswordField txtConfirmPassword;
-    @FXML private TextField     txtPhone;
-    @FXML private TextField     txtEmail;
-    @FXML private TextField     txtCccd;
-    @FXML private TextField     txtAddress;
-    @FXML private TextField     txtBirthDate;   // định dạng dd/MM/yyyy
+    @FXML private TextField txtPhone;
+    @FXML private TextField txtEmail;
+    @FXML private TextField txtCccd;
+    @FXML private TextField txtAddress;
+    @FXML private TextField txtBirthDate;   // định dạng dd/MM/yyyy
     @FXML private ComboBox<String> cbRole;
     @FXML private ComboBox<String> cbGender;
-    @FXML private Label         lblMsg;
-    @FXML private Button        btnSave;
+    @FXML private Label lblMsg;
+    @FXML private Button btnSave;
 
     private final UserBLL userBLL = new UserBLL();
     private Runnable onSaved;
@@ -45,7 +45,6 @@ public class AddEmployeeController {
         this.onSaved = callback;
     }
 
-    // ── Lưu nhân viên mới ────────────────────────────────────
     @FXML
     void handleSave(ActionEvent event) {
         // --- Validate ---
@@ -84,10 +83,8 @@ public class AddEmployeeController {
         user.setGender("Nam".equals(cbGender.getValue()));
         user.setIs_active(true);
 
-        // role_id: Admin=1, Staff=2
         user.setRole_id("Admin".equals(cbRole.getValue()) ? 1 : 2);
 
-        // Ngày sinh (tùy chọn)
         if (!birth.isEmpty()) {
             try {
                 SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");

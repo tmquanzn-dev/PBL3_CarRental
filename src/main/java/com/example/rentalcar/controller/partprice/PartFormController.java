@@ -20,19 +20,19 @@ public class PartFormController implements Initializable {
 
     public enum Mode { ADD, EDIT }
 
-    @FXML private Label     lblTitle;
-    @FXML private Label     lblSubtitle;
+    @FXML private Label lblTitle;
+    @FXML private Label lblSubtitle;
     @FXML private TextField txtPartName;
     @FXML private ComboBox<String> cbVehicleType;
     @FXML private TextField txtPrice;
-    @FXML private Label     lblPricePreview;
-    @FXML private Label     lblMsg;
-    @FXML private Button    btnSave;
+    @FXML private Label lblPricePreview;
+    @FXML private Label lblMsg;
+    @FXML private Button btnSave;
 
     private final PartPriceBLL bll = new PartPriceBLL();
-    private Mode       currentMode  = Mode.ADD;
+    private Mode currentMode  = Mode.ADD;
     private PartPrices editingPart;
-    private Runnable   onSaved;
+    private Runnable onSaved;
 
     private static final String[] VEHICLE_TYPES = {
             "Tất cả", "Tay ga", "Xe số", "Xe côn tay",
@@ -44,13 +44,10 @@ public class PartFormController implements Initializable {
         cbVehicleType.setItems(FXCollections.observableArrayList(VEHICLE_TYPES));
         cbVehicleType.getSelectionModel().selectFirst();
 
-        // Live preview giá khi gõ
         txtPrice.textProperty().addListener((obs, old, val) -> updatePreview(val));
     }
 
-    // ============================================================
-    // NHẬN DỮ LIỆU TỪ CONTROLLER MẸ
-    // ============================================================
+    // Nhận dữ liệu từ controller mẹ
     public void setMode(Mode mode, PartPrices part) {
         this.currentMode  = mode;
         this.editingPart  = part;
@@ -76,9 +73,6 @@ public class PartFormController implements Initializable {
         this.onSaved = callback;
     }
 
-    // ============================================================
-    // LƯU
-    // ============================================================
     @FXML void handleSave() {
         // --- Validate ---
         String name = txtPartName.getText().trim();
@@ -95,7 +89,8 @@ public class PartFormController implements Initializable {
         double price;
         try {
             price = Double.parseDouble(txtPrice.getText().trim().replace(",", "").replace(".", ""));
-            if (price <= 0) throw new NumberFormatException();
+            if (price <= 0)
+                throw new NumberFormatException();
         } catch (NumberFormatException e) {
             showMsg("❌  Đơn giá không hợp lệ! Nhập số nguyên dương.", false);
             txtPrice.requestFocus();
@@ -107,12 +102,12 @@ public class PartFormController implements Initializable {
             boolean ok;
             if (currentMode == Mode.ADD) {
                 PartPrices newPart = new PartPrices(0, name, vehicleType, price);
-                ok = bll.addPartPrice(newPart); // Dùng BLL
+                ok = bll.addPartPrice(newPart);
             } else {
                 editingPart.setPart_name(name);
                 editingPart.setVehicle(vehicleType);
                 editingPart.setPrice(price);
-                ok = bll.updatePartPrice(editingPart); // Dùng BLL
+                ok = bll.updatePartPrice(editingPart);
             }
 
             if (ok) {
@@ -121,16 +116,14 @@ public class PartFormController implements Initializable {
                 autoClose();
             }
         } catch (IllegalArgumentException | IllegalStateException ex) {
-            // BẮT LỖI BẢO MẬT TỪ BLL VÀ IN LÊN MÀN HÌNH
             showMsg("❌ " + ex.getMessage(), false);
         }
     }
 
-    @FXML void handleClose() { getStage().close(); }
-
-    // ============================================================
+    @FXML void handleClose() {
+        getStage().close();
+    }
     // HELPERS
-    // ============================================================
     private void updatePreview(String val) {
         try {
             double price = Double.parseDouble(val.replace(",", "").replace(".", ""));

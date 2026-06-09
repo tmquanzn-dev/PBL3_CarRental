@@ -13,9 +13,7 @@ public class EarlyReturnModalController {
 
     private boolean confirmed = false;
 
-    /**
-     * Nạp dữ liệu số tiền lên giao diện Popup
-     */
+
     public void setData(String timeUnusedStr, double actualUsed, double penalty, double newBase) {
         if (lblTimeUnused != null) lblTimeUnused.setText("Thời gian hoàn thành sớm: " + timeUnusedStr);
         if (lblActualUsedPrice != null) lblActualUsedPrice.setText(fmt(actualUsed));

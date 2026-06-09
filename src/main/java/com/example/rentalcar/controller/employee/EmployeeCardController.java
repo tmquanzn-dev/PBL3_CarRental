@@ -21,15 +21,14 @@ import javafx.stage.Stage;
 import java.util.Optional;
 
 public class EmployeeCardController {
-
-    @FXML private Label  lblFullName, lblRoleName, lblUsername, lblOrderCount, lblStatus, lblInitial;
+    @FXML private Label lblFullName, lblRoleName, lblUsername, lblOrderCount, lblStatus, lblInitial;
     @FXML private Circle circleAvatar;
     @FXML private Button btnEdit;
     @FXML private Button btnLock;
     @FXML private Button btnResetPass;
-    @FXML private HBox   btnBox;
+    @FXML private HBox btnBox;
 
-    private Users    currentUser;
+    private Users currentUser;
     private Runnable onRefresh;
     private final UserBLL userBLL = new UserBLL();
     private final ReportBLL reportBLL = new ReportBLL();
@@ -38,12 +37,15 @@ public class EmployeeCardController {
         if (user == null) return;
         this.currentUser = user;
 
-        if (lblFullName   != null) lblFullName.setText(user.getFull_name());
-        if (lblRoleName   != null) lblRoleName.setText(
+        if (lblFullName!= null)
+            lblFullName.setText(user.getFull_name());
+        if (lblRoleName != null)
+            lblRoleName.setText(
                 user.getRole_name() != null ? user.getRole_name() : "Nhân viên");
-        if (lblUsername   != null) lblUsername.setText("@" + user.getUsername());
+        if (lblUsername   != null)
+            lblUsername.setText("@" + user.getUsername());
 
-        // FIX: lấy số đơn tháng này thay vì hardcode "0 đơn"
+        //lấy số đơn tháng này
         if (lblOrderCount != null) {
             int count = reportBLL.getStaffPerformanceCount(user.getId_user());
             String month = java.time.LocalDate.now().getMonthValue() + "/" +
@@ -70,7 +72,9 @@ public class EmployeeCardController {
         }
     }
 
-    public void setOnRefresh(Runnable callback) { this.onRefresh = callback; }
+    public void setOnRefresh(Runnable callback) {
+        this.onRefresh = callback;
+    }
 
     private void refreshStatusBadge(boolean isActive) {
         if (lblStatus == null) return;
@@ -148,17 +152,22 @@ public class EmployeeCardController {
                     refreshLockButton(!isActive);
                     showInfo((isActive ? "Đã khóa" : "Đã mở khóa")
                             + " tài khoản " + currentUser.getFull_name() + "!");
-                    if (onRefresh != null) onRefresh.run();
+                    if (onRefresh != null)
+                        onRefresh.run();
                 } else {
                     showError("Thao tác thất bại!");
                 }
-            } catch (IllegalArgumentException ex) { showError(ex.getMessage()); }
+            } catch (IllegalArgumentException ex)
+            {
+                showError(ex.getMessage());
+            }
         });
     }
 
     @FXML
     void handleResetPassword() {
-        if (currentUser == null || !AppSession.isAdmin()) return;
+        if (currentUser == null || !AppSession.isAdmin())
+            return;
 
         TextInputDialog dialog = new TextInputDialog();
         dialog.setTitle("Reset mật khẩu");
@@ -169,12 +178,15 @@ public class EmployeeCardController {
         Optional<String> result = dialog.showAndWait();
         result.ifPresent(newPass -> {
             if (newPass.trim().length() < 8) {
-                showError("Mật khẩu mới phải có ít nhất 8 ký tự!"); return;
+                showError("Mật khẩu mới phải có ít nhất 8 ký tự!");
+                return;
             }
             try {
                 boolean ok = userBLL.resetPassword(currentUser.getId_user(), newPass.trim());
-                if (ok) showInfo("Đã reset mật khẩu cho " + currentUser.getFull_name() + "!");
-                else showError("Reset mật khẩu thất bại!");
+                if (ok)
+                    showInfo("Đã reset mật khẩu cho " + currentUser.getFull_name() + "!");
+                else
+                    showError("Reset mật khẩu thất bại!");
             } catch (IllegalArgumentException ex) { showError(ex.getMessage()); }
         });
     }

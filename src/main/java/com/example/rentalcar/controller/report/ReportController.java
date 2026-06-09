@@ -29,37 +29,31 @@ import java.util.Map;
 import java.util.ResourceBundle;
 
 public class ReportController implements Initializable {
-
-    // ── KPI Cards ─────────────────────────────────────────
     @FXML private Label lblYearRevenue, lblRevenueGrowth;
     @FXML private Label lblYearContracts, lblContractSub;
     @FXML private Label lblTotalCustomers;
     @FXML private Label lblAvgMonthly;
 
-    // ── Header ────────────────────────────────────────────
     @FXML private Label lblYear;
     @FXML private ComboBox<String> cbMonth;
 
-    // ── Bar Chart ─────────────────────────────────────────
     @FXML private BarChart<String, Number> barChartRevenue;
     @FXML private CategoryAxis xAxis;
     @FXML private NumberAxis   yAxis;
     @FXML private Label lblChartSubtitle, lblPeakMonth;
 
-    // ── Pie Chart ─────────────────────────────────────────
     @FXML private PieChart pieChartStatus;
 
-    // ── Top 5 xe ──────────────────────────────────────────
+    //Top 5 xe
     @FXML private VBox  vboxTopVehicles;
     @FXML private Label lblTopVehiclesPeriod;
     @FXML private Label lblNoVehicles;
 
-    // ── Top 5 nhân viên ───────────────────────────────────
+    // Top 5 nhân viên
     @FXML private VBox  vboxTopStaff;
     @FXML private Label lblTopStaffPeriod;
     @FXML private Label lblNoStaff;
 
-    // ── Trạng thái xe ─────────────────────────────────────
     @FXML private Label lblVehAvailable, lblVehRented, lblVehMaintenance, lblVehTotal;
 
     // ── Tổng kết tháng ────────────────────────────────────
@@ -67,12 +61,11 @@ public class ReportController implements Initializable {
     @FXML private Label lblMonthRevenue, lblMonthContracts, lblMonthCustomers;
     @FXML private Label lblPrevMonthRevenue, lblPrevMonthContracts, lblGrowthBadge;
 
-    // ── BLL ───────────────────────────────────────────────
     private final ReportBLL  reportBLL  = new ReportBLL();
     private final VehicleBLL vehicleBLL = new VehicleBLL();
 
     private int selectedYear  = LocalDate.now().getYear();
-    private int selectedMonth = LocalDate.now().getMonthValue(); // 0 = tất cả tháng
+    private int selectedMonth = LocalDate.now().getMonthValue();
 
     private static final String[] MONTH_LABELS = {
             "T1","T2","T3","T4","T5","T6",
@@ -89,22 +82,20 @@ public class ReportController implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
         setupMonthCombo();
         setupBarChart();
-        // setupTableColumns() removed - using VBox rows instead
         loadAllData();
     }
 
-    // ─────────────────────────────────────────────────────
-    //  SETUP
-    // ─────────────────────────────────────────────────────
     private void setupMonthCombo() {
-        if (cbMonth == null) return;
+        if (cbMonth == null)
+            return;
         cbMonth.getItems().add("Cả năm");
-        for (String mn : MONTH_NAMES) cbMonth.getItems().add(mn);
+        for (String mn : MONTH_NAMES)
+            cbMonth.getItems().add(mn);
         // Mặc định chọn tháng hiện tại
-        cbMonth.getSelectionModel().select(selectedMonth); // index = tháng (1-12)
+        cbMonth.getSelectionModel().select(selectedMonth);
         cbMonth.setOnAction(e -> {
             int idx = cbMonth.getSelectionModel().getSelectedIndex();
-            selectedMonth = idx; // 0 = cả năm, 1..12 = tháng cụ thể
+            selectedMonth = idx;
             loadBarChart();        // cập nhật highlight cột tháng
             refreshTopTables();
             refreshMonthSummary();
@@ -121,8 +112,13 @@ public class ReportController implements Initializable {
     // ─────────────────────────────────────────────────────
     //  ĐIỀU HƯỚNG NĂM
     // ─────────────────────────────────────────────────────
-    @FXML void handlePrevYear(ActionEvent e) { selectedYear--; loadAllData(); }
-    @FXML void handleNextYear(ActionEvent e) { selectedYear++; loadAllData(); }
+    @FXML void handlePrevYear(ActionEvent e) {
+        selectedYear--;
+        loadAllData();
+    }
+    @FXML void handleNextYear(ActionEvent e) {
+        selectedYear++; loadAllData();
+    }
 
     @FXML void handleRefresh(ActionEvent e) {
         selectedYear  = LocalDate.now().getYear();
@@ -131,11 +127,9 @@ public class ReportController implements Initializable {
         loadAllData();
     }
 
-    // ─────────────────────────────────────────────────────
-    //  LOAD TẤT CẢ
-    // ─────────────────────────────────────────────────────
     private void loadAllData() {
-        if (lblYear != null) lblYear.setText(String.valueOf(selectedYear));
+        if (lblYear != null)
+            lblYear.setText(String.valueOf(selectedYear));
         loadKpiCards();
         loadBarChart();
         loadPieChart();
@@ -144,9 +138,6 @@ public class ReportController implements Initializable {
         refreshMonthSummary();
     }
 
-    // ─────────────────────────────────────────────────────
-    //  KPI CARDS
-    // ─────────────────────────────────────────────────────
     private void loadKpiCards() {
         try {
             double totalRev = reportBLL.getTotalRevenue(selectedYear);
@@ -170,9 +161,6 @@ public class ReportController implements Initializable {
         }
     }
 
-    // ─────────────────────────────────────────────────────
-    //  BAR CHART
-    // ─────────────────────────────────────────────────────
     private void loadBarChart() {
         try {
             barChartRevenue.getData().clear();
@@ -210,10 +198,6 @@ public class ReportController implements Initializable {
                 }
             }
 
-            // Tô màu thanh:
-            // - Tháng đỉnh → đỏ
-            // - Tháng đang chọn (selectedMonth) → cam nổi bật
-            // - Các tháng khác → xanh
             final int pkMonth = peakMonth;
             final int selMonth = selectedMonth;
             Platform.runLater(() -> {
@@ -253,9 +237,6 @@ public class ReportController implements Initializable {
         }
     }
 
-    // ─────────────────────────────────────────────────────
-    //  PIE CHART
-    // ─────────────────────────────────────────────────────
     private void loadPieChart() {
         try {
             pieChartStatus.getData().clear();
@@ -286,24 +267,18 @@ public class ReportController implements Initializable {
         }
     }
 
-    // ─────────────────────────────────────────────────────
-    //  TRẠNG THÁI XE
-    // ─────────────────────────────────────────────────────
     private void loadVehicleStatus() {
         try {
             Map<String, Integer> veh = reportBLL.getVehicleStatusCount();
-            setLabel(lblVehAvailable,   String.valueOf(veh.getOrDefault("AVAILABLE", 0)));
-            setLabel(lblVehRented,      String.valueOf(veh.getOrDefault("RENTED", 0)));
+            setLabel(lblVehAvailable, String.valueOf(veh.getOrDefault("AVAILABLE", 0)));
+            setLabel(lblVehRented, String.valueOf(veh.getOrDefault("RENTED", 0)));
             setLabel(lblVehMaintenance, String.valueOf(veh.getOrDefault("MAINTENANCE", 0)));
-            setLabel(lblVehTotal,       String.valueOf(veh.getOrDefault("TOTAL", 0)));
+            setLabel(lblVehTotal, String.valueOf(veh.getOrDefault("TOTAL", 0)));
         } catch (Exception ex) {
             System.err.println("[Report] VehicleStatus: " + ex.getMessage());
         }
     }
 
-    // ─────────────────────────────────────────────────────
-    //  TOP 5 (theo tháng hoặc năm) — dùng VBox rows, không TableView
-    // ─────────────────────────────────────────────────────
     private void refreshTopTables() {
         try {
             boolean isMonthMode = selectedMonth > 0;
@@ -316,7 +291,7 @@ public class ReportController implements Initializable {
 
             // Top xe
             List<VehicleReportRow> vList = isMonthMode
-                    ? reportBLL.getTopVehiclesByMonth(selectedYear, selectedMonth)
+                    ? reportBLL.getTopVehiclesByMonth(selectedYear, selectedMonth) // theo tháng
                     : reportBLL.getTopVehiclesByYear(selectedYear);
             renderVehicleRows(vList);
 
@@ -332,13 +307,20 @@ public class ReportController implements Initializable {
     }
 
     private void renderVehicleRows(List<VehicleReportRow> list) {
-        if (vboxTopVehicles == null) return;
+        if (vboxTopVehicles == null)
+            return;
         vboxTopVehicles.getChildren().clear();
         if (list == null || list.isEmpty()) {
-            if (lblNoVehicles != null) { lblNoVehicles.setVisible(true); lblNoVehicles.setManaged(true); }
+            if (lblNoVehicles != null) {
+                lblNoVehicles.setVisible(true);
+                lblNoVehicles.setManaged(true);
+            }
             return;
         }
-        if (lblNoVehicles != null) { lblNoVehicles.setVisible(false); lblNoVehicles.setManaged(false); }
+        if (lblNoVehicles != null) {
+            lblNoVehicles.setVisible(false);
+            lblNoVehicles.setManaged(false);
+        }
         for (VehicleReportRow row : list) {
             HBox hbox = new HBox();
             hbox.setAlignment(javafx.geometry.Pos.CENTER_LEFT);
